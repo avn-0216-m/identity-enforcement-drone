@@ -22,10 +22,7 @@ class Database_Handler():
             except:
                 print("Well, that's okay.")
 
-    def add_to_database(self, message):
-        print("Adding message to database")
-        cursor.execute(f'INSERT INTO {MESSAGES}(message) VALUES("{message}")')
-    
+    #Admin
     def completely_reset_database(self) -> Status:
         print("Completely resetting database.")
         for step in MIGRATION:
@@ -34,24 +31,28 @@ class Database_Handler():
         print("Database completely reset.")
         return Status.OK
 
+    #General
     def get_recent_from_table(self, table_name, key, amount) -> list:
         cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT {amount}')
         return cursor.fetchall()
-
-    def add_message(self, message, user_id) -> Status:
-        print("Inserting message.")
-        cursor.execute(f'INSERT INTO {MESSAGES}(message, user_id) VALUES("{message}", "{user_id}")')
-        print("Message inserted.")
-        return Status.OK
 
     def get_all_from_table(self, table_name: str, key: str) -> Response:
         cursor.execute(f'SELECT * FROM {table_name}')
         data = cursor.fetchall()
         return Response(Status.OK, data)
 
+    #Messages
+    def add_to_database(self, message):
+        print("Adding message to database")
+        cursor.execute(f'INSERT INTO {MESSAGES}(message) VALUES("{message}")')
+    
+    def add_message(self, message, user_id) -> Status:
+        print("Inserting message.")
+        cursor.execute(f'INSERT INTO {MESSAGES}(message, user_id) VALUES("{message}", "{user_id}")')
+        print("Message inserted.")
+        return Status.OK
     
     #Relationship Queries
-
     def find_prexisting_relationship(self, dom_id, sub_id, initiated_by) -> bool:
         print("Checking if there's a prexisting relationship for the BDSM request.")
         cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND initiated_by = {initiated_by};')

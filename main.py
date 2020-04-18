@@ -55,7 +55,7 @@ async def db_list(context):
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
-    Attempt to dominate someone.
+    Attempt to dominate someone
     They must respond by submitting to you with the submit command.
     '''
     response = rl.handle_dominate_query(context.message.author, submissive)
@@ -104,7 +104,8 @@ async def on_message(message):
         if role.name.startswith('🟆: '):
             print("Enforcable role found.")
             en.enforce(member=message.author, role=role)
-    return
+
+    await bot.process_commands(message)
 
 print("Starting bot.")
 bot.run(bot_token)
