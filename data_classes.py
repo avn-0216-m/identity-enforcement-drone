@@ -1,3 +1,5 @@
+from status_codes import Status
+
 class Relationship():
     def __init__(self, dominant, submissive, initiated_by):
         self.dominant = dominant
@@ -6,7 +8,7 @@ class Relationship():
         self.pending = True
 
 class Identity():
-    def __init__(name, owner):
+    def __init__(self, name, owner):
         self.name = name
         self.owner = owner
         self.server = None
@@ -14,9 +16,15 @@ class Identity():
         self.allowed_words = None
         self.avatar = None
 
-class IED_User():
-    def __init__():
+class Subject():
+    def __init__(self):
         self.discord_id = None
         self.drone_id = None
         self.safe_words = None
+
+class Response():
+    def __init__(self, data, status: Status):
+        self.data = data
+        self.status = status
+
 

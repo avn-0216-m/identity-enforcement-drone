@@ -35,8 +35,8 @@ class Database_Handler():
         print("Database completely reset.")
         return Status.OK
 
-    def get_recent_from_table(self, table_name, primary_key) -> list:
-        cursor.execute(f'SELECT * FROM {table_name} ORDER BY {primary_key} DESC LIMIT 10')
+    def get_recent_from_table(self, table_name, key) -> list:
+        cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT 10')
         return cursor.fetchall()
 
     def add_message(self, message, user_id) -> Status:
@@ -48,3 +48,6 @@ class Database_Handler():
     def add_relationship(self, relationship: Relationship) -> Status:
         print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
         return Status.Ok
+
+    def get_all_from_table(self, table_name: str, key: str) -> list:
+        cursor.execute(f'SELECT * FROM {table_name}')
