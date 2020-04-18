@@ -5,7 +5,7 @@ class Relationship():
         self.dominant = dominant
         self.submissive = submissive
         self.initiated_by = initiated_by
-        self.pending = True
+        self.pending = 1
 
 class Identity():
     def __init__(self, name, owner):

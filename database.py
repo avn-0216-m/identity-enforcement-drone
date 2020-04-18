@@ -1,5 +1,5 @@
 import mysql.connector
-from database_constants import DATABASE_NAME, MESSAGES, MIGRATION
+from database_constants import DATABASE_NAME, MESSAGES, MIGRATION, RELATIONSHIPS
 from data_classes import Relationship, Identity, Status, Response
 
 database = None
@@ -29,7 +29,8 @@ class Database_Handler():
     def completely_reset_database(self) -> Status:
         print("Completely resetting database.")
         for step in MIGRATION:
-            cursor.execute(step)
+            current_step = step
+            cursor.execute(current_step)
         print("Database completely reset.")
         return Status.OK
 
@@ -43,11 +44,27 @@ class Database_Handler():
         print("Message inserted.")
         return Status.OK
 
-    def add_relationship(self, relationship: Relationship) -> Status:
-        print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
-        return Status.Ok
-
     def get_all_from_table(self, table_name: str, key: str) -> Response:
         cursor.execute(f'SELECT * FROM {table_name}')
         data = cursor.fetchall()
         return Response(Status.OK, data)
+
+    
+    #Relationship Queries
+
+    def find_prexisting_relationship(self, dom_id, sub_id, initiated_by) -> bool:
+        print("Checking if there's a prexisting relationship for the BDSM request.")
+        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND initiated_by = {initiated_by};')
+        data = cursor.fetchall()
+        return len(data) != 0
+
+    def get_number_of_submissives(self, dom_id) -> int:
+        print("Getting number of subs.")
+        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id}')
+        data = cursor.fetchall()
+        return len(data)
+
+    def add_relationship(self, relationship: Relationship) -> Status:
+        print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
+        cursor.execute(f'INSERT INTO {RELATIONSHIPS}(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant}","{relationship.submissive}","{relationship.initiated_by}","{relationship.pending}");')
+        return Status.OK
