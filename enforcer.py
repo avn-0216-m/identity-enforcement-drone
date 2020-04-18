@@ -33,9 +33,12 @@ async def db_push(context, argument):
 @bot.command()
 async def db_list(context):
     print("Listing all entries in database")
-    for entry in cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME}"):
-        print(dir(entry))
-        print(entry)
+    cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME}")
+    output_message = "```"
+    for message_id, message in cursor.fetchall():
+        output_message += f"Message {message_id}: {message}\n"
+    output_message += "```"
+    await context.send(output_message)
 
 @bot.event
 async def on_ready():
