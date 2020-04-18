@@ -1,4 +1,4 @@
-from status_codes import Status
+from enum import Enum
 
 class Relationship():
     def __init__(self, dominant, submissive, initiated_by):
@@ -22,9 +22,18 @@ class Subject():
         self.drone_id = None
         self.safe_words = None
 
+class Status(Enum):
+    #Standard HTTP
+    OK = 200
+    CREATED = 201
+
+    #Joke
+    GOOD_DRONE = 216
+
+    #Custom
+    DUPLICATE_ENTRY = 601
+
 class Response():
     def __init__(self, data, status: Status):
         self.data = data
         self.status = status
-
-

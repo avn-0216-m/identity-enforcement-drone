@@ -1,7 +1,6 @@
 import mysql.connector
 from database_constants import DATABASE_NAME, MESSAGES
-from data_classes import Relationship, Identity
-from status_codes import Status
+from data_classes import Relationship, Identity, Status, Response
 
 database = None
 cursor = None

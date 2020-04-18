@@ -9,7 +9,7 @@ import mysql.connector
 from relationship import Relationship_Handler
 from database import Database_Handler
 #import utility modules 
-from status_codes import Status
+from data_classes import Status
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 
