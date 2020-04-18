@@ -82,6 +82,12 @@ async def list(context, arg: str = None):
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)
 
+@bot.command()
+async def set(context, arg1: str = None, arg2 = None):
+    if arg1 is None:
+        await context.send("What would you like to set?")
+        return
+
 @bot.event
 async def on_ready():
     print("Identity Enforcement Drone #3161 ready.")
@@ -97,7 +103,7 @@ async def on_message(message):
     for role in message.author.roles:
         if role.name.startswith('🟆: '):
             print("Enforcable role found.")
-            en
+            en.enforce(member=message.author, role=role)
     return
 
 print("Starting bot.")
