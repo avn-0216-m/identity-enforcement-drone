@@ -26,6 +26,11 @@ async def db_reset(context):
 @bot.command()
 async def db_push(context, argument):
     print("Pushing argument to database.")
+    cursor.execute("USE " + DATABASE_NAME)
+    print("Command being executed is:")
+    print(f'INSERT INTO {TEST_TABLE_NAME}(message) VALUES("{argument}");')
+    cursor.execute(f'INSERT INTO {TEST_TABLE_NAME}(message) VALUES("{argument}");')
+    await context.send("Message '" + argument + "' added to the database.")
 
 @bot.command()
 async def db_list(context, argument):
