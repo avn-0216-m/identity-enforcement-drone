@@ -8,8 +8,11 @@ import mysql.connector
 #import utility modules 
 #import data structure modules
 from database_constants import DATABASE_NAME, TEST_TABLE_NAME
+import relationship
 
 bot = commands.Bot(command_prefix="")
+
+relationship_handler = relationship.Relationship_Handler(bot)
 
 @bot.command()
 async def db_reset(context):
@@ -39,6 +42,11 @@ async def db_list(context):
         output_message += f"Message {message_id}: {message}\n"
     output_message += "```"
     await context.send(output_message)
+
+@bot.command()
+async def dominate(context, argument):
+    await relationship_handler.handle_dominate_query()
+    
 
 @bot.event
 async def on_ready():
