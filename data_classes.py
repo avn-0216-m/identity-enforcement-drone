@@ -34,6 +34,6 @@ class Status(Enum):
     DUPLICATE_ENTRY = 601
 
 class Response():
-    def __init__(self, data, status: Status):
-        self.data = data
+    def __init__(self, status: Status, data = None):
         self.status = status
+        self.data = data

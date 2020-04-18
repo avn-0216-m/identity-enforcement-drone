@@ -1,5 +1,5 @@
 import mysql.connector
-from database_constants import DATABASE_NAME, MESSAGES
+from database_constants import DATABASE_NAME, MESSAGES, MIGRATION
 from data_classes import Relationship, Identity, Status, Response
 
 database = None
@@ -27,15 +27,14 @@ class Database_Handler():
         cursor.execute(f'INSERT INTO {MESSAGES}(message) VALUES("{message}")')
     
     def completely_reset_database(self) -> Status:
-        cursor.execute(f'DROP DATABASE {DATABASE_NAME}')
-        cursor.execute(f'CREATE DATABASE {DATABASE_NAME}')
-        cursor.execute(f'USE {DATABASE_NAME}')
-        cursor.execute(f'CREATE TABLE {MESSAGES}(message_id int not null auto_increment primary key, user_id varchar(255) not null, message varchar(255) not null)')
+        print("Completely resetting database.")
+        for step in MIGRATION:
+            cursor.execute(step)
         print("Database completely reset.")
         return Status.OK
 
-    def get_recent_from_table(self, table_name, key) -> list:
-        cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT 10')
+    def get_recent_from_table(self, table_name, key, amount) -> list:
+        cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT {amount}')
         return cursor.fetchall()
 
     def add_message(self, message, user_id) -> Status:
@@ -48,5 +47,7 @@ class Database_Handler():
         print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
         return Status.Ok
 
-    def get_all_from_table(self, table_name: str, key: str) -> list:
+    def get_all_from_table(self, table_name: str, key: str) -> Response:
         cursor.execute(f'SELECT * FROM {table_name}')
+        data = cursor.fetchall()
+        return Response(Status.OK, data)

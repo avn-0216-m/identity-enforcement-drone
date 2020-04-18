@@ -45,7 +45,7 @@ async def db_push(context, argument):
 async def db_list(context):
     print("Listing all entries in database")
     output_message = "```"
-    for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id"):
+    for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
         user_from_id = bot.get_user(int(user_id))
         user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
         output_message += f'Message {message_id}: "{message}" by {user_name}\n'

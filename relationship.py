@@ -10,6 +10,9 @@ class Relationship_Handler():
 
     def handle_dominate_query(self) -> bool:
         print("Someone wants to dominate.")
+
+        self.db.get_all_from_table()
+
         return self.db.add_relationship(Relationship("beep", "boop", "beep"))
     
 
