@@ -26,15 +26,24 @@ async def db_reset(context):
 @bot.command()
 async def db_push(context, argument):
     print("Pushing argument to database.")
-    cursor.execute("USE " + DATABASE_NAME)
-    print("Command being executed is:")
-    print(f'INSERT INTO {TEST_TABLE_NAME}(message) VALUES("{argument}");')
-    cursor.execute(f'INSERT INTO {TEST_TABLE_NAME}(message) VALUES("{argument}");')
+    print(f'INSERT INTO {DATABASE_NAME}.{TEST_TABLE_NAME}(message) VALUE("{argument}");')
+    cursor.execute(f'INSERT INTO {DATABASE_NAME}.{TEST_TABLE_NAME}(message) VALUE("{argument}");')
     await context.send("Message '" + argument + "' added to the database.")
 
 @bot.command()
-async def db_list(context, argument):
-    print("Listing entries in database")
+async def db_list(context):
+    print("Listing all entries in database")
+    for entry in cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME}"):
+        print(dir(entry))
+        print(entry)
+
+@bot.event
+async def on_ready():
+    print("Bot ready. Creating database if it doesn't already exist.")
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
+    cursor.execute(f"USE {DATABASE_NAME}")
+    cursor.execute(f"CREATE TABLE IF NOT EXISTS {TEST_TABLE_NAME} (message_id int not null primary key auto_increment, message varchar(255))")
+    print("Database ready.")
 
 #Main setup begins here.
 print("Getting SQL and token details")
@@ -52,6 +61,8 @@ print("Establishing connection with database.")
 database = mysql.connector.connect(host=db_host, user=db_user, passwd=db_pass)
 print(database)
 print("Connection established.")
+print("Setting database autocommit to true.")
+database.autocommit= True
 cursor = database.cursor()
 print("Starting bot.")
 bot.run(bot_token)
