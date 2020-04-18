@@ -42,13 +42,9 @@ class Database_Handler():
         return Response(Status.OK, data)
 
     #Messages
-    def add_to_database(self, message):
-        print("Adding message to database")
-        cursor.execute(f'INSERT INTO {MESSAGES}(message) VALUES("{message}")')
-    
     def add_message(self, message, user_id) -> Status:
         print("Inserting message.")
-        cursor.execute(f'INSERT INTO {MESSAGES}(message, user_id) VALUES("{message}", "{user_id}")')
+        cursor.execute(f'INSERT INTO {MESSAGES}(message_content, user_id) VALUES("{message}", "{user_id}")')
         print("Message inserted.")
         return Status.OK
     
