@@ -4,3 +4,12 @@ class Relationship():
         self.submissive = submissive
         self.initiated_by = initiated_by
         self.pending = True
+
+class Identity():
+    def __init__(name, owner):
+        self.name = name
+        self.owner = owner
+        self.server = None
+        self.lexicon = None
+        self.allowed_words = None
+        self.avatar = None
