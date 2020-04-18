@@ -13,3 +13,4 @@ class Identity():
         self.lexicon = None
         self.allowed_words = None
         self.avatar = None
+
