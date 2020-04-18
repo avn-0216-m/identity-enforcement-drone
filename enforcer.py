@@ -52,7 +52,11 @@ async def db_list(context):
     await context.send(output_message if output_message != "``````" else "`No messages found.`")
 
 @bot.command()
-async def dominate(context, argument):
+async def dominate(context, argument: discord.Member):
+    '''
+    Attempt to dominate someone.
+    They must respond by submitting to you with the submit command.
+    '''
     if rl.handle_dominate_query():
         await context.send("`Hey, good job kiddo, you dominated somebody (not really).`")
     
