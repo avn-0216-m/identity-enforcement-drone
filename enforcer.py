@@ -9,7 +9,7 @@ import json
 bot = discord.ext.commands.Bot(command_prefix='//', case_insensitive=True)
 print("Getting SQL details")
 with open("sql_details.json") as sql_file:
-    sql_details = json.dump(sql_file)
+    sql_details = json.load(sql_file)
     for detail in details:
         print(detail)
         
