@@ -93,8 +93,9 @@ async def on_message(message):
     print("Message incoming.")
     #Check if any user roles begin with '🟆:' (Which marks an enforcable role)
     for role in message.author.roles:
-        if role.name.startswith('🟆:'):
+        if role.name.startswith('🟆: '):
             print("Enforcable role found.")
+    return
 
 print("Starting bot.")
 bot.run(bot_token)
