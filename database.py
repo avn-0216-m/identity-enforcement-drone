@@ -44,5 +44,6 @@ class Database_Handler():
         print("Message inserted.")
         return True
 
-    def add_relationship_to_database(self, relationship: Relationship) -> bool:
-        print("Adding relationship where {relationship.dominant} is the dominant to the database.")
+    def add_relationship(self, relationship: Relationship) -> bool:
+        print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
+        return True

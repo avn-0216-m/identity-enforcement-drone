@@ -14,3 +14,9 @@ class Identity():
         self.allowed_words = None
         self.avatar = None
 
+class IED_User():
+    def __init__():
+        self.discord_id = None
+        self.drone_id = None
+        self.safe_words = None
+

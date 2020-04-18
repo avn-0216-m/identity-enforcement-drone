@@ -1,9 +1,15 @@
-class Relationship_Handler():
-    def __init__(self, bot):
-        self.bot = bot
+from database import Database_Handler
+from data_classes import Relationship
 
-    async def handle_submit_query(self):
+class Relationship_Handler():
+    def __init__(self, db):
+        self.db = db
+
+    def handle_submit_query(self) -> bool:
         print("Someone wants to submit.")
 
-    async def handle_dominate_query(self):
+    def handle_dominate_query(self) -> bool:
         print("Someone wants to dominate.")
+        return self.db.add_relationship(Relationship("beep", "boop", "beep"))
+    
+
