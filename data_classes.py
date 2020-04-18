@@ -8,13 +8,27 @@ class Relationship():
         self.pending = 1
 
 class Identity():
-    def __init__(self, name, owner):
+    def __init__(
+        self, 
+        name = None, 
+        owner = None, 
+        server = None,
+        lexicon = None,
+        allowed_words = None,
+        avatar = None,
+        uses_drone_id = False,
+        display_name = None,
+        display_name_with_id = None 
+    ):
         self.name = name
         self.owner = owner
         self.server = None
         self.lexicon = None
         self.allowed_words = None
         self.avatar = None
+        self.uses_drone_id = False
+        self.display_name = None
+        self.display_name_with_id = None
 
 class Subject():
     def __init__(self):

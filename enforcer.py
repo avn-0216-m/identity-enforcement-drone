@@ -50,7 +50,7 @@ async def db_list(context):
         output_message += f'Message {message_id}: "{message}" by {user_name}\n'
     await context.send(output_message if output_message != "" else "No messages found.")
 
-@bot.command()
+@bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
     Attempt to dominate someone.
@@ -83,6 +83,18 @@ async def list(context, arg: str = None):
 @bot.event
 async def on_ready():
     print("Identity Enforcement Drone #3161 ready.")
+
+@bot.event
+async def on_message(message):
+
+    if message.author.bot: #Don't deal with bots.
+        return
+
+    print("Message incoming.")
+    #Check if any user roles begin with '🟆:' (Which marks an enforcable role)
+    for role in message.author.roles:
+        if role.name.startswith('🟆:'):
+            print("Enforcable role found.")
 
 print("Starting bot.")
 bot.run(bot_token)
