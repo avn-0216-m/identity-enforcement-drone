@@ -33,7 +33,7 @@ async def db_push(context, argument):
 @bot.command()
 async def db_list(context):
     print("Listing all entries in database")
-    cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME}")
+    cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME} ORDER BY message_id DESC LIMIT 10")
     output_message = "```"
     for message_id, message in cursor.fetchall():
         output_message += f"Message {message_id}: {message}\n"
