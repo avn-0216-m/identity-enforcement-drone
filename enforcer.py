@@ -9,6 +9,7 @@ import mysql.connector
 from relationship import Relationship_Handler
 from database import Database_Handler
 #import utility modules 
+from status_codes import Status
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 
@@ -31,12 +32,12 @@ rl = Relationship_Handler(db)
 
 @bot.command()
 async def db_reset(context):
-    if db.completely_reset_database():
+    if db.completely_reset_database() is Status.OK:
         await context.send("`I hope you're proud of yourself.`")
 
 @bot.command()
 async def db_push(context, argument):
-    if db.add_message(argument, context.message.author.id):
+    if db.add_message(argument, context.message.author.id) is Status.OK:
         await context.send("`Your message was succesfully added to the database. :)`")
 
 
@@ -57,7 +58,7 @@ async def dominate(context, argument: discord.Member):
     Attempt to dominate someone.
     They must respond by submitting to you with the submit command.
     '''
-    if rl.handle_dominate_query():
+    if rl.handle_dominate_query() == Status.OK:
         await context.send("`Hey, good job kiddo, you dominated somebody (not really).`")
     
 
