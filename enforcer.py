@@ -18,19 +18,19 @@ relationship_handler = relationship.Relationship_Handler(bot)
 @bot.command()
 async def db_reset(context):
     if db.completely_reset_database():
-        context.send("```I hope you're proud of yourself.```")
+        await context.send("`I hope you're proud of yourself.`")
 
 @bot.command()
 async def db_push(context, argument):
     if db.add_message(argument, context.message.author.id):
-        context.send("`Your message was succesfully added to the database. :)`")
+        await context.send("`Your message was succesfully added to the database. :)`")
 
 
 @bot.command()
 async def db_list(context):
     print("Listing all entries in database")
     output_message = "```"
-    for message_id, user_id, message in db.get_all_from_table(MESSAGES):
+    for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id"):
         user_from_id = bot.get_user(int(user_id))
         user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
         output_message += f'Message {message_id}: "{message}" by {user_name}\n'
@@ -60,6 +60,7 @@ with open("secret_details.json") as secret_file:
     bot_token = secret_details['bot_token']
 
 db = database.Database_Handler(db_host, db_user, db_pass)
+bot.database_handler = db
 
 print("Starting bot.")
 bot.run(bot_token)
