@@ -59,16 +59,26 @@ async def dominate(context, submissive: discord.Member):
     response = rl.handle_dominate_query(context.message.author, submissive)
     print("Response is:")
     print(response)
-    if response is Status.DUPLICATE_ENTRY:
-        await context.send("You are already dominating that person.")
+    if response is Status.DUPLICATE_REQUEST:
+        await context.send("You are already dominating/attempting to dominate that person.")
     elif response.status is Status.OK:
         plural = "user" if response.data == 1 else "users"
         await context.send("You are now dominating " + submissive.mention + f"\nIn total, you are dominating {response.data} {plural}.")
     
 @bot.command()
-async def list(context, arg: str):
+async def list(context, arg: str = None):
     if arg is None:
         await context.send("What would you like to list?")
+        return
+    if arg == "submissives" or "subs":
+        subs = rl.get_all_submissives(context.message.author).data
+        reply = "You currently own the following submissives:\n"
+        for sub_id, in subs: #The comma is to unpack a tuple with only 1 value (super weird)
+            sub_as_user = bot.get_user(int(sub_id))
+            reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
+        if len(reply) > 2000:
+            reply = "You own too many submissives to count. Well done."
+        await context.send(reply)
 
 @bot.event
 async def on_ready():

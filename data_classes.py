@@ -31,7 +31,7 @@ class Status(Enum):
     GOOD_DRONE = 216
 
     #Custom
-    DUPLICATE_ENTRY = 601
+    DUPLICATE_REQUEST = 601
 
 class Response():
     def __init__(self, status: Status, data = None):

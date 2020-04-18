@@ -11,9 +11,11 @@ class Relationship_Handler():
     def handle_dominate_query(self, dominant, submissive) -> Response:
         print(dominant.display_name + " wants to dominate " + submissive.display_name)
         if self.db.find_prexisting_relationship(dominant.id, submissive.id, dominant.id):
-            return Status.DUPLICATE_ENTRY
+            return Status.DUPLICATE_REQUEST
         print("No duplicate entries found, adding initial domination request to database.")
         if self.db.add_relationship(Relationship(dominant.id, submissive.id, dominant.id)) is Status.OK:
             return Response(Status.OK, self.db.get_number_of_submissives(dominant.id))
     
-
+    def get_all_submissives(self, dominant) -> Response:
+        print(f"Getting all submissives belonging to {dominant.display_name}")
+        return Response(Status.OK, self.db.get_all_submissives(dominant.id))

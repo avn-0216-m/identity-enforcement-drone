@@ -16,7 +16,7 @@ class Database_Handler():
             database = mysql.connector.connect(host=hostname, user=username, passwd=password)
             print("Connection to database established.")
             database.autocommit = True
-            cursor = database.cursor()
+            cursor = database.cursor(buffered=True)
             try:
                 cursor.execute(f"USE {DATABASE_NAME}")
             except:
@@ -60,7 +60,7 @@ class Database_Handler():
 
     def get_number_of_submissives(self, dom_id) -> int:
         print("Getting number of subs.")
-        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id}')
+        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
         data = cursor.fetchall()
         return len(data)
 
@@ -68,3 +68,7 @@ class Database_Handler():
         print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
         cursor.execute(f'INSERT INTO {RELATIONSHIPS}(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant}","{relationship.submissive}","{relationship.initiated_by}","{relationship.pending}");')
         return Status.OK
+
+    def get_all_submissives(self, dom_id: int) -> list:
+        cursor.execute(f'SELECT submissive_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
+        return cursor.fetchall()
