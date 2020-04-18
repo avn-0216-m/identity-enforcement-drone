@@ -8,6 +8,7 @@ import mysql.connector
 #import handler modules
 from relationship import Relationship_Handler
 from database import Database_Handler
+from enforcement import Enforcement_Handler
 #import utility modules 
 from data_classes import Status
 #import data structure modules
@@ -29,6 +30,7 @@ with open("secret_details.json") as secret_file:
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
+en = Enforcement_Handler(bot)
 
 @bot.command()
 async def db_reset(context):
@@ -95,6 +97,7 @@ async def on_message(message):
     for role in message.author.roles:
         if role.name.startswith('🟆: '):
             print("Enforcable role found.")
+            en
     return
 
 print("Starting bot.")
