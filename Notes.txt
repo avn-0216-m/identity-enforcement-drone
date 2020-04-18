@@ -1,0 +1,24 @@
+Classes:
+
+Ownership:
+dom - discord member
+sub - discord member
+initiated_by - discord member
+pending - boolean
+
+Command:
+requires_dexterity - boolean
+command_word - string
+
+User:
+user - discord member
+id - string or int (probably string)
+
+Identity:
+uses_id - boolean
+name - string
+dexterous - boolean
+replace - dictionary
+full_replace - list
+allow - list
+avatar - string (url)
