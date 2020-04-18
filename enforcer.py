@@ -4,10 +4,11 @@ import discord
 from discord.ext import commands
 import json
 import mysql.connector
+import database
 #import enforcer modules
 #import utility modules 
 #import data structure modules
-from database_constants import DATABASE_NAME, TEST_TABLE_NAME
+from database_constants import DATABASE_NAME, MESSAGES
 import relationship
 
 bot = commands.Bot(command_prefix="")
@@ -16,32 +17,25 @@ relationship_handler = relationship.Relationship_Handler(bot)
 
 @bot.command()
 async def db_reset(context):
-    print("Resetting database.")
-    cursor.execute("DROP DATABASE IF EXISTS " + DATABASE_NAME)
-    print("Database dropped.")
-    cursor.execute("CREATE DATABASE " + DATABASE_NAME)
-    print("Database created.")
-    cursor.execute("USE " + DATABASE_NAME)
-    cursor.execute("CREATE TABLE " + TEST_TABLE_NAME + "(message_id int not null primary key auto_increment, message varchar(255))")
-    print("Test table created.")
-    await context.send("Database reset.")
+    if db.completely_reset_database():
+        context.send("```I hope you're proud of yourself.```")
 
 @bot.command()
 async def db_push(context, argument):
-    print("Pushing argument to database.")
-    print(f'INSERT INTO {DATABASE_NAME}.{TEST_TABLE_NAME}(message) VALUE("{argument}");')
-    cursor.execute(f'INSERT INTO {DATABASE_NAME}.{TEST_TABLE_NAME}(message) VALUE("{argument}");')
-    await context.send("Message '" + argument + "' added to the database.")
+    if db.add_message(argument, context.message.author.id):
+        context.send("`Your message was succesfully added to the database. :)`")
+
 
 @bot.command()
 async def db_list(context):
     print("Listing all entries in database")
-    cursor.execute(f"SELECT * FROM {TEST_TABLE_NAME} ORDER BY message_id DESC LIMIT 10")
     output_message = "```"
-    for message_id, message in cursor.fetchall():
-        output_message += f"Message {message_id}: {message}\n"
+    for message_id, user_id, message in db.get_all_from_table(MESSAGES):
+        user_from_id = bot.get_user(int(user_id))
+        user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
+        output_message += f'Message {message_id}: "{message}" by {user_name}\n'
     output_message += "```"
-    await context.send(output_message)
+    await context.send(output_message if output_message != "``````" else "`No messages found.`")
 
 @bot.command()
 async def dominate(context, argument):
@@ -50,11 +44,7 @@ async def dominate(context, argument):
 
 @bot.event
 async def on_ready():
-    print("Bot ready. Creating database if it doesn't already exist.")
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
-    cursor.execute(f"USE {DATABASE_NAME}")
-    cursor.execute(f"CREATE TABLE IF NOT EXISTS {TEST_TABLE_NAME} (message_id int not null primary key auto_increment, message varchar(255))")
-    print("Database ready.")
+    print("Identity Enforcement Drone #3161 ready.")
 
 #Main setup begins here.
 print("Getting SQL and token details")
@@ -68,12 +58,8 @@ with open("secret_details.json") as secret_file:
     db_user = secret_details['db_user']
     db_pass = secret_details['db_pass']
     bot_token = secret_details['bot_token']
-print("Establishing connection with database.")
-database = mysql.connector.connect(host=db_host, user=db_user, passwd=db_pass)
-print(database)
-print("Connection established.")
-print("Setting database autocommit to true.")
-database.autocommit= True
-cursor = database.cursor()
+
+db = database.Database_Handler(db_host, db_user, db_pass)
+
 print("Starting bot.")
 bot.run(bot_token)
