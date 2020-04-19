@@ -58,9 +58,14 @@ class Database_Handler():
         return Status.OK
     
     #Relationship Queries
-    def find_prexisting_relationship(self, dom_id, sub_id) -> Response: #List of relationships
+    def find_potential_relationship(self, dom_id, sub_id) -> Response: #List of relationships
         print("Checking if there's a prexisting relationship for the BDSM request.")
         cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id};')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_relationship(data))
+
+    def find_confirmed_relationship(self, dom_id, sub_id) -> Response:
+        cursor.execute(f'SELECT relationship_id FROM relationships WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND pending = 0')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_relationship(data))
 

@@ -9,7 +9,7 @@ class Relationship_Handler():
         print("Someone wants to submit.")
 
     def handle_submit_query(self, submissive, dominant) -> Response:
-        results = self.db.find_prexisting_relationship(dominant.id, submissive.id).data
+        results = self.db.find_potential_relationship(dominant.id, submissive.id).data
         print("Results are")
         print(results)
         if results == []:
@@ -27,7 +27,7 @@ class Relationship_Handler():
         return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
 
     def handle_dominate_query(self, dominant, submissive) -> Response:
-        results = self.db.find_prexisting_relationship(dominant.id, submissive.id).data
+        results = self.db.find_potential_relationship(dominant.id, submissive.id).data
         print("Results are")
         print(results)
         if results == []:

@@ -41,3 +41,11 @@ class Enforcement_Handler():
         #Finally, assign the new enforcement role.
         await target.add_roles(role_to_assign)
         return Status.OK
+
+    def check_permissions(self, dom_id, sub_id) -> bool:
+        results = self.db.find_confirmed_relationship(dom_id, sub_id).data
+        print("RESULTS ARE")
+        print(results)
+        if len(results) != 0:
+            return True
+        return False
