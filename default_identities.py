@@ -9,7 +9,7 @@ def init_default_identities(guild_id = 0) -> list:
         reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon, guild_id, avatar, allowed_words) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}", "{identity.allowed_words}");')
     return reply
 
-PUPPY_WORDS = "woof", "woof!", "bark!", "wauf"
+PUPPY_WORDS = "woof!", "snff," "bark!", "bork!", "wauf!", "woofwoof!", "barkbark!", "awrr!", "🐾", "🐶‼️", "💖", "wauf,", "woof!!",
 KITTY_WORDS = "meow", "meow!", "mrow", "prrrr"
 HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "Mmmm...", "Mmmnn...", "I...", "Hhh...", "....", "Mmm...", "....", "...."
 
