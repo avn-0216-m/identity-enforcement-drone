@@ -59,15 +59,37 @@ async def dominate(context, submissive: discord.Member):
     Attempt to dominate someone
     They must respond by submitting to you with the submit command.
     '''
-    print("Attempting to dom someone.")
+
+    if context.message.author is submissive:
+        await context.send("You cannot own yourself.")
+        return
+
     response = rl.handle_dominate_query(context.message.author, submissive)
-    print("Response is:")
-    print(response)
     if response is Status.DUPLICATE_REQUEST:
         await context.send("You are already dominating/attempting to dominate that person.")
-    elif response.status is Status.OK:
-        plural = "user" if response.data == 1 else "users"
-        await context.send("You are now dominating " + submissive.mention + f"\nIn total, you are dominating {response.data} {plural}.")
+    elif response is Status.OK:
+        await context.send("Request to dominate recieved. The sub will need to submit to you with the 'submit' command.")
+    elif response is Status.HOLY_MATRIHORNY:
+        await context.send("By the power invested in my hard drive, I now pronounce you sub and dom. Hurray!")
+
+@bot.command(aliases = ['sub'])
+async def submit(context, dominant: discord.Member):
+    '''
+    Attempt to submit to someone
+    They must respond by dominating you with the dominate command.
+    '''
+
+    if context.message.author is dominant:
+        await context.send("You cannot submit to yourself.")
+        return
+
+    response = rl.handle_submit_query(context.message.author, dominant)
+    if response is Status.DUPLICATE_REQUEST:
+        await context.send("You are already submissive to/attempting to submit to that person. You needy fucking bottom, chill out.")
+    elif response is Status.OK:
+        await context.send("Get ready to keysmash in delight- your request to submit has been received. Now the other party simply needs to dominate you in turn.")
+    elif response is Status.HOLY_MATRIHORNY:
+        await context.send("By the power invested in my processor, I now pronounce you dom and sub. Huzzah!")
     
 @bot.command()
 async def list(context, arg: str = None):

@@ -1,4 +1,4 @@
-from data_classes import Identity
+from data_classes import Identity, Relationship
 
 def lexicon_to_string(lexicon: list) -> str:
     print("Converting lexicon to string.")
@@ -38,5 +38,33 @@ def result_to_identity(results: list) -> list: #Of identities:
         except KeyError:
             pass
         reply.append(identity)
+    return reply
+
+def result_to_relationship(results: list) -> list: #Of relationships
+    print("Serializing result set to list of relationships.")
+    reply = []
+    for result in results:
+        relationship = Relationship()
+        try:
+            relationship.relationship_id = result["relationship_id"]
+        except KeyError:
+            pass
+        try:
+            relationship.dominant_id = result["dominant_id"]
+        except KeyError:
+            pass
+        try:
+            relationship.submissive_id = result["submissive_id"]
+        except KeyError:
+            pass
+        try:
+            relationship.initiated_by = result["initiated_by"]
+        except KeyError:
+            pass
+        try:
+            relationship.pending = result["pending"]
+        except KeyError:
+            pass
+        reply.append(relationship)
     return reply
 

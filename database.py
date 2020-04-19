@@ -3,7 +3,7 @@ from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities
-from serialize import result_to_identity
+from serialize import result_to_identity, result_to_relationship
 
 database = None
 cursor = None
@@ -58,21 +58,24 @@ class Database_Handler():
         return Status.OK
     
     #Relationship Queries
-    def find_prexisting_relationship(self, dom_id, sub_id, initiated_by) -> bool:
+    def find_prexisting_relationship(self, dom_id, sub_id) -> Response: #List of relationships
         print("Checking if there's a prexisting relationship for the BDSM request.")
-        cursor.execute(f'SELECT relationship_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND initiated_by = {initiated_by};')
+        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id};')
         data = cursor.fetchall()
-        return len(data) != 0
+        return Response(Status.OK, result_to_relationship(data))
+
+    def confirm_relationship(self, relationship_id) -> Status:
+        cursor.execute(f'UPDATE relationships SET pending = 0 WHERE relationship_id = {relationship_id}')
+        return Status.OK
 
     def get_number_of_submissives(self, dom_id) -> int:
         print("Getting number of subs.")
-        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
+        cursor.execute(f'SELECT relationship_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
         data = cursor.fetchall()
         return len(data)
 
     def add_relationship(self, relationship: Relationship) -> Status:
-        print(f"Adding relationship where {relationship.dominant} is the dominant to the database.")
-        cursor.execute(f'INSERT INTO {RELATIONSHIPS}(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant}","{relationship.submissive}","{relationship.initiated_by}","{relationship.pending}");')
+        cursor.execute(f'INSERT INTO {RELATIONSHIPS}(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant_id}","{relationship.submissive_id}","{relationship.initiated_by}","{relationship.pending}");')
         return Status.OK
 
     def get_all_submissives(self, dom_id: int) -> list:

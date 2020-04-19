@@ -8,14 +8,42 @@ class Relationship_Handler():
     def handle_submit_query(self) -> bool:
         print("Someone wants to submit.")
 
+    def handle_submit_query(self, submissive, dominant) -> Response:
+        results = self.db.find_prexisting_relationship(dominant.id, submissive.id).data
+        print("Results are")
+        print(results)
+        if results == []:
+            print("No duplicate results found. Continuing.")
+            pass
+        else:
+            for result in results:
+                if result.initiated_by == result.dominant_id and result.pending == 1:
+                    print("Relationship acquired")
+                    self.db.confirm_relationship(result.relationship_id)
+                    return Status.HOLY_MATRIHORNY
+                else:
+                    print("Duplicate found. Get it outta here.")
+                    return Status.DUPLICATE_REQUEST
+        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
+
     def handle_dominate_query(self, dominant, submissive) -> Response:
-        print(dominant.display_name + " wants to dominate " + submissive.display_name)
-        if self.db.find_prexisting_relationship(dominant.id, submissive.id, dominant.id):
-            return Status.DUPLICATE_REQUEST
-        print("No duplicate entries found, adding initial domination request to database.")
-        if self.db.add_relationship(Relationship(dominant.id, submissive.id, dominant.id)) is Status.OK:
-            return Response(Status.OK, self.db.get_number_of_submissives(dominant.id))
-    
+        results = self.db.find_prexisting_relationship(dominant.id, submissive.id).data
+        print("Results are")
+        print(results)
+        if results == []:
+            print("No duplicate results found. Continuing.")
+            pass
+        else:
+            for result in results:
+                if result.initiated_by == result.submissive_id and result.pending == 1:
+                    print("Relationship acquired")
+                    self.db.confirm_relationship(result.relationship_id)
+                    return Status.HOLY_MATRIHORNY
+                else:
+                    print("Duplicate found. Get it outta here.")
+                    return Status.DUPLICATE_REQUEST
+        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
+
     def get_all_submissives(self, dominant) -> Response:
         print(f"Getting all submissives belonging to {dominant.display_name}")
         return Response(Status.OK, self.db.get_all_submissives(dominant.id))

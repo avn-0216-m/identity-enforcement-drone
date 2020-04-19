@@ -2,9 +2,9 @@ from enum import Enum
 
 #Data objects
 class Relationship():
-    def __init__(self, dominant, submissive, initiated_by):
-        self.dominant = dominant
-        self.submissive = submissive
+    def __init__(self, dominant_id = None, submissive_id = None, initiated_by = None):
+        self.dominant_id = dominant_id
+        self.submissive_id = submissive_id
         self.initiated_by = initiated_by
         self.pending = 1
 
@@ -60,6 +60,7 @@ class Status(Enum):
 
     #Custom
     DUPLICATE_REQUEST = 601
+    HOLY_MATRIHORNY = 602
 
 class Response():
     def __init__(self, status: Status, data = None):
