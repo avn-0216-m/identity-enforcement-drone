@@ -1,10 +1,11 @@
 from data_classes import Identity, Lexicon
+from notable_entities import ENFORCEMENT_DRONE
 
-def init_default_identities() -> list:
+def init_default_identities(guild_id = 0) -> list:
     print("Initializing default identities.")
     reply = []
     for identity in DEFAULT_IDENTITIES:
-        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon_id) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon_id}");')
+        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon_id, guild_id) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon_id}", "{guild_id}");')
     return reply
 
 def init_default_lexicons() -> list:
@@ -27,11 +28,9 @@ def map_words_list_to_lexicon_list(words: list, id: int) -> list:
         lexicon_list.append(Lexicon(lexicon_id = id, word=word))
     return lexicon_list
 
-enforcer_drone = 694984579995533313
-
 PUPPY = Identity(
     name = "puppy",
-    user_id = enforcer_drone,
+    user_id = ENFORCEMENT_DRONE,
     allowed_words = [],
     lexicon_id = 1,
     avatar = "https://upload.wikimedia.org/wikipedia/commons/2/2b/WelshCorgi.jpeg",
@@ -40,7 +39,7 @@ PUPPY = Identity(
 
 KITTY = Identity(
     name = "kitty",
-    user_id = enforcer_drone,
+    user_id = ENFORCEMENT_DRONE,
     allowed_words = [],
     lexicon_id = 2,
     avatar = "",

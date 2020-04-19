@@ -14,7 +14,7 @@ class Identity():
         identity_id = None, 
         name = None, 
         user_id = None, 
-        server = None,
+        guild_id = None,
         lexicon_id = None,
         allowed_words = None,
         avatar = None,
@@ -25,7 +25,7 @@ class Identity():
         self.identity_id = identity_id
         self.name = name
         self.user_id = user_id
-        self.server = server
+        self.guild_id = guild_id
         self.lexicon_id = lexicon_id
         self.allowed_words = allowed_words
         self.avatar = avatar

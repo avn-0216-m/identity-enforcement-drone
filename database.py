@@ -1,6 +1,8 @@
 import mysql.connector
 from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONSHIPS
 from data_classes import Relationship, Identity, Status, Response
+from notable_entities import ENFORCEMENT_DRONE
+from default_identities import init_default_identities
 
 database = None
 cursor = None
@@ -37,8 +39,13 @@ class Database_Handler():
         cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT {amount}')
         return cursor.fetchall()
 
-    def get_all_from_table(self, table_name: str, key: str) -> Response:
+    def get_all_from_table(self, table_name: str) -> Response:
         cursor.execute(f'SELECT * FROM {table_name}')
+        data = cursor.fetchall()
+        return Response(Status.OK, data)
+
+    def get_all_matches_from_table(self, table_name: str, key, value) -> Response:
+        cursor.execute(f'SELECT * FROM {table_name} WHERE {key} = {value}')
         data = cursor.fetchall()
         return Response(Status.OK, data)
 
@@ -70,3 +77,13 @@ class Database_Handler():
     def get_all_submissives(self, dom_id: int) -> list:
         cursor.execute(f'SELECT submissive_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
         return cursor.fetchall()
+
+    #Identities
+    def refresh_default_identities(self, guild_id):
+        #Delete all identities for given server belonging to the enforcement drone.
+        cursor.execute(f'DELETE FROM identities WHERE guild_id = {guild_id} AND user_id = {ENFORCEMENT_DRONE};')
+        #Reinsert the default identities.
+        for statement in init_default_identities(guild_id):
+            print(f"EXECUTING: {statement}")
+            cursor.execute(statement)
+

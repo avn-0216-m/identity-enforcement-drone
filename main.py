@@ -30,7 +30,7 @@ with open("secret_details.json") as secret_file:
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
-en = Enforcement_Handler(bot)
+en = Enforcement_Handler(bot, db)
 
 @bot.command()
 async def db_reset(context):
@@ -73,7 +73,7 @@ async def list(context, arg: str = None):
     if arg is None:
         await context.send("What would you like to list?")
         return
-    if arg == "submissives" or "subs":
+    elif arg == "submissives" or arg == "subs":
         subs = rl.get_all_submissives(context.message.author).data
         reply = "You currently own the following submissives:\n"
         for sub_id, in subs: #The comma is to unpack a tuple with only 1 value (super weird)
@@ -81,6 +81,15 @@ async def list(context, arg: str = None):
             reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
+        await context.send(reply)
+    elif arg == "identities":
+        identities = db.get_all_matches_from_table("identities", "guild_id", context.guild.id).data
+        if len(identities) == 0:
+            await context.send("This server hosts no identities.")
+            return
+        reply = "This server hosts the following identities:\n"
+        for identity_id,name,user_id,lexicon_id,display_name,guild_id, in identities:
+            reply += f"[{name}], with the display name [{display_name}]\n"
         await context.send(reply)
 
 @bot.command()
@@ -99,6 +108,7 @@ async def set(context, arg1: str = None, arg2 = None):
 async def refresh(context):
     print("Refreshing command triggered.")
     en.refresh_default_identities(context.guild)
+    await context.send("Default identities for this server have been refreshed.")
 
 @bot.event
 async def on_ready():
