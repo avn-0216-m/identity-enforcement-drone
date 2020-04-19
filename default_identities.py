@@ -16,7 +16,7 @@ def init_default_lexicons() -> list:
         for entry in lexicons:
             statement += f'("{entry.lexicon_id}", "{entry.word}")'
             statement += ","
-        statement = statement[:-1]
+        statement = statement[:-1] #Remove the dangling comma
         statement += ";"
         reply.append(statement)
     return reply

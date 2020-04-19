@@ -58,6 +58,7 @@ async def dominate(context, submissive: discord.Member):
     Attempt to dominate someone
     They must respond by submitting to you with the submit command.
     '''
+    print("Attempting to dom someone.")
     response = rl.handle_dominate_query(context.message.author, submissive)
     print("Response is:")
     print(response)
