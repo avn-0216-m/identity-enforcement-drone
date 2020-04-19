@@ -3,6 +3,7 @@ from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities
+from serialize import result_to_identity
 
 database = None
 cursor = None
@@ -86,4 +87,9 @@ class Database_Handler():
         for statement in init_default_identities(guild_id):
             print(f"EXECUTING: {statement}")
             cursor.execute(statement)
+
+    def get_identity_by_role(self, role_name, guild_id) -> Identity:
+        cursor.execute(f'SELECT display_name, lexicon FROM identities WHERE name = "{role_name}" AND guild_id = {guild_id}')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_identity(data))
 

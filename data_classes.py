@@ -15,7 +15,7 @@ class Identity():
         name = None, 
         user_id = None, 
         guild_id = None,
-        lexicon_id = None,
+        lexicon = None,
         allowed_words = None,
         avatar = None,
         uses_drone_id = False,
@@ -26,7 +26,7 @@ class Identity():
         self.name = name
         self.user_id = user_id
         self.guild_id = guild_id
-        self.lexicon_id = lexicon_id
+        self.lexicon = lexicon
         self.allowed_words = allowed_words
         self.avatar = avatar
         self.uses_drone_id = uses_drone_id
