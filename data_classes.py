@@ -53,6 +53,7 @@ class Status(Enum):
     #Standard HTTP
     OK = 200
     CREATED = 201
+    BAD_REQUEST = 400
 
     #Joke
     GOOD_DRONE = 216

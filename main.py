@@ -14,7 +14,7 @@ from data_classes import Status
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 
-bot = commands.Bot(command_prefix="//")
+bot = commands.Bot(command_prefix="!")
 
 print("Getting SQL and token details")
 with open("secret_details.json") as secret_file:
@@ -83,13 +83,13 @@ async def list(context, arg: str = None):
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)
     elif arg == "identities":
-        identities = db.get_all_matches_from_table("identities", "guild_id", context.guild.id).data
+        identities = db.get_all_identities_for_guild(context.guild.id).data
         if len(identities) == 0:
             await context.send("This server hosts no identities.")
             return
         reply = "This server hosts the following identities:\n"
-        for identity_id,name,user_id,lexicon_id,display_name,guild_id, in identities:
-            reply += f"[{name}], with the display name [{display_name}]\n"
+        for identity in identities:
+            reply += f"[{identity.name}], with the display name [{identity.display_name}]\n"
         await context.send(reply)
 
 @bot.command()
@@ -109,6 +109,18 @@ async def refresh(context):
     print("Refreshing command triggered.")
     en.refresh_default_identities(context.guild)
     await context.send("Default identities for this server have been refreshed.")
+
+@bot.command(aliases = ['assign'])
+async def enforce(context, arg1: discord.Member, arg2: str):
+    '''
+    Assign an identity role to a user.
+    '''
+    print("Enforcing.")
+    status = await en.assign(arg1, arg2)
+    if status is Status.OK:
+        await context.send("Identity assigned.")
+    if status is Status.BAD_REQUEST:
+        await context.send("Not a valid identity. See server identities by typing 'list identities'")
 
 @bot.event
 async def on_ready():

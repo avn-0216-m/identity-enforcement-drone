@@ -19,7 +19,7 @@ class Database_Handler():
             database = mysql.connector.connect(host=hostname, user=username, passwd=password)
             print("Connection to database established.")
             database.autocommit = True
-            cursor = database.cursor(buffered=True)
+            cursor = database.cursor(buffered=True, dictionary=True)
             try:
                 cursor.execute(f"USE {DATABASE_NAME}")
             except:
@@ -93,3 +93,7 @@ class Database_Handler():
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
 
+    def get_all_identities_for_guild(self, guild_id) -> Identity:
+        cursor.execute(f'SELECT name, display_name FROM identities WHERE guild_id = {guild_id}')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_identity(data))
