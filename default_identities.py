@@ -11,7 +11,7 @@ def init_default_identities(guild_id = 0) -> list:
 
 PUPPY_WORDS = "woof", "woof!", "bark!", "wauf"
 KITTY_WORDS = "meow", "meow!", "mrow", "prrrr"
-HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "I...", "Hhh...", "....", "Mmm..."
+HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "Mmmm...", "Mmmnn...", "I...", "Hhh...", "....", "Mmm...", "....", "...."
 
 PUPPY = Identity(
     name = "puppy",
@@ -35,7 +35,7 @@ HYPNOSLUT = Identity(
     name = "hypnoslut",
     user_id = ENFORCEMENT_DRONE,
     lexicon = lexicon_to_string(HYPNOSLUT_WORDS),
-    allowed_words = lexicon_to_string(["Yes", "No"]),
+    allowed_words = lexicon_to_string(["Yes", "No", "yes", "no"]),
     avatar = "https://cdn.discordapp.com/attachments/284120898624028689/701514781751902238/unknown.png",
     display_name = "Hypnoslut"
 )
@@ -49,7 +49,7 @@ BEEPER = Identity(
     display_name = "a heckin testaroonie"
 )
 
-DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, BEEPER]
+DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT]
 
 
 
