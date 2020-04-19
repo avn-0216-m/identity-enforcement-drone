@@ -43,6 +43,10 @@ class Enforcement_Handler():
         return Status.OK
 
     def check_permissions(self, dom_id, sub_id) -> bool:
+
+        if dom_id == sub_id:
+            return True
+
         results = self.db.find_confirmed_relationship(dom_id, sub_id).data
         if len(results) != 0:
             return True
