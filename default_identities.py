@@ -16,8 +16,8 @@ HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "I...", "Hhh...", "....", "Mm
 PUPPY = Identity(
     name = "puppy",
     user_id = ENFORCEMENT_DRONE,
-    allowed_words = [],
     lexicon = lexicon_to_string(PUPPY_WORDS),
+    allowed_words = lexicon_to_string([]),
     avatar = "https://upload.wikimedia.org/wikipedia/commons/2/2b/WelshCorgi.jpeg",
     display_name = "A puppy!",
 )
@@ -26,7 +26,7 @@ KITTY = Identity(
     name = "kitty",
     user_id = ENFORCEMENT_DRONE,
     lexicon = lexicon_to_string(KITTY_WORDS),
-    allowed_words = [],
+    allowed_words = lexicon_to_string([]),
     avatar = "https://upload.wikimedia.org/wikipedia/commons/9/94/British_shorthair_with_calico_coat_%281%29.jpg",
     display_name = "A kitty!",
 )
@@ -34,8 +34,8 @@ KITTY = Identity(
 HYPNOSLUT = Identity(
     name = "hypnoslut",
     user_id = ENFORCEMENT_DRONE,
-    lexicon = lexicon_to_string(HYPNOSLUT_WORDS)
-    allowed_words = lexicon_to_string(["Yes", "No"])
+    lexicon = lexicon_to_string(HYPNOSLUT_WORDS),
+    allowed_words = lexicon_to_string(["Yes", "No"]),
     avatar = "",
     display_name = "Hypnoslut"
 )

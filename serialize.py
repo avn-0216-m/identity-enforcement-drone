@@ -29,6 +29,14 @@ def result_to_identity(results: list) -> list: #Of identities:
             identity.name = result["name"]
         except KeyError:
             pass
+        try:
+            identity.lexicon = result["lexicon"]
+        except KeyError:
+            pass
+        try:
+            identity.allowed_words = result["allowed_words"]
+        except KeyError:
+            pass
         reply.append(identity)
     return reply
 
