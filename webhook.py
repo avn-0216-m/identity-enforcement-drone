@@ -22,6 +22,7 @@ class Webhook_Handler():
         if identity.lexicon is not None:
             print("Lexicon detected.")
             lexicon = string_to_lexicon(identity.lexicon)
+            allowed_words = string_to_lexicon(identity.allowed_words)
             print("Lexicon parsed. Replacing message.")
             message_content = ""
             for i in range(0,len(message.content)//5 + 1):

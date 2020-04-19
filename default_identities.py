@@ -11,6 +11,7 @@ def init_default_identities(guild_id = 0) -> list:
 
 PUPPY_WORDS = "woof", "woof!", "bark!", "wauf"
 KITTY_WORDS = "meow", "meow!", "mrow", "prrrr"
+HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "I...", "Hhh...", "....", "Mmm..."
 
 PUPPY = Identity(
     name = "puppy",
@@ -28,6 +29,15 @@ KITTY = Identity(
     allowed_words = [],
     avatar = "https://upload.wikimedia.org/wikipedia/commons/9/94/British_shorthair_with_calico_coat_%281%29.jpg",
     display_name = "A kitty!",
+)
+
+HYPNOSLUT = Identity(
+    name = "hypnoslut",
+    user_id = ENFORCEMENT_DRONE,
+    lexicon = lexicon_to_string(HYPNOSLUT_WORDS)
+    allowed_words = lexicon_to_string(["Yes", "No"])
+    avatar = "",
+    display_name = "Hypnoslut"
 )
 
 DEFAULT_IDENTITIES = [PUPPY, KITTY]

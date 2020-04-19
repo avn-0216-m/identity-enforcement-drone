@@ -15,7 +15,7 @@ class Enforcement_Handler():
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
         print("Role name to look for: " + role.name)
-        identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data
+        identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data[0]
         await self.wh.proxy_message(message = message, identity = identity)
 
     def refresh_default_identities(self, guild: discord.Guild) -> Status:
