@@ -8,31 +8,11 @@ def init_default_identities(guild_id = 0) -> list:
         reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon_id, guild_id) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon_id}", "{guild_id}");')
     return reply
 
-def init_default_lexicons() -> list:
-    print("Initializing default lexicon migration")
-    reply = []
-    statement = ''
-    for lexicons in DEFAULT_LEXICONS:
-        statement = 'INSERT INTO lexicons(lexicon_id, word) VALUES'
-        for entry in lexicons:
-            statement += f'("{entry.lexicon_id}", "{entry.word}")'
-            statement += ","
-        statement = statement[:-1] #Remove the dangling comma
-        statement += ";"
-        reply.append(statement)
-    return reply
-
-def map_words_list_to_lexicon_list(words: list, id: int) -> list:
-    lexicon_list = []
-    for word in words:
-        lexicon_list.append(Lexicon(lexicon_id = id, word=word))
-    return lexicon_list
-
 PUPPY = Identity(
     name = "puppy",
     user_id = ENFORCEMENT_DRONE,
     allowed_words = [],
-    lexicon_id = 1,
+    lexicon = [PUPPY_WORDS],
     avatar = "https://upload.wikimedia.org/wikipedia/commons/2/2b/WelshCorgi.jpeg",
     display_name = "A puppy!",
 )
@@ -40,6 +20,7 @@ PUPPY = Identity(
 KITTY = Identity(
     name = "kitty",
     user_id = ENFORCEMENT_DRONE,
+    lexicon = [KITTY_WORDS]
     allowed_words = [],
     lexicon_id = 2,
     avatar = "",

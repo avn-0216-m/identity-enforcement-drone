@@ -59,7 +59,7 @@ class Database_Handler():
     #Relationship Queries
     def find_prexisting_relationship(self, dom_id, sub_id, initiated_by) -> bool:
         print("Checking if there's a prexisting relationship for the BDSM request.")
-        cursor.execute(f'SELECT * FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND initiated_by = {initiated_by};')
+        cursor.execute(f'SELECT relationship_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND initiated_by = {initiated_by};')
         data = cursor.fetchall()
         return len(data) != 0
 
