@@ -6,7 +6,7 @@ def init_default_identities(guild_id = 0) -> list:
     print("Initializing default identities.")
     reply = []
     for identity in DEFAULT_IDENTITIES:
-        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon, guild_id, avatar) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}");')
+        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon, guild_id, avatar, allowed_words) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}", "{identity.allowed_words}");')
     return reply
 
 PUPPY_WORDS = "woof", "woof!", "bark!", "wauf"
@@ -36,11 +36,20 @@ HYPNOSLUT = Identity(
     user_id = ENFORCEMENT_DRONE,
     lexicon = lexicon_to_string(HYPNOSLUT_WORDS),
     allowed_words = lexicon_to_string(["Yes", "No"]),
-    avatar = "",
+    avatar = "https://cdn.discordapp.com/attachments/284120898624028689/701514781751902238/unknown.png",
     display_name = "Hypnoslut"
 )
 
-DEFAULT_IDENTITIES = [PUPPY, KITTY]
+BEEPER = Identity(
+    name = "beeper",
+    user_id = ENFORCEMENT_DRONE,
+    lexicon = lexicon_to_string(["AAAA","BBBB"]),
+    allowed_words = lexicon_to_string(["beep","boop"]),
+    avatar = "",
+    display_name = "a heckin testaroonie"
+)
+
+DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, BEEPER]
 
 
 

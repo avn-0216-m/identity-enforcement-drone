@@ -89,7 +89,7 @@ class Database_Handler():
             cursor.execute(statement)
 
     def get_identity_by_role(self, role_name, guild_id) -> Identity:
-        cursor.execute(f'SELECT display_name, lexicon, avatar FROM identities WHERE name = "{role_name}" AND guild_id = {guild_id}')
+        cursor.execute(f'SELECT display_name, lexicon, avatar, allowed_words FROM identities WHERE name = "{role_name}" AND guild_id = {guild_id}')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
 
