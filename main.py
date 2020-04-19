@@ -14,7 +14,7 @@ from data_classes import Status
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 
-bot = commands.Bot(command_prefix="")
+bot = commands.Bot(command_prefix="//")
 
 print("Getting SQL and token details")
 with open("secret_details.json") as secret_file:
@@ -84,9 +84,20 @@ async def list(context, arg: str = None):
 
 @bot.command()
 async def set(context, arg1: str = None, arg2 = None):
+
+    '''
+    Set a wide array of parameters with this function.
+    '''
     if arg1 is None:
         await context.send("What would you like to set?")
         return
+    elif arg1 == "command_channel":
+        await context.send("cool beanzo")
+
+@bot.command()
+async def refresh(context):
+    print("Refreshing command triggered.")
+    en.refresh_default_identities(context.guild)
 
 @bot.event
 async def on_ready():
@@ -95,7 +106,8 @@ async def on_ready():
 @bot.event
 async def on_message(message):
 
-    if message.author.bot: #Don't deal with bots.
+    #Don't deal with bots.
+    if message.author.bot: 
         return
 
     print("Message incoming.")

@@ -1,5 +1,6 @@
 from enum import Enum
 
+#Data objects
 class Relationship():
     def __init__(self, dominant, submissive, initiated_by):
         self.dominant = dominant
@@ -36,6 +37,7 @@ class Subject():
         self.drone_id = None
         self.safe_words = None
 
+#Database response data objects
 class Status(Enum):
     #Standard HTTP
     OK = 200
