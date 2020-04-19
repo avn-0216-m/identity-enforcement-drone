@@ -15,6 +15,6 @@ def result_to_identity(result: list) -> Identity:
     print("Serializing result set to identity object")
     #Result will be a singleton list of tuples.
     #Get the first item.
-    for display_name, lexicon in result:
-        return Identity(display_name = display_name, lexicon = lexicon)
+    for display_name, lexicon, avatar in result:
+        return Identity(display_name = display_name, lexicon = lexicon, avatar = avatar)
 

@@ -12,7 +12,7 @@ def drop_database() -> list:
 def create_tables() -> list:
     return ["CREATE TABLE messages(message_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, message_content VARCHAR(255) NOT NULL);",
     "CREATE TABLE relationships(relationship_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, dominant_id BIGINT NOT NULL, submissive_id BIGINT NOT NULL, initiated_by BIGINT NOT NULL, pending BOOL);",
-    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL, lexicon VARCHAR(6000), display_name VARCHAR(255), guild_id BIGINT, colour VARCHAR(7));"]
+    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL, avatar VARCHAR(255), lexicon VARCHAR(6000), display_name VARCHAR(255), guild_id BIGINT, colour VARCHAR(7));"]
 
 def get_migration() -> list:
     return drop_database() + create_tables() + init_default_identities()

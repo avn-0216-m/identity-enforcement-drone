@@ -6,7 +6,7 @@ def init_default_identities(guild_id = 0) -> list:
     print("Initializing default identities.")
     reply = []
     for identity in DEFAULT_IDENTITIES:
-        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon, guild_id) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon}", "{guild_id}");')
+        reply.append(f'INSERT INTO identities(name, user_id, display_name, lexicon, guild_id, avatar) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}");')
     return reply
 
 PUPPY_WORDS = "woof", "woof!", "bark!", "wauf"
@@ -26,7 +26,7 @@ KITTY = Identity(
     user_id = ENFORCEMENT_DRONE,
     lexicon = lexicon_to_string(KITTY_WORDS),
     allowed_words = [],
-    avatar = "",
+    avatar = "https://upload.wikimedia.org/wikipedia/commons/9/94/British_shorthair_with_calico_coat_%281%29.jpg",
     display_name = "A kitty!",
 )
 
