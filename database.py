@@ -1,5 +1,5 @@
 import mysql.connector
-from database_constants import DATABASE_NAME, MESSAGES, MIGRATION, RELATIONSHIPS
+from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONSHIPS
 from data_classes import Relationship, Identity, Status, Response
 
 database = None
@@ -25,8 +25,9 @@ class Database_Handler():
     #Admin
     def completely_reset_database(self) -> Status:
         print("Completely resetting database.")
-        for step in MIGRATION:
+        for step in get_migration():
             current_step = step
+            print("EXECUTING: " + current_step)
             cursor.execute(current_step)
         print("Database completely reset.")
         return Status.OK

@@ -22,22 +22,31 @@ class Identity():
         display_name = None,
         display_name_with_id = None 
     ):
-        self.identity_id = None
+        self.identity_id = identity_id
         self.name = name
         self.user_id = user_id
-        self.server = None
-        self.lexicon_id = None
-        self.allowed_words = None
-        self.avatar = None
-        self.uses_drone_id = False
-        self.display_name = None
-        self.display_name_with_id = None
+        self.server = server
+        self.lexicon_id = lexicon_id
+        self.allowed_words = allowed_words
+        self.avatar = avatar
+        self.uses_drone_id = uses_drone_id
+        self.display_name = display_name
+        self.display_name_with_id = display_name_with_id
 
 class Subject():
     def __init__(self):
         self.discord_id = None
         self.drone_id = None
         self.safe_words = None
+
+class Lexicon():
+    def __init__(
+        self,
+        lexicon_id = None,
+        word = None
+    ):
+        self.lexicon_id = lexicon_id
+        self.word = word
 
 #Database response data objects
 class Status(Enum):

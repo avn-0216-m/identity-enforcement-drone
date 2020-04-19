@@ -1,4 +1,4 @@
-from default_identities import initialize_default_identities
+from default_identities import init_default_identities, init_default_lexicons
 
 DATABASE_NAME = 'enforcement_drone'
 
@@ -13,6 +13,8 @@ def drop_database() -> list:
 def create_tables() -> list:
     return ["CREATE TABLE messages(message_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, message_content VARCHAR(255) NOT NULL);",
     "CREATE TABLE relationships(relationship_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, dominant_id BIGINT NOT NULL, submissive_id BIGINT NOT NULL, initiated_by BIGINT NOT NULL, pending BOOL);",
-    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL);"]
+    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL, lexicon_id INT, display_name VARCHAR(255));",
+    "CREATE TABLE lexicons(lexicon_id INT NOT NULL, word VARCHAR(255) NOT NULL);"]
 
-MIGRATION = drop_database() + create_tables() + initialize_default_identities()
+def get_migration() -> list:
+    return drop_database() + create_tables() + init_default_lexicons() + init_default_identities()
