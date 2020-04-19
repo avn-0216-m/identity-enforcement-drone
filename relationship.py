@@ -43,7 +43,3 @@ class Relationship_Handler():
                     print("Duplicate found. Get it outta here.")
                     return Status.DUPLICATE_REQUEST
         return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
-
-    def get_all_submissives(self, dominant) -> Response:
-        print(f"Getting all submissives belonging to {dominant.display_name}")
-        return Response(Status.OK, self.db.get_all_submissives(dominant.id))

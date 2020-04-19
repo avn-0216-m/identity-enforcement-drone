@@ -79,8 +79,9 @@ class Database_Handler():
         return Status.OK
 
     def get_all_submissives(self, dom_id: int) -> list:
-        cursor.execute(f'SELECT submissive_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id};')
-        return cursor.fetchall()
+        cursor.execute(f'SELECT submissive_id FROM {RELATIONSHIPS} WHERE dominant_id = {dom_id} AND pending = 0;')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_relationship(data))
 
     #Identities
     def refresh_default_identities(self, guild_id):

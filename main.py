@@ -10,7 +10,7 @@ from relationship import Relationship_Handler
 from database import Database_Handler
 from enforcement import Enforcement_Handler
 #import utility modules 
-from notable_entities import ENFORCEMENT_PREFIX
+from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
@@ -64,6 +64,10 @@ async def dominate(context, submissive: discord.Member):
         await context.send("You cannot own yourself.")
         return
 
+    if context.message.author.id == ENFORCEMENT_DRONE:
+        await context.send("Thanks, but no thanks.")
+        return
+
     response = rl.handle_dominate_query(context.message.author, submissive)
     if response is Status.DUPLICATE_REQUEST:
         await context.send("You are already dominating/attempting to dominate that person.")
@@ -83,6 +87,10 @@ async def submit(context, dominant: discord.Member):
         await context.send("You cannot submit to yourself.")
         return
 
+    if context.message.author.id == ENFORCEMENT_DRONE:
+        await context.send("Thanks, but no thanks.")
+        return
+
     response = rl.handle_submit_query(context.message.author, dominant)
     if response is Status.DUPLICATE_REQUEST:
         await context.send("You are already submissive to/attempting to submit to that person. You needy fucking bottom, chill out.")
@@ -97,10 +105,10 @@ async def list(context, arg: str = None):
         await context.send("What would you like to list?")
         return
     elif arg == "submissives" or arg == "subs":
-        subs = rl.get_all_submissives(context.message.author).data
+        results = db.get_all_submissives(context.message.author.id).data
         reply = "You currently own the following submissives:\n"
-        for sub_id, in subs: #The comma is to unpack a tuple with only 1 value (super weird)
-            sub_as_user = bot.get_user(int(sub_id))
+        for result in results:
+            sub_as_user = bot.get_user(int(result.submissive_id))
             reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
