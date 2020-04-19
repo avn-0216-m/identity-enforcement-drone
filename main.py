@@ -10,9 +10,10 @@ from relationship import Relationship_Handler
 from database import Database_Handler
 from enforcement import Enforcement_Handler
 #import utility modules 
-from data_classes import Status
+from notable_entities import ENFORCEMENT_PREFIX
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
+from data_classes import Status
 
 bot = commands.Bot(command_prefix="!")
 
@@ -121,6 +122,16 @@ async def enforce(context, arg1: discord.Member, arg2: str):
         await context.send("Identity assigned.")
     if status is Status.BAD_REQUEST:
         await context.send("Not a valid identity. See server identities by typing 'list identities'")
+
+@bot.command()
+async def release(context, arg: discord.Member):
+    for role in arg.roles:
+        if role.name.startswith(ENFORCEMENT_PREFIX):
+            print("Enforcable role found. Removing.")
+            await arg.remove_roles(role)
+            await context.send("Enforcable identity removed.")
+            return
+    await context.send("That user does not have an assigned identity.")
 
 @bot.event
 async def on_ready():
