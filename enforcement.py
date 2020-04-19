@@ -1,4 +1,5 @@
 import discord
+from data_classes import Status
 
 class Enforcement_Handler():
     def __init__(self, bot):
@@ -10,5 +11,5 @@ class Enforcement_Handler():
 
     def refresh_default_identities(self, guild: discord.Guild) -> Status:
         print(f"Refreshing default identities for server {guild.name}")
-        
+
         return Status.OK

@@ -10,21 +10,23 @@ class Relationship():
 
 class Identity():
     def __init__(
-        self, 
+        self,
+        identity_id = None, 
         name = None, 
-        owner = None, 
+        user_id = None, 
         server = None,
-        lexicon = None,
+        lexicon_id = None,
         allowed_words = None,
         avatar = None,
         uses_drone_id = False,
         display_name = None,
         display_name_with_id = None 
     ):
+        self.identity_id = None
         self.name = name
-        self.owner = owner
+        self.user_id = user_id
         self.server = None
-        self.lexicon = None
+        self.lexicon_id = None
         self.allowed_words = None
         self.avatar = None
         self.uses_drone_id = False
