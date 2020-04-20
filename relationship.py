@@ -42,4 +42,4 @@ class Relationship_Handler():
                 else:
                     print("Duplicate found. Get it outta here.")
                     return Status.DUPLICATE_REQUEST
-        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
+        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = submissive.id))

@@ -64,7 +64,7 @@ async def dominate(context, submissive: discord.Member):
         await context.send("You cannot own yourself.")
         return
 
-    if context.message.author.id == ENFORCEMENT_DRONE:
+    if submissive.id == ENFORCEMENT_DRONE:
         await context.send("Thanks, but no thanks.")
         return
 
@@ -87,7 +87,7 @@ async def submit(context, dominant: discord.Member):
         await context.send("You cannot submit to yourself.")
         return
 
-    if context.message.author.id == ENFORCEMENT_DRONE:
+    if dominant.id == ENFORCEMENT_DRONE:
         await context.send("Thanks, but no thanks.")
         return
 

@@ -42,6 +42,8 @@ def result_to_identity(results: list) -> list: #Of identities:
 
 def result_to_relationship(results: list) -> list: #Of relationships
     print("Serializing result set to list of relationships.")
+    print("Results are:")
+    print(results)
     reply = []
     for result in results:
         relationship = Relationship()
@@ -66,5 +68,7 @@ def result_to_relationship(results: list) -> list: #Of relationships
         except KeyError:
             pass
         reply.append(relationship)
+    print("Reply is:")
+    print(reply)
     return reply
 
