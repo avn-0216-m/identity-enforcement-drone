@@ -12,7 +12,7 @@ def drop_database() -> list:
 def create_tables() -> list:
     return ["CREATE TABLE messages(message_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, message_content VARCHAR(255) NOT NULL);",
     "CREATE TABLE relationships(relationship_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, dominant_id BIGINT NOT NULL, submissive_id BIGINT NOT NULL, initiated_by BIGINT NOT NULL, pending BOOL);",
-    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL, avatar VARCHAR(255), lexicon VARCHAR(6000), allowed_words VARCHAR(3000), display_name VARCHAR(255), display_name_with_id VARCHAR(255), guild_id BIGINT, colour VARCHAR(7));",
+    "CREATE TABLE identities(identity_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL, avatar VARCHAR(500), lexicon VARCHAR(6000), allowed_words VARCHAR(3000), display_name VARCHAR(255), display_name_with_id VARCHAR(255), guild_id BIGINT, colour VARCHAR(7));",
     "CREATE TABLE users(user_id BIGINT NOT NULL PRIMARY KEY, drone_id VARCHAR(4), safe_words VARCHAR(6000), bulge BOOL);"]
 
 def get_migration() -> list:

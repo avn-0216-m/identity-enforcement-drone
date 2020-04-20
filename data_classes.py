@@ -15,10 +15,9 @@ class Identity():
         name = None, 
         user_id = None, 
         guild_id = None,
-        lexicon = None,
-        allowed_words = None,
+        lexicon = "",
+        allowed_words = "",
         avatar = None,
-        uses_drone_id = False,
         display_name = None,
         display_name_with_id = None 
     ):
@@ -29,7 +28,6 @@ class Identity():
         self.lexicon = lexicon
         self.allowed_words = allowed_words
         self.avatar = avatar
-        self.uses_drone_id = uses_drone_id
         self.display_name = display_name
         self.display_name_with_id = display_name_with_id
 

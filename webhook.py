@@ -1,6 +1,7 @@
 import discord
 from data_classes import Identity
 from serialize import string_to_lexicon
+from utils import scrape_drone_id
 import random
 import re
 
@@ -27,26 +28,49 @@ class Webhook_Handler():
     async def proxy_message(self, message: discord.Message = None, identity: Identity = None):
         print("Proxying message.")
         webhook = await self.get_webhook_for(message)
+
         message_content = message.content
 
-        occurrences = None
+        proxy_name = identity.display_name
+        drone_id = scrape_drone_id(message.author.display_name)
+        if drone_id is not None and identity.display_name_with_id != "":
+            print("User has a drone ID. Enforcing drone ID display name.")
+            proxy_name = identity.display_name_with_id.format(drone_id)
 
-        if identity.allowed_words != "":
-            print("Allowed words detected. Gathering occurrences.")
+        occurrences = None
+        if identity.allowed_words != "" and identity.lexicon != "":
+            print("Allowed words detected. Gathering occurrences for insertion durning message generation.")
             occurrences = self.get_occurrences_of_allowed_words(identity.allowed_words, message.content)
 
-        if identity.lexicon is not None:
-            print("Lexicon detected.")
+        if identity.lexicon != "" and identity.allowed_words != "":
+            print("Lexicon and allowed words detected.")
             lexicon = string_to_lexicon(identity.lexicon)
             allowed_words = string_to_lexicon(identity.allowed_words)
-            print("Lexicon parsed. Replacing message.")
+            print("Lexicon and allowed words parsed. Replacing message.")
             message_content = ""
             for i in range(0,len(message.content)//5 + 1):
                 message_content += f"{random.choice(lexicon)} "
                 if occurrences is not None and len(occurrences) != 0 and len(message_content) > occurrences[0][0]:
                     message_content += str(occurrences.pop(0)[1]) + " "
 
+        elif identity.lexicon != "" and identity.allowed_words == "":
+            print("Lexicon detected")
+            lexicon = string_to_lexicon(identity.lexicon)
+            print("Lexicon parsed. Replacing message.")
+            message_content = ""
+            for i in range(0,len(message.content)//5 + 1):
+                message_content += f"{random.choice(lexicon)} "
+
+        elif identity.lexicon == "" and identity.allowed_words != "":
+            print("Allowed words detected without lexicon. Strict speech restriction enabled.")
+            if message.content in string_to_lexicon(identity.allowed_words):
+                print("Good message found, proxying.")
+            else:
+                print("Bad message found.")
+                await message.delete()
+                return
+
         await message.delete()
-        await webhook.send(message_content, username=identity.display_name, avatar_url = identity.avatar)
+        await webhook.send(message_content, username=proxy_name, avatar_url = identity.avatar)
 
 

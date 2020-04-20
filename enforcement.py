@@ -15,8 +15,11 @@ class Enforcement_Handler():
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
         print("Role name to look for: " + role.name)
-        identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data[0]
-        await self.wh.proxy_message(message = message, identity = identity)
+        identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data
+        if len(identity) == 0:
+            print("Someone has a role for an identity that doesn't exist.")
+            return
+        await self.wh.proxy_message(message = message, identity = identity[0])
 
     def refresh_default_identities(self, guild: discord.Guild) -> Status:
         print(f"Refreshing default identities for server {guild.name}")
@@ -25,7 +28,7 @@ class Enforcement_Handler():
 
     async def assign(self, target: discord.Member = None, role: str = None):
         #Check if given string is a valid identity.
-        if self.db.get_identity_by_role(role, target.guild.id).data is None:
+        if len(self.db.get_identity_by_role(role, target.guild.id).data) == 0:
             print("Not a valid identity")
             return Status.BAD_REQUEST
         #Check if the server has the enforcable role available.

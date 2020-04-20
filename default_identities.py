@@ -20,7 +20,7 @@ PUPPY = Identity(
     allowed_words = lexicon_to_string([]),
     avatar = "https://upload.wikimedia.org/wikipedia/commons/2/2b/WelshCorgi.jpeg",
     display_name = "A puppy!",
-    display_name_with_id = ""
+    display_name_with_id = "#{}"
 )
 
 KITTY = Identity(
@@ -30,7 +30,7 @@ KITTY = Identity(
     allowed_words = lexicon_to_string([]),
     avatar = "https://upload.wikimedia.org/wikipedia/commons/9/94/British_shorthair_with_calico_coat_%281%29.jpg",
     display_name = "A kitty!",
-    display_name_with_id = ""
+    display_name_with_id = "#{}"
 )
 
 HYPNOSLUT = Identity(
@@ -40,40 +40,40 @@ HYPNOSLUT = Identity(
     allowed_words = lexicon_to_string(["Yes", "No", "yes", "no"]),
     avatar = "https://cdn.discordapp.com/attachments/284120898624028689/701514781751902238/unknown.png",
     display_name = "Hypnoslut",
-    display_name_with_id = ""
-)
-
-BEEPER = Identity(
-    name = "beeper",
-    user_id = ENFORCEMENT_DRONE,
-    lexicon = lexicon_to_string(["AAAA","BBBB"]),
-    allowed_words = lexicon_to_string(["beep","boop"]),
-    avatar = "",
-    display_name = "a heckin testaroonie",
-    display_name_with_id = ""
+    display_name_with_id = "Hypnoslut #{}"
 )
 
 DRONE = Identity(
     name = "drone",
     user_id = ENFORCEMENT_DRONE,
-    display_name = "notorious beep",
-    display_name_with_id = "wu tang nyan! :3c",
-    lexicon = lexicon_to_string(["beep","boop"]),
-    allowed_words = lexicon_to_string([]),
-    avatar = ""
+    display_name = "A faceless, anonymous drone.",
+    display_name_with_id = "Drone #{}",
+    lexicon = "",
+    allowed_words = "",
+    avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png"
 )
 
-DOLL = Identity(
-    name = "doll",
+SPECIALDOLL = Identity(
+    name = "special_dolly",
     user_id = ENFORCEMENT_DRONE,
-    display_name = "wait this isn't actually ready yet",
-    lexicon = lexicon_to_string(["..."]),
-    allowed_words = lexicon_to_string([]),
-    avatar = "",
-    display_name_with_id = ""
+    display_name = "My special doll~",
+    lexicon = "",
+    allowed_words = lexicon_to_string(["4729 is a pretty doll and it loves to be displayed.", "4729 is a pretty doll and it loves to be displayed"]),
+    avatar = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/190707-index-madame-alexander-ii-1562606955.png",
+    display_name_with_id = "My special little #{}~"
 )
 
-DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, DOLL]
+SPECIALDRONE = Identity(
+    name = "special_drone",
+    user_id = ENFORCEMENT_DRONE,
+    display_name = "My special little drone~",
+    lexicon = "",
+    allowed_words = lexicon_to_string(["4189 is a good drone and it loves to obey", "4189 is a good drone and it loves to obey."]),
+    avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png",
+    display_name_with_id = "My special little #{}~"
+)
+
+DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, SPECIALDOLL, SPECIALDRONE]
 
 
 
