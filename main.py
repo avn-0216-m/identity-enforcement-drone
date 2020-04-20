@@ -137,7 +137,7 @@ async def set(context, arg1: str = None, arg2 = None):
     
 @bot.command()
 async def register(context):
-    
+    pass
 
 @bot.command()
 async def refresh(context):
