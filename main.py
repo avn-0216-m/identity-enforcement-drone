@@ -134,6 +134,10 @@ async def set(context, arg1: str = None, arg2 = None):
         return
     elif arg1 == "command_channel":
         await context.send("cool beanzo")
+    
+@bot.command()
+async def register(context):
+    
 
 @bot.command()
 async def refresh(context):
