@@ -3,7 +3,7 @@ from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities
-from rowmapper import result_to_identity, result_to_relationship
+from rowmapper import result_to_identity, result_to_relationship, result_to_user
 
 database = None
 cursor = None
@@ -106,3 +106,17 @@ class Database_Handler():
         cursor.execute(f'SELECT name, display_name FROM identities WHERE guild_id = {guild_id}')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
+
+    #Users
+    def get_registered_user(self, user_id):
+        cursor.execute(f'SELECT user_id FROM users WHERE user_id = {user_id}')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_user(data))
+    
+    def register_user_with_id(self, user_id, drone_id):
+        cursor.execute(f'INSERT INTO users(user_id, drone_id) VALUES({user_id}, LPAD({drone_id}, 4, 0));')
+        return Status.OK
+
+    def register_user(self, user_id):
+        cursor.execute(f'INSERT INTO users(user_id) VALUES({user_id});')
+        return Status.OK

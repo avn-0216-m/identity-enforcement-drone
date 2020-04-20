@@ -11,6 +11,7 @@ from database import Database_Handler
 from enforcement import Enforcement_Handler
 #import utility modules 
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE
+from utils import scrape_drone_id
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
@@ -137,7 +138,18 @@ async def set(context, arg1: str = None, arg2 = None):
     
 @bot.command()
 async def register(context):
-    pass
+    if db.get_registered_user(context.message.author.id).data != []:
+        await context.send("You're already registered.")
+        return
+
+    drone_id = scrape_drone_id(context.message.author.display_name)
+
+    if drone_id is not None:
+        db.register_user_with_id(context.message.author.id, drone_id)
+        await context.send("We've registered you in the database- and I couldn't help but notice your cute little drone ID, so we've made a note of that too. <3")
+
+    db.register_user(context.message.author.id)
+    await context.send("You've been registered in our database. :)")
 
 @bot.command()
 async def refresh(context):

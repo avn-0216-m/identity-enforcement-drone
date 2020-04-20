@@ -33,7 +33,7 @@ class Identity():
         self.display_name = display_name
         self.display_name_with_id = display_name_with_id
 
-class Subject():
+class User():
     def __init__(self):
         self.discord_id = None
         self.drone_id = None

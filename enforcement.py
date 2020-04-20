@@ -43,10 +43,6 @@ class Enforcement_Handler():
         return Status.OK
 
     def check_permissions(self, dom_id, sub_id) -> bool:
-
-        print(dom_id)
-        print(sub_id)
-
         if dom_id == sub_id:
             return True
 
