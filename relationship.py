@@ -24,7 +24,7 @@ class Relationship_Handler():
                 else:
                     print("Duplicate found. Get it outta here.")
                     return Status.DUPLICATE_REQUEST
-        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
+        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = submissive.id))
 
     def handle_dominate_query(self, dominant, submissive) -> Response:
         results = self.db.find_potential_relationship(dominant.id, submissive.id).data
@@ -42,4 +42,4 @@ class Relationship_Handler():
                 else:
                     print("Duplicate found. Get it outta here.")
                     return Status.DUPLICATE_REQUEST
-        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = submissive.id))
+        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
