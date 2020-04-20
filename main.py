@@ -147,6 +147,7 @@ async def register(context):
     if drone_id is not None:
         db.register_user_with_id(context.message.author.id, drone_id)
         await context.send("We've registered you in the database- and I couldn't help but notice your cute little drone ID, so we've made a note of that too. <3")
+        return
 
     db.register_user(context.message.author.id)
     await context.send("You've been registered in our database. :)")
