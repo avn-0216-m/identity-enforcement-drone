@@ -55,6 +55,7 @@ BEEPER = Identity(
 
 DRONE = Identity(
     name = "drone",
+    user_id = ENFORCEMENT_DRONE,
     display_name = "notorious beep",
     display_name_with_id = "wu tang nyan! :3c",
     lexicon = lexicon_to_string(["beep","boop"]),
@@ -64,6 +65,7 @@ DRONE = Identity(
 
 DOLL = Identity(
     name = "doll",
+    user_id = ENFORCEMENT_DRONE,
     display_name = "wait this isn't actually ready yet",
     lexicon = lexicon_to_string(["..."]),
     allowed_words = lexicon_to_string([]),

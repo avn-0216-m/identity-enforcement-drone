@@ -3,7 +3,7 @@ from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities
-from serialize import result_to_identity, result_to_relationship
+from rowmapper import result_to_identity, result_to_relationship
 
 database = None
 cursor = None
