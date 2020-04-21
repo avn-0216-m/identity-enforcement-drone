@@ -14,7 +14,7 @@ class Enforcement_Handler():
         print(f"Attempting to enforce {message.author.display_name} with role {role.name} in {message.author.guild.name}")
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
-        print("Role name to look for: " + role.name)
+        print(f"Role name to look for: {role.name}")
         identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data
         if len(identity) == 0:
             print("Someone has a role for an identity that doesn't exist.")

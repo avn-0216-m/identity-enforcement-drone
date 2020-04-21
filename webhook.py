@@ -31,11 +31,15 @@ class Webhook_Handler():
 
         message_content = message.content
 
-        proxy_name = identity.display_name
+        proxy_name = identity.display_name if identity.display_name != "" else message.author.display_name
+
         drone_id = scrape_drone_id(message.author.display_name)
+        #(If drone ID is none here, check DB to see if user has a drone ID there)
+
         if drone_id is not None and identity.display_name_with_id != "":
             print("User has a drone ID. Enforcing drone ID display name.")
             proxy_name = identity.display_name_with_id.format(drone_id)
+
 
         occurrences = None
         if identity.allowed_words != "" and identity.lexicon != "":
