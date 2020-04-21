@@ -43,6 +43,7 @@ class Webhook_Handler():
             occurrences = self.get_occurrences_of_allowed_words(identity.allowed_words, message.content)
 
         if identity.lexicon != "" and identity.allowed_words != "":
+            #Use lexicon, insert allowed words when they occur.
             print("Lexicon and allowed words detected.")
             lexicon = string_to_lexicon(identity.lexicon)
             allowed_words = string_to_lexicon(identity.allowed_words)
@@ -54,6 +55,7 @@ class Webhook_Handler():
                     message_content += str(occurrences.pop(0)[1]) + " "
 
         elif identity.lexicon != "" and identity.allowed_words == "":
+            #Just use lexicon
             print("Lexicon detected")
             lexicon = string_to_lexicon(identity.lexicon)
             print("Lexicon parsed. Replacing message.")
@@ -62,8 +64,15 @@ class Webhook_Handler():
                 message_content += f"{random.choice(lexicon)} "
 
         elif identity.lexicon == "" and identity.allowed_words != "":
+            #Strict speech checking.
             print("Allowed words detected without lexicon. Strict speech restriction enabled.")
-            if message.content in string_to_lexicon(identity.allowed_words):
+
+            if drone_id is not None:
+                allowed_words = [word.format(drone_id) for word in string_to_lexicon(identity.allowed_words)]
+            else:
+                allowed_words = string_to_lexicon(identity.allowed_words)
+
+            if message.content in allowed_words:
                 print("Good message found, proxying.")
             else:
                 print("Bad message found.")

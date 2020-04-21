@@ -54,21 +54,21 @@ DRONE = Identity(
 )
 
 SPECIALDOLL = Identity(
-    name = "special_dolly",
+    name = "realdoll",
     user_id = ENFORCEMENT_DRONE,
     display_name = "My special doll~",
     lexicon = "",
-    allowed_words = lexicon_to_string(["4729 is a pretty doll and it loves to be displayed.", "4729 is a pretty doll and it loves to be displayed"]),
+    allowed_words = lexicon_to_string(["{} is a pretty doll and it loves to be displayed.", "{} is a pretty doll and it loves to be displayed"]),
     avatar = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/190707-index-madame-alexander-ii-1562606955.png",
     display_name_with_id = "My special little #{}~"
 )
 
 SPECIALDRONE = Identity(
-    name = "special_drone",
+    name = "good_drone",
     user_id = ENFORCEMENT_DRONE,
     display_name = "My special little drone~",
     lexicon = "",
-    allowed_words = lexicon_to_string(["4189 is a good drone and it loves to obey", "4189 is a good drone and it loves to obey."]),
+    allowed_words = lexicon_to_string(["{} is a good drone and it loves to obey", "{} is a good drone and it loves to obey."]),
     avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png",
     display_name_with_id = "My special little #{}~"
 )
