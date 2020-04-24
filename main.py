@@ -16,7 +16,7 @@ from utils import scrape_drone_id
 from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
 
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
 print("Getting SQL and token details")
 with open("secret_details.json") as secret_file:
@@ -33,6 +33,20 @@ with open("secret_details.json") as secret_file:
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
+
+@bot.command
+async def beep(context):
+    if context.message.author.bot:
+        return
+    else:
+        await context.send("Boop!")
+
+@bot.command
+async def boop(context):
+    if context.message.author.bot:
+        return
+    else:
+        await context.send("Beep!")
 
 @bot.command()
 async def db_reset(context):
@@ -200,6 +214,16 @@ async def on_message(message):
     for role in message.author.roles:
         if role.name.startswith('🟆: '):
             await en.enforce(message=message, role=role)
+
+    if message.content.lower().startswith("beep"):
+        await message.channel.send("Boop!")
+
+    if message.content.lower().startswith("boop"):
+        await message.channel.send("Beep!")
+
+    if message.content.lower() in ["good bot", "good bot!", "good bot."]:
+        await message.channel.send("Y-You too... <3")
+    
     await bot.process_commands(message)
 
 print("Starting bot.")

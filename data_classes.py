@@ -53,12 +53,18 @@ class Status(Enum):
     CREATED = 201
     BAD_REQUEST = 400
 
-    #Joke
+    #haha it me
     GOOD_DRONE = 216
 
-    #Custom
+    #Enforcement Results
+    ENFORCE_LEXICON = 3334
+    ENFORCE_PASSTHROUGH = 3919
+    ENFORCE_STRICT_ACCEPT = 4189
+    ENFORCE_STRICT_REJECT = 4729
+
+    #Relationships
     DUPLICATE_REQUEST = 601
-    HOLY_MATRIHORNY = 602
+    HOLY_MATRIHORNY = 828
 
 class Response():
     def __init__(self, status: Status, data = None):
