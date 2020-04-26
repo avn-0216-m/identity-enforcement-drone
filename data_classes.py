@@ -17,8 +17,6 @@ class Identity():
         guild_id = None,
         lexicon = "",
         allowed_words = "",
-        override = None,
-        override_chance = None,
         avatar = None,
         display_name = None,
         display_name_with_id = None 
@@ -29,8 +27,6 @@ class Identity():
         self.guild_id = guild_id
         self.lexicon = lexicon
         self.allowed_words = allowed_words
-        self.override = override
-        self.override_chance = override_chance
         self.avatar = avatar
         self.display_name = display_name
         self.display_name_with_id = display_name_with_id
