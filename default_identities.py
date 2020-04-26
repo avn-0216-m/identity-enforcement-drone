@@ -6,7 +6,7 @@ def init_default_identities(guild_id = 0) -> list:
     print("Initializing default identities.")
     reply = []
     for identity in DEFAULT_IDENTITIES:
-        reply.append(f'INSERT INTO identities(name, user_id, display_name, display_name_with_id, lexicon, guild_id, avatar, allowed_words) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.display_name_with_id}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}", "{identity.allowed_words}");')
+        reply.append(f'INSERT INTO identities(name, user_id, display_name, display_name_with_id, lexicon, override, override_chance, guild_id, avatar, allowed_words) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.display_name_with_id}", "{identity.lexicon}", "{identity.override}", "{identity.override_chance}", "{guild_id}", "{identity.avatar}", "{identity.allowed_words}");')
     return reply
 
 PUPPY_WORDS = "woof!", "snff," "bark!", "bork!", "wauf!", "woofwoof!", "barkbark!", "awrr!", "🐾", "🐶‼️", "💖", "wauf,", "woof!!",
@@ -50,6 +50,8 @@ DRONE = Identity(
     display_name_with_id = "Drone #{}",
     lexicon = "",
     allowed_words = "",
+    override = "It feels good to obey!",
+    override_chance = "5",
     avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png"
 )
 
@@ -73,7 +75,19 @@ SPECIALDRONE = Identity(
     display_name_with_id = "Good little drone #{}~"
 )
 
-DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, SPECIALDOLL, SPECIALDRONE]
+EASYDROP = Identity(
+    name = "barely_conscious",
+    user_id = ENFORCEMENT_DRONE,
+    display_name = "Barely-conscious hypnoslut",
+    display_name_with_id = "Barely-conscious hypnoslut #{}",
+    lexicon = "",
+    allowed_words = "",
+    avatar = "https://cdn.discordapp.com/attachments/284120898624028689/701514781751902238/unknown.png",
+    override = "Mmnnnn...",
+    override_chance = 70
+)
+
+DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, SPECIALDOLL, SPECIALDRONE, EASYDROP]
 
 
 

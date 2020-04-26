@@ -83,6 +83,11 @@ class Webhook_Handler():
                 await message.delete()
                 return
 
+        #If they've made it this far and they have an override associated with the identity, try that.
+        if(identity.override != None or "None"):
+            if(identity.override is not None and int(identity.override_chance) > random.randint(0,100)):
+                message_content = identity.override
+
         await message.delete()
         await webhook.send(message_content, username=proxy_name, avatar_url = identity.avatar)
 

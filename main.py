@@ -48,25 +48,25 @@ async def boop(context):
     else:
         await context.send("Beep!")
 
-@bot.command()
-async def db_reset(context):
-    if db.completely_reset_database() is Status.OK:
-        await context.send("I hope you're proud of yourself.")
+# @bot.command()
+# async def db_reset(context):
+    # if db.completely_reset_database() is Status.OK:
+        # await context.send("I hope you're proud of yourself.")
 
-@bot.command()
-async def db_push(context, argument):
-    if db.add_message(argument, context.message.author.id) is Status.OK:
-        await context.send("Your message was succesfully added to the database. :)")
+# @bot.command()
+# async def db_push(context, argument):
+    # if db.add_message(argument, context.message.author.id) is Status.OK:
+        # await context.send("Your message was succesfully added to the database. :)")
 
-@bot.command()
-async def db_list(context):
-    print("Listing all entries in database")
-    output_message = ""
-    for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
-        user_from_id = bot.get_user(int(user_id))
-        user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
-        output_message += f'Message {message_id}: "{message}" by {user_name}\n'
-    await context.send(output_message if output_message != "" else "No messages found.")
+# @bot.command()
+# async def db_list(context):
+    # print("Listing all entries in database")
+    # output_message = ""
+    # for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
+        # user_from_id = bot.get_user(int(user_id))
+        # user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
+        # output_message += f'Message {message_id}: "{message}" by {user_name}\n'
+    # await context.send(output_message if output_message != "" else "No messages found.")
 
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
@@ -202,6 +202,20 @@ async def release(context, arg: discord.Member):
 @bot.event
 async def on_ready():
     print("Identity Enforcement Drone #3161 ready.")
+
+@bot.command()
+async def id(context):
+    if scrape_drone_id(context.message.author.display_name) is not None:
+        await context.send("But... You're _already_ a good little drone, sweetie!")
+        return
+    generated_id = en.generate_new_id(context.guild)
+    try:
+        await context.message.author.edit(nick=generated_id)
+        await context.send(f"Your wonderful new drone ID is {generated_id}! I've went ahead and assigned it to you- I know you're probably very eager to be a good drone! Enjoy.")
+    except discord.errors.Forbidden:
+        await context.send(f"Your wonderful new drone ID is {generated_id}! I would've assigned it to you, but you rank higher than me, so I can't change your nickname.")
+
+
 
 @bot.event
 async def on_message(message):

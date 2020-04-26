@@ -1,8 +1,11 @@
 import discord
+import random
 from discord.utils import get
 from data_classes import Status
 from webhook import Webhook_Handler
 from notable_entities import ENFORCEMENT_PREFIX
+from utils import scrape_drone_id
+
 
 class Enforcement_Handler():
     def __init__(self, bot, db):
@@ -53,3 +56,29 @@ class Enforcement_Handler():
         if len(results) != 0:
             return True
         return False
+
+    def generate_new_id(self, guild: discord.Guild) -> str:
+
+        preexisting_ids = []
+
+        #Get all registered drone IDs from database.
+        drones = self.db.get_all_registered_drones().data
+
+        for drone in drones:
+            preexisting_ids.append(drone.drone_id)
+        #Get all registered drone IDs from the server.
+        for member in guild.members:
+            drone_id = scrape_drone_id(member.display_name)
+            if drone_id is not None:
+                preexisting_ids.append(drone_id)
+
+        generated_id = random.randint(0,9999)
+        generated_id = f"{generated_id:04}"
+
+        while generated_id in preexisting_ids:
+            generated_id = random.randint(0,9999)
+            generated_id = f"{generated_id:04}"
+
+        return generated_id
+
+
