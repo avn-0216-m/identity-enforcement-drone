@@ -11,7 +11,7 @@ def init_default_identities(guild_id = 0) -> list:
 
 PUPPY_WORDS = "woof!", "snff," "bark!", "bork!", "wauf!", "woofwoof!", "barkbark!", "awrr!", "🐾", "🐶‼️", "💖", "wauf,", "woof!!",
 KITTY_WORDS = "meow", "meow!", "mrow", "prrrr"
-HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "Mmmm...", "Mmmnn...", "I...", "Hhh...", "....", "Mmm...", "....", "...."
+HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "Mmmm...", "Mmmnn...", "I...", "Hhh...", "....", "Mmm...", "....", "....", "....", "...", "....", "...", "...", "...", "I...?", "Hhh?", "...", "....", "...", "....", "...", "....",
 
 PUPPY = Identity(
     name = "puppy",

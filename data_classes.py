@@ -18,8 +18,8 @@ class Identity():
         lexicon = "",
         allowed_words = "",
         avatar = None,
-        display_name = None,
-        display_name_with_id = None 
+        display_name = "",
+        display_name_with_id = "" 
     ):
         self.identity_id = identity_id
         self.name = name

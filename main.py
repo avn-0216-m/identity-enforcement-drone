@@ -53,20 +53,20 @@ async def boop(context):
     # if db.completely_reset_database() is Status.OK:
         # await context.send("I hope you're proud of yourself.")
 
-# @bot.command()
-# async def db_push(context, argument):
-    # if db.add_message(argument, context.message.author.id) is Status.OK:
-        # await context.send("Your message was succesfully added to the database. :)")
+@bot.command()
+async def db_push(context, argument):
+    if db.add_message(argument, context.message.author.id) is Status.OK:
+        await context.send("Your message was succesfully added to the database. :)")
 
-# @bot.command()
-# async def db_list(context):
-    # print("Listing all entries in database")
-    # output_message = ""
-    # for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
-        # user_from_id = bot.get_user(int(user_id))
-        # user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
-        # output_message += f'Message {message_id}: "{message}" by {user_name}\n'
-    # await context.send(output_message if output_message != "" else "No messages found.")
+@bot.command()
+async def db_list(context):
+    print("Listing all entries in database")
+    output_message = ""
+    for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
+        user_from_id = bot.get_user(int(user_id))
+        user_name = f"{user_from_id.name}#{user_from_id.discriminator}"
+        output_message += f'Message {message_id}: "{message}" by {user_name}\n'
+    await context.send(output_message if output_message != "" else "No messages found.")
 
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
