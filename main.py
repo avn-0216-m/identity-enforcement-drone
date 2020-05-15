@@ -1,6 +1,7 @@
 #import core modules
 import sys
 import discord
+import logging
 from discord.ext import commands
 import json
 import mysql.connector
@@ -16,9 +17,18 @@ from utils import scrape_drone_id
 from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
 
+#Setup logger
+logger = logging.getLogger('Main')
+hdlr = logging.FileHandler('/logs/log.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.INFO)
+
+
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
-print("Getting SQL and token details")
+logger.info("Getting secret details (SQL and access token.)")
 with open("secret_details.json") as secret_file:
     secret_details = json.load(secret_file)
     for key in secret_details:
@@ -29,6 +39,7 @@ with open("secret_details.json") as secret_file:
     db_user = secret_details['db_user']
     db_pass = secret_details['db_pass']
     bot_token = secret_details['bot_token']
+logger.info("Secret details successfully got.")
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
