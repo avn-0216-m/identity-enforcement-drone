@@ -158,7 +158,7 @@ async def list(context, arg1: str = None, arg2: str = None):
         return
     elif arg1 == "submissives" or arg1 == "subs":
         results = db.get_all_submissives(context.message.author.id).data
-        reply = "In this server, you own the following submissives:\n"
+        reply = "On this server, you own the following submissives:\n"
 
         subs_in_other_servers = 0
 
