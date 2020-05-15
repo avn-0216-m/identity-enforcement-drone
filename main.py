@@ -7,6 +7,7 @@ import logging
 from discord.ext import commands
 import json
 import mysql.connector
+import asyncio
 
 #import handler modules
 from relationship import Relationship_Handler
@@ -21,12 +22,13 @@ from data_classes import Status
 
 #Setup logger
 logger = logging.getLogger('Main')
-hdlr = logging.FileHandler('log.txt')
 formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d :: %(levelname)s :: %(message)s', datefmt='%Y-%m-%d :: %H:%M:%S')
-
-
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr) 
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+fh = logging.FileHandler('log.txt')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 
 logger.info("-----------------------------------------------")
@@ -42,10 +44,6 @@ bot = commands.Bot(command_prefix="!", case_insensitive=True)
 logger.info("Loading secret details from file.")
 with open("secret_details.json") as secret_file:
     secret_details = json.load(secret_file)
-    for key in secret_details:
-        print("--------------")
-        print(key)
-        print(secret_details[key])
     db_host = secret_details['db_host']
     db_user = secret_details['db_user']
     db_pass = secret_details['db_pass']
@@ -54,12 +52,36 @@ logger.info("Secret details successfully loaded.")
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
-en = Enforcement_Handler(bot, db)
+en = Enforcement_Handler(bot, db, logger)
+
+async def cull_roles():
+
+    do_not_cull = []
+    total_culled = 0
+
+    while True:
+        await asyncio.sleep(60 * 60 * 24) #60 * 60 * 24 = 24 hours
+        logger.info("Beginning routine role cull on all available servers.")
+        for guild in bot.guilds:
+            for member in guild.members:
+                for role in member.roles:
+                    if role.name.startswith(ENFORCEMENT_PREFIX):
+                        do_not_cull.append(role)
+            for role in guild.roles:
+                if role not in do_not_cull and role.name.startswith(ENFORCEMENT_PREFIX):
+                    logger.info(f'Culling enforcement role "{role.name[3:]}" in guild "{guild.name}"')
+                    total_culled += 1
+                    await role.delete()
+            logger.info(f'Culled {total_culled} roles in "{guild.name}"')
+
+        do_not_cull.clear()
+
 
 # @bot.command()
 # async def db_reset(context):
     # if db.completely_reset_database() is Status.OK:
         # await context.send("I hope you're proud of yourself.")
+
 @bot.command()
 async def db_push(context, argument):
     if db.add_message(argument, context.message.author.id) is Status.OK:
@@ -168,7 +190,6 @@ async def list(context, arg1: str = None, arg2: str = None):
         for identity in identities:
             reply += f'"{identity.name}",\n'
 
-
 @bot.command()
 async def set(context, arg1: str = None, arg2 = None):
 
@@ -233,6 +254,10 @@ async def release(context, arg: discord.Member):
 @bot.event
 async def on_ready():
     print("Identity Enforcement Drone #3161 ready.")
+    global culling_roles
+    if not culling_roles:
+        culling_roles = True
+        asyncio.ensure_future(cull_roles())
 
 @bot.command()
 async def id(context):
@@ -245,7 +270,6 @@ async def id(context):
         await context.send(f"Your wonderful new drone ID is {generated_id}! I've went ahead and assigned it to you- I know you're probably very eager to be a good drone! Enjoy.")
     except discord.errors.Forbidden:
         await context.send(f"Your wonderful new drone ID is {generated_id}! I would've assigned it to you, but you rank higher than me, so I can't change your nickname.")
-
 
 @bot.event
 async def on_message(message):

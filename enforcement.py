@@ -8,19 +8,21 @@ from utils import scrape_drone_id
 
 
 class Enforcement_Handler():
-    def __init__(self, bot, db):
+    def __init__(self, bot, db, logger):
         self.bot = bot
         self.db = db
         self.wh = Webhook_Handler(bot)
+        self.logger = logger
 
     async def enforce(self, message: discord.Message = None, role: discord.Role = None):
         print(f"Attempting to enforce {message.author.display_name} with role {role.name} in {message.author.guild.name}")
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
         print(f"Role name to look for: {role.name}")
-        identity = self.db.get_identity_by_role(role.name[3:], message.author.guild.id).data
+        identity = self.db.get_identity_by_role_name(role.name[3:], message.author.guild.id).data
         if len(identity) == 0:
-            print("Someone has a role for an identity that doesn't exist.")
+            self.logger.warning("Someone has a role for an identity that doesn't exist. Removing.")
+            await message.author.remove_roles(role)
             return
         await self.wh.proxy_message(message = message, identity = identity[0])
 

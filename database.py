@@ -97,8 +97,8 @@ class Database_Handler():
             print(f"EXECUTING: {statement}")
             cursor.execute(statement)
 
-    def get_identity_by_role(self, role_name, guild_id) -> Identity:
-        cursor.execute(f'SELECT * FROM identities WHERE name = {role_name} AND owner_id = {guild_id} AND owner_type = "guild";')
+    def get_identity_by_role_name(self, role_name, guild_id) -> Identity:
+        cursor.execute(f'SELECT * FROM identities WHERE name = "{role_name}" AND owner_id = {guild_id} AND owner_type = "guild";')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
 
