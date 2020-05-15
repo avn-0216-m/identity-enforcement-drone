@@ -158,10 +158,18 @@ async def list(context, arg1: str = None, arg2: str = None):
         return
     elif arg1 == "submissives" or arg1 == "subs":
         results = db.get_all_submissives(context.message.author.id).data
-        reply = "You currently own the following submissives:\n"
+        reply = "In this server, you own the following submissives:\n"
+
+        subs_in_other_servers = 0
+
         for result in results:
             sub_as_user = bot.get_user(int(result.submissive_id))
-            reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
+            if sub_as_user is not None:
+                reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
+            else:
+                subs_in_other_servers += 1
+        plural = ("sub" if subs_in_other_servers is 1 else "subs")
+        reply += f"...and {subs_in_other_servers} {plural} elsewhere~\n"
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)
