@@ -165,7 +165,7 @@ async def list(context, arg1: str = None, arg2: str = None):
         for result in results:
             sub_as_user = bot.get_user(int(result.submissive_id))
             if sub_as_user is not None:
-                reply += f"{sub_as_user.name}#{sub_as_user.discriminator}\n"
+                reply += f"{sub_as_user.name}\n"
             else:
                 subs_in_other_servers += 1
         plural = ("sub" if subs_in_other_servers == 1 else "subs")
