@@ -22,15 +22,24 @@ from data_classes import Status
 #Setup logger
 logger = logging.getLogger('Main')
 hdlr = logging.FileHandler('log.txt')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d :: %(levelname)s :: %(message)s', datefmt='%Y-%m-%d :: %H:%M:%S')
+
+
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
 logger.setLevel(logging.INFO)
 
+logger.info("-----------------------------------------------")
+logger.info("It's a new day~!")
+logger.info("-----------------------------------------------")
+
+
+#on_ready checkers
+culling_roles = False
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
-logger.info("Getting secret details (SQL and access token.)")
+logger.info("Loading secret details from file.")
 with open("secret_details.json") as secret_file:
     secret_details = json.load(secret_file)
     for key in secret_details:
@@ -41,25 +50,11 @@ with open("secret_details.json") as secret_file:
     db_user = secret_details['db_user']
     db_pass = secret_details['db_pass']
     bot_token = secret_details['bot_token']
-logger.info("Secret details successfully got.")
+logger.info("Secret details successfully loaded.")
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
-
-@bot.command
-async def beep(context):
-    if context.message.author.bot:
-        return
-    else:
-        await context.send("Boop!")
-
-@bot.command
-async def boop(context):
-    if context.message.author.bot:
-        return
-    else:
-        await context.send("Beep!")
 
 # @bot.command()
 # async def db_reset(context):
@@ -68,11 +63,12 @@ async def boop(context):
 @bot.command()
 async def db_push(context, argument):
     if db.add_message(argument, context.message.author.id) is Status.OK:
+        logger.info(f'{context.message.author.display_name} added the message "{argument}" to the database.')
         await context.send("Your message was succesfully added to the database. :)")
 
 @bot.command()
 async def db_list(context):
-    print("Listing all entries in database")
+    logger.info("Listing all messages in the database.")
     output_message = ""
     for message_id, user_id, message in db.get_recent_from_table(MESSAGES, "message_id", "10"):
         user_from_id = bot.get_user(int(user_id))
@@ -86,6 +82,8 @@ async def dominate(context, submissive: discord.Member):
     Attempt to dominate someone
     They must respond by submitting to you with the submit command.
     '''
+
+    logger.info(f'{context.message.author.display_name} is trying to dominate {submissive.display_name}')
 
     if context.message.author is submissive:
         await context.send("You cannot own yourself.")
@@ -110,6 +108,8 @@ async def submit(context, dominant: discord.Member):
     They must respond by dominating you with the dominate command.
     '''
 
+    logger.info(f'{context.message.author.display_name} is trying to submit to {dominant.display_name}')
+
     if context.message.author is dominant:
         await context.send("You cannot submit to yourself.")
         return
@@ -128,6 +128,9 @@ async def submit(context, dominant: discord.Member):
     
 @bot.command()
 async def list(context, arg: str = None):
+
+    logger.info(f"{context.message.author.display_name} has requested to list {arg}")
+
     if arg is None:
         await context.send("What would you like to list?")
         return
@@ -180,7 +183,7 @@ async def register(context):
 
 @bot.command()
 async def refresh(context):
-    print("Refreshing command triggered.")
+    logger.info(f"Refreshing default identities for server: {context.guild}")
     en.refresh_default_identities(context.guild)
     await context.send("Default identities for this server have been refreshed.")
 
@@ -243,11 +246,14 @@ async def on_message(message):
 
     if message.content.lower().startswith("beep"):
         await message.channel.send("Boop!")
+        logger.info(f"{message.author.display_name} beeped! I booped back.")
 
     if message.content.lower().startswith("boop"):
         await message.channel.send("Beep!")
+        logger.info(f"{message.author.display_name} booped! I beeped back.")
 
     if message.content.lower() in ["good bot", "good bot!", "good bot."]:
+        logger.info(f"{message.author.display_name} called me a good bot! ///")
         await message.channel.send("Y-You too... <3")
     
     await bot.process_commands(message)
