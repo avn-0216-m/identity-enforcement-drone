@@ -165,11 +165,11 @@ async def list(context, arg1: str = None, arg2: str = None):
         for result in results:
             sub_as_user = bot.get_user(int(result.submissive_id))
             if sub_as_user is not None:
-                reply += f"* {sub_as_user.name}#{sub_as_user.discriminator}\n"
+                reply += f"{sub_as_user.name}#{sub_as_user.discriminator}\n"
             else:
                 subs_in_other_servers += 1
-        plural = ("sub" if subs_in_other_servers is 1 else "subs")
-        reply += f"...and {subs_in_other_servers} {plural} elsewhere~\n"
+        plural = ("sub" if subs_in_other_servers == 1 else "subs")
+        reply += f"...and {subs_in_other_servers} {plural} elsewhere on Discord~\n"
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)

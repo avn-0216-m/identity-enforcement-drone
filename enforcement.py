@@ -33,7 +33,7 @@ class Enforcement_Handler():
 
     async def assign(self, target: discord.Member = None, role: str = None):
         #Check if given string is a valid identity.
-        if len(self.db.get_identity_by_role(role, target.guild.id).data) == 0:
+        if len(self.db.get_identity_by_role_name(role, target.guild.id).data) == 0:
             print("Not a valid identity")
             return Status.BAD_REQUEST
         #Check if the server has the enforcable role available.

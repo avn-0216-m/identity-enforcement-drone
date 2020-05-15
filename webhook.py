@@ -9,8 +9,8 @@ class Webhook_Handler():
     def __init__(self, bot):
         self.bot = bot
 
-    def get_occurrences_of_allowed_words(self, allowed_words: str, message: str) -> list:
-        allowance_lexicon = string_to_lexicon(allowed_words)
+    def get_occurrences_of_allowance_lexicon(self, allowance_lexicon: str, message: str) -> list:
+        allowance_lexicon = string_to_lexicon(allowance_lexicon)
         occurrences = []
         for word in allowance_lexicon:
             occurrences.extend((m.start(), word) for m in re.finditer(word, message))
@@ -31,26 +31,26 @@ class Webhook_Handler():
 
         message_content = message.content
 
-        proxy_name = identity.display_name if identity.display_name != "" else message.author.display_name
+        proxy_name = identity.display_name if identity.display_name is not None else message.author.display_name
 
         drone_id = scrape_drone_id(message.author.display_name)
         #(If drone ID is none here, check DB to see if user has a drone ID there)
 
-        if drone_id is not None and identity.display_name_with_id != "":
+        if drone_id is not None and identity.display_name_with_id is not None:
             print("User has a drone ID. Enforcing drone ID display name.")
             proxy_name = identity.display_name_with_id.format(drone_id)
 
 
         occurrences = None
-        if identity.allowed_words != "" and identity.lexicon != "":
+        if identity.allowance_lexicon != None and identity.replacement_lexicon != None:
             print("Allowed words detected. Gathering occurrences for insertion durning message generation.")
-            occurrences = self.get_occurrences_of_allowed_words(identity.allowed_words, message.content)
+            occurrences = self.get_occurrences_of_allowance_lexicon(identity.allowance_lexicon, message.content)
 
-        if identity.lexicon != "" and identity.allowed_words != "":
+        if identity.replacement_lexicon != None and identity.allowance_lexicon != None:
             #Use lexicon, insert allowed words when they occur.
             print("Lexicon and allowed words detected.")
-            lexicon = string_to_lexicon(identity.lexicon)
-            allowed_words = string_to_lexicon(identity.allowed_words)
+            lexicon = string_to_lexicon(identity.replacement_lexicon)
+            allowance_lexicon = string_to_lexicon(identity.allowance_lexicon)
             print("Lexicon and allowed words parsed. Replacing message.")
             message_content = ""
             for i in range(0,len(message.content)//5 + 1):
@@ -58,25 +58,25 @@ class Webhook_Handler():
                 if occurrences is not None and len(occurrences) != 0 and len(message_content) > occurrences[0][0]:
                     message_content += str(occurrences.pop(0)[1]) + " "
 
-        elif identity.lexicon != "" and identity.allowed_words == "":
+        elif identity.replacement_lexicon != None and identity.allowance_lexicon == None:
             #Just use lexicon
             print("Lexicon detected")
-            lexicon = string_to_lexicon(identity.lexicon)
+            lexicon = string_to_lexicon(identity.replacement_lexicon)
             print("Lexicon parsed. Replacing message.")
             message_content = ""
             for i in range(0,len(message.content)//5 + 1):
                 message_content += f"{random.choice(lexicon)} "
 
-        elif identity.lexicon == "" and identity.allowed_words != "":
+        elif identity.replacement_lexicon == None and identity.allowance_lexicon != None:
             #Strict speech checking.
             print("Allowed words detected without lexicon. Strict speech restriction enabled.")
 
             if drone_id is not None:
-                allowed_words = [word.format(drone_id) for word in string_to_lexicon(identity.allowed_words)]
+                allowance_lexicon = [word.format(drone_id) for word in string_to_lexicon(identity.allowance_lexicon)]
             else:
-                allowed_words = string_to_lexicon(identity.allowed_words)
+                allowance_lexicon = string_to_lexicon(identity.allowance_lexicon)
 
-            if message.content in allowed_words:
+            if message.content in allowance_lexicon:
                 print("Good message found, proxying.")
             else:
                 print("Bad message found.")
