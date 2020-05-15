@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #import core modules
 import sys
 import discord
@@ -19,7 +21,7 @@ from data_classes import Status
 
 #Setup logger
 logger = logging.getLogger('Main')
-hdlr = logging.FileHandler('/logs/log.log')
+hdlr = logging.FileHandler('log.txt')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
@@ -63,7 +65,6 @@ async def boop(context):
 # async def db_reset(context):
     # if db.completely_reset_database() is Status.OK:
         # await context.send("I hope you're proud of yourself.")
-
 @bot.command()
 async def db_push(context, argument):
     if db.add_message(argument, context.message.author.id) is Status.OK:
