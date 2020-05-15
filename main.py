@@ -169,7 +169,7 @@ async def list(context, arg1: str = None, arg2: str = None):
             else:
                 subs_in_other_servers += 1
         plural = ("sub" if subs_in_other_servers == 1 else "subs")
-        reply += f"...and {subs_in_other_servers} {plural} elsewhere on Discord~\n"
+        reply += f"...and {subs_in_other_servers} other {plural} elsewhere on Discord~\n"
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)
