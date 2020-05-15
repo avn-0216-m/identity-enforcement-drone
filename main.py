@@ -21,7 +21,7 @@ from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
 
 #Setup logger
-logger = logging.getLogger('Main')
+logger = logging.getLogger('Identity Enforcement Drone')
 formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d :: %(levelname)s :: %(message)s', datefmt='%Y-%m-%d :: %H:%M:%S')
 ch = logging.StreamHandler()
 ch.setFormatter(formatter)
@@ -52,7 +52,7 @@ logger.info("Secret details successfully loaded.")
 
 db = Database_Handler(db_host, db_user, db_pass)
 rl = Relationship_Handler(db)
-en = Enforcement_Handler(bot, db, logger)
+en = Enforcement_Handler(bot, db)
 
 async def cull_roles():
 

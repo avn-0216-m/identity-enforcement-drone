@@ -1,18 +1,18 @@
 import discord
 import random
+import logging
 from discord.utils import get
 from data_classes import Status
 from webhook import Webhook_Handler
 from notable_entities import ENFORCEMENT_PREFIX
 from utils import scrape_drone_id
 
-
 class Enforcement_Handler():
-    def __init__(self, bot, db, logger):
+    def __init__(self, bot, db):
         self.bot = bot
         self.db = db
         self.wh = Webhook_Handler(bot)
-        self.logger = logger
+        self.logger = logging.getLogger("Identity Enforcement Drone")
 
     async def enforce(self, message: discord.Message = None, role: discord.Role = None):
         print(f"Attempting to enforce {message.author.display_name} with role {role.name} in {message.author.guild.name}")
@@ -21,7 +21,7 @@ class Enforcement_Handler():
         print(f"Role name to look for: {role.name}")
         identity = self.db.get_identity_by_role_name(role.name[3:], message.author.guild.id).data
         if len(identity) == 0:
-            self.logger.warning("Someone has a role for an identity that doesn't exist. Removing.")
+            self.logger.warning(f"{message.author.display_name} has a role for an identity that doesn't exist ({role.name}). Removing.")
             await message.author.remove_roles(role)
             return
         await self.wh.proxy_message(message = message, identity = identity[0])
