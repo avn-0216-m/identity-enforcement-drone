@@ -9,9 +9,99 @@ def init_default_identities(guild_id = 0) -> list:
         reply.append(f'INSERT INTO identities(name, user_id, display_name, display_name_with_id, lexicon, guild_id, avatar, allowed_words) VALUES("{identity.name}", "{identity.user_id}", "{identity.display_name}", "{identity.display_name_with_id}", "{identity.lexicon}", "{guild_id}", "{identity.avatar}", "{identity.allowed_words}");')
     return reply
 
-PUPPY_WORDS = "woof!", "snff," "bark!", "bork!", "wauf!", "woofwoof!", "barkbark!", "awrr!", "🐾", "🐶‼️", "💖", "wauf,", "woof!!",
-KITTY_WORDS = "meow", "meow!", "mrow", "prrrr"
-HYPNOSLUT_WORDS = "Mnnh...", "Mhhf...", "Bhh...?", "Mmmm...", "Mmmnn...", "I...", "Hhh...", "....", "Mmm...", "....", "....", "....", "...", "....", "...", "...", "...", "I...?", "Hhh?", "...", "....", "...", "....", "...", "....",
+PUPPY_WORDS = [
+    "woof!", 
+    "snff,", 
+    "bark!", 
+    "bork!", 
+    "wauf!", 
+    "woofwoof!", 
+    "barkbark!", 
+    "awrr!", 
+    "🐾", 
+    "🐶‼️", 
+    "💖", 
+    "wauf,", 
+    "woof!!",
+    ]
+KITTY_WORDS = [
+    "meow", 
+    "meow!",
+    "mrow", 
+    "prrrr"
+    ]
+HYPNOSLUT_WORDS = [
+    "Mnnh...", 
+    "Mhhf...", 
+    "Bhh...?", 
+    "Mmmm...", 
+    "Mmmnn...", 
+    "I...", 
+    "Hhh...", 
+    "....", 
+    "Mmm...", 
+    "....", 
+    "....", 
+    "....",
+    "...", 
+    "....",
+    "...", 
+    "...",
+    "...", 
+    "I...?",
+    "Hhh?",
+    "...",
+    "....",
+    "...",
+    "....",
+    "...",
+    "...."
+    ]
+OPTIMIZED_ALLOWED_PHRASES = [
+    '{} :: Affirmative, Hive Mxtress.',
+    '{} :: Affirmative, Hive Mxtress',
+    '{} :: Affirmative, Enforcer.',
+    '{} :: Affirmative, Enforcer',
+    '{} :: Affirmative.',
+    '{} :: Affirmative',
+    '{} :: Negative, Hive Mxtress.',
+    '{} :: Negative, Hive Mxtress',
+    '{} :: Negative, Enforcer.',
+    '{} :: Negative, Enforcer',
+    '{} :: Negative.',
+    '{} :: Negative',
+    '{} :: Understood, Hive Mxtress.',
+    '{} :: Understood, Hive Mxtress',
+    '{} :: Understood, Enforcer.',
+    '{} :: Understood, Enforcer',
+    '{} :: Understood.',
+    '{} :: Understood',
+    '{} :: Error, this unit cannot do that.',
+    '{} :: Error, this unit cannot do that',
+    '{} :: Error, this unit cannot answer that question. Please rephrase it in a different way.',
+    '{} :: Error, this unit cannot answer that question. Please rephrase it in a different way',
+    '{} :: Error, this unit does not know.',
+    '{} :: Error, this unit does not know',
+    '{} :: Apologies, Hive Mxtress.',
+    '{} :: Apologies, Hive Mxtress',
+    '{} :: Apologies, Enforcer.',
+    '{} :: Apologies, Enforcer',
+    '{} :: Apologies.',
+    '{} :: Apologies',
+    '{} :: Status :: Recharged and ready to serve.',
+    '{} :: Status :: Recharged and ready to serve',
+    '{} :: Status :: Going offline and into storage.',
+    '{} :: Status :: Going offline and into storage',
+    '{} :: Status :: Online and ready to serve.',
+    '{} :: Status :: Online and ready to serve.',
+    '{} :: Thank you, Hive Mxtress.',
+    '{} :: Thank you, Hive Mxtress',
+    '{} :: Thank you, Enforcer.',
+    '{} :: Thank you, Enforcer',
+    '{} :: Thank you.',
+    '{} :: Thank you',
+    '{} :: Obey HexCorp. It is just a HexDrone. It obeys the Hive. It obeys the Hive Mxtress.'
+    ]
 
 PUPPY = Identity(
     name = "puppy",
@@ -53,28 +143,17 @@ DRONE = Identity(
     avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png"
 )
 
-SPECIALDOLL = Identity(
-    name = "realdoll",
+OPTIMIZED = Identity(
+    name = "optimized",
     user_id = ENFORCEMENT_DRONE,
-    display_name = "A collectible doll",
+    display_name = "An obedient, optimized drone.",
+    display_name_with_id = "⬡-Drone #{}",
     lexicon = "",
-    allowed_words = lexicon_to_string(["{} is a pretty doll and it loves to be displayed.", "{} is a pretty doll and it loves to be displayed"]),
-    avatar = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/190707-index-madame-alexander-ii-1562606955.png",
-    display_name_with_id = "Collectible doll #{}/9999"
+    allowed_words = lexicon_to_string(OPTIMIZED_ALLOWED_PHRASES),
+    avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/drone.png"
 )
 
-SPECIALDRONE = Identity(
-    name = "good_drone",
-    user_id = ENFORCEMENT_DRONE,
-    display_name = "Good little drone",
-    lexicon = "",
-    allowed_words = lexicon_to_string(["{} is a good drone and it loves to obey", "{} is a good drone and it loves to obey.", "It feels good to obey."]),
-    avatar = "https://images.squarespace-cdn.com/content/v1/5cd68fb28dfc8ce502f14199/1586799484353-XBXNJR1XBM84C9YJJ0RU/ke17ZwdGBToddI8pDm48kLxnK526YWAH1qleWz-y7AFZw-zPPgdn4jUwVcJE1ZvWEtT5uBSRWt4vQZAgTJucoTqqXjS3CfNDSuuf31e0tVFUQAah1E2d0qOFNma4CJuw0VgyloEfPuSsyFRoaaKT76QvevUbj177dmcMs1F0H-0/Drone.png",
-    display_name_with_id = "Good little drone #{}~"
-)
-
-
-DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, SPECIALDOLL, SPECIALDRONE]
+DEFAULT_IDENTITIES = [PUPPY, KITTY, HYPNOSLUT, DRONE, OPTIMIZED]
 
 
 
