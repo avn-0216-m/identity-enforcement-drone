@@ -8,6 +8,7 @@ from discord.ext import commands
 import json
 import mysql.connector
 import asyncio
+import random
 
 #import handler modules
 from relationship import Relationship_Handler
@@ -266,6 +267,9 @@ async def on_ready():
     if not culling_roles:
         culling_roles = True
         asyncio.ensure_future(cull_roles())
+
+    game = discord.Game("with your identity.")
+    await bot.change_presence(activity = game)
 
 @bot.command()
 async def id(context):
