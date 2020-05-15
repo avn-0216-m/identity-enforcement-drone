@@ -2,7 +2,7 @@ import mysql.connector
 from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONSHIPS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
-from default_identities import init_default_identities
+from default_identities import init_default_identities_for_guild
 from rowmapper import result_to_identity, result_to_relationship, result_to_user
 
 database = None
@@ -90,20 +90,25 @@ class Database_Handler():
 
     #Identities
     def refresh_default_identities(self, guild_id):
-        #Delete all identities for given server belonging to the enforcement drone.
-        cursor.execute(f'DELETE FROM identities WHERE guild_id = {guild_id} AND user_id = {ENFORCEMENT_DRONE};')
+        #Delete all identities for given guild belonging to the enforcement drone.
+        cursor.execute(f'DELETE FROM identities WHERE owner_id = {guild_id} AND owner_type = "guild";')
         #Reinsert the default identities.
-        for statement in init_default_identities(guild_id):
+        for statement in init_default_identities_for_guild(guild_id):
             print(f"EXECUTING: {statement}")
             cursor.execute(statement)
 
     def get_identity_by_role(self, role_name, guild_id) -> Identity:
-        cursor.execute(f'SELECT display_name, lexicon, avatar, allowed_words, display_name_with_id FROM identities WHERE name = "{role_name}" AND guild_id = {guild_id}')
+        cursor.execute(f'SELECT * FROM identities WHERE name = {role_name} AND owner_id = {guild_id} AND owner_type = "guild";')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
 
     def get_all_identities_for_guild(self, guild_id) -> Identity:
-        cursor.execute(f'SELECT name, display_name FROM identities WHERE guild_id = {guild_id}')
+        cursor.execute(f'SELECT name, display_name FROM identities WHERE owner_id = {guild_id} AND owner_type = "guild";')
+        data = cursor.fetchall()
+        return Response(Status.OK, result_to_identity(data))
+
+    def get_all_identities_for_user(self, user_id) -> Identity:
+        cursor.execute(f'SELECT name FROM identities WHERE owner_id = {user_id} AND owner_type = "user";')
         data = cursor.fetchall()
         return Response(Status.OK, result_to_identity(data))
 

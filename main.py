@@ -127,14 +127,14 @@ async def submit(context, dominant: discord.Member):
         await context.send("By the power invested in my processor, I now pronounce you dom and sub. Huzzah!")
     
 @bot.command()
-async def list(context, arg: str = None):
+async def list(context, arg1: str = None, arg2: str = None):
 
-    logger.info(f"{context.message.author.display_name} has requested to list {arg}")
+    logger.info(f"{context.message.author.display_name} has requested to list something.")
 
-    if arg is None:
+    if arg1 is None:
         await context.send("What would you like to list?")
         return
-    elif arg == "submissives" or arg == "subs":
+    elif arg1 == "submissives" or arg1 == "subs":
         results = db.get_all_submissives(context.message.author.id).data
         reply = "You currently own the following submissives:\n"
         for result in results:
@@ -143,15 +143,31 @@ async def list(context, arg: str = None):
         if len(reply) > 2000:
             reply = "You own too many submissives to count. Well done."
         await context.send(reply)
-    elif arg == "identities":
+    elif arg1 == "server":
         identities = db.get_all_identities_for_guild(context.guild.id).data
         if len(identities) == 0:
             await context.send("This server hosts no identities.")
             return
         reply = "This server hosts the following identities:\n"
         for identity in identities:
-            reply += f"[{identity.name}], with the display name [{identity.display_name}]\n"
+            if identity.display_name == None and identity.display_name_with_id == None:
+                reply += f'"{identity.name}",'
+            elif identity.display_name == None:
+                reply += f'"{identity.name}", with the display name "{identity.display_name_with_id}" if you\'re a drone.\n'
+            elif identity.display_name_with_id == None:
+                reply += f'"{identity.name}", with the display name "{identity.display_name}"\n'
+            else:
+                reply += f'"{identity.name}, with the display name "{identity.display_name}" or {identity.display_name} if you\'re a drone.\n'
         await context.send(reply)
+    elif arg1 == "my":
+        identities = db.get_all_identities_for_user(context.message.author.id).data
+        if len(identities) == 0:
+            await context.send("You possess no identities right now. Kinda hot! Why not make one?")
+            return
+        reply = "You own the following identities:\n"
+        for identity in identities:
+            reply += f'"{identity.name}",\n'
+
 
 @bot.command()
 async def set(context, arg1: str = None, arg2 = None):
@@ -229,7 +245,6 @@ async def id(context):
         await context.send(f"Your wonderful new drone ID is {generated_id}! I've went ahead and assigned it to you- I know you're probably very eager to be a good drone! Enjoy.")
     except discord.errors.Forbidden:
         await context.send(f"Your wonderful new drone ID is {generated_id}! I would've assigned it to you, but you rank higher than me, so I can't change your nickname.")
-
 
 
 @bot.event

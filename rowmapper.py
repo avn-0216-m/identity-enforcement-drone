@@ -5,7 +5,11 @@ def result_to_identity(results: list) -> list: #Of identities:
     for result in results:
         identity = Identity()
         for key in result.keys():
-            setattr(identity, key, result[key])
+
+            value = result[key]
+            if value == "None":
+                value = None
+            setattr(identity, key, value)
         reply.append(identity)
     return reply
 

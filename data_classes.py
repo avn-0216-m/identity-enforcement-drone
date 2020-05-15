@@ -11,25 +11,33 @@ class Relationship():
 class Identity():
     def __init__(
         self,
-        identity_id = None, 
-        name = None, 
-        user_id = None, 
-        guild_id = None,
-        lexicon = "",
-        allowed_words = "",
+        identity_id = None,
+        name = None,
+        display_name = None,
+        display_name_with_id = None,
         avatar = None,
-        display_name = "",
-        display_name_with_id = "" 
+        replacement_lexicon = "",
+        allowance_lexicon = "",
+        strict = 0,
+        override_lexicon = "",
+        override_chance = 0,
+        owner_type = "user",
+        owner_id = None,
+        colour = None
     ):
         self.identity_id = identity_id
         self.name = name
-        self.user_id = user_id
-        self.guild_id = guild_id
-        self.lexicon = lexicon
-        self.allowed_words = allowed_words
-        self.avatar = avatar
         self.display_name = display_name
         self.display_name_with_id = display_name_with_id
+        self.avatar = avatar
+        self.replacement_lexicon = replacement_lexicon
+        self.allowance_lexicon = allowance_lexicon
+        self.strict = strict
+        self.override_lexicon = override_lexicon
+        self.override_chance = override_chance
+        self.owner_type = owner_type
+        self.owner_id = owner_id
+        self.colour = colour
 
 class User():
     def __init__(self):

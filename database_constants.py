@@ -1,4 +1,4 @@
-from default_identities import init_default_identities
+from default_identities import init_default_identities_for_guild
 DATABASE_NAME = 'enforcement_drone'
 
 MESSAGES = 'messages'
@@ -16,4 +16,4 @@ def create_tables() -> list:
     "CREATE TABLE users(user_id BIGINT NOT NULL PRIMARY KEY, drone_id VARCHAR(4), safe_words VARCHAR(6000), bulge BOOL);"]
 
 def get_migration() -> list:
-    return drop_database() + create_tables() + init_default_identities()
+    return drop_database() + create_tables() + init_default_identities_for_guild()
