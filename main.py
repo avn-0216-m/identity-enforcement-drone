@@ -163,9 +163,9 @@ async def list(context, arg1: str = None, arg2: str = None):
         subs_in_other_servers = 0
 
         for result in results:
-            sub_as_user = bot.get_user(int(result.submissive_id))
+            sub_as_user = context.guild.get_member(int(result.submissive_id))
             if sub_as_user is not None:
-                reply += f"{sub_as_user.name}\n"
+                reply += f"{sub_as_user.display_name}\n"
             else:
                 subs_in_other_servers += 1
         plural = ("sub" if subs_in_other_servers == 1 else "subs")
