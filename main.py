@@ -226,9 +226,9 @@ async def register(context):
 
 @bot.command()
 async def refresh(context):
-    logger.info(f"Refreshing default identities for server: {context.guild}")
+    logger.info(f"Refreshing default identities for guild {context.guild}")
     en.refresh_default_identities(context.guild)
-    await context.send("Default identities for this server have been refreshed.")
+    await context.send("Default identities for this guild have been refreshed.")
 
 @bot.command(aliases = ['assign'])
 async def enforce(context, arg1: discord.Member, arg2: str):

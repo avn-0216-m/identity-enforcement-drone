@@ -94,7 +94,6 @@ class Database_Handler():
         cursor.execute(f'DELETE FROM identities WHERE owner_id = {guild_id} AND owner_type = "guild";')
         #Reinsert the default identities.
         for statement in init_default_identities_for_guild(guild_id):
-            print(f"EXECUTING: {statement}")
             cursor.execute(statement)
 
     def get_identity_by_role_name(self, role_name, guild_id) -> Identity:
