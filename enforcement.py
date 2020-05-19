@@ -15,10 +15,9 @@ class Enforcement_Handler():
         self.logger = logging.getLogger("Identity Enforcement Drone")
 
     async def enforce(self, message: discord.Message = None, role: discord.Role = None):
-        print(f"Attempting to enforce {message.author.display_name} with role {role.name} in {message.author.guild.name}")
+        self.logger.info(f"Enforcing {message.author.display_name} with role {role.name} in {message.author.guild.name}")
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
-        print(f"Role name to look for: {role.name}")
         identity = self.db.get_identity_by_role_name(role.name[3:], message.author.guild.id).data
         if len(identity) == 0:
             self.logger.warning(f"{message.author.display_name} has a role for an identity that doesn't exist ({role.name}). Removing.")
@@ -27,19 +26,18 @@ class Enforcement_Handler():
         await self.wh.proxy_message(message = message, identity = identity[0])
 
     def refresh_default_identities(self, guild: discord.Guild) -> Status:
-        print(f"Refreshing default identities for server {guild.name}")
+        self.logger.info(f"Refreshing default identities for guild {guild.name}")
         self.db.refresh_default_identities(guild.id)
         return Status.OK
 
     async def assign(self, target: discord.Member = None, role: str = None):
         #Check if given string is a valid identity.
         if len(self.db.get_identity_by_role_name(role, target.guild.id).data) == 0:
-            print("Not a valid identity")
             return Status.BAD_REQUEST
         #Check if the server has the enforcable role available.
         role_to_assign = get(target.guild.roles, name=f"{ENFORCEMENT_PREFIX} {role}")
         if role_to_assign is None:
-            print("Role not present. Creating.")
+            self.logger.info(f'Creating enforcable role "{role}" in {target.guild.name}.')
             role_to_assign = await target.guild.create_role(name=f"{ENFORCEMENT_PREFIX} {role}")
         #Check if user already has an enforceable role.
         for role in target.roles:

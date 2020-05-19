@@ -18,15 +18,14 @@ class Webhook_Handler():
         return occurrences
 
     async def get_webhook_for(self, message: discord.Message = None) -> discord.Webhook:
-        print("Getting a webhook.")
+        self.logger.info(f'Getting a webhook for "{message.channel.name}" in "{message.guild.name}".')
         available_webhooks = await message.channel.webhooks()
         if len(available_webhooks) == 0:
-            print(f"No webhook found. Creating webhook for channel {message.channel.name}")
+            self.logger.info(f'Creating webhook for channel "{message.channel.name}" in "{message.guild.name}"')
             available_webhooks = [await message.channel.create_webhook(name = "Identity Enforcement Drone")]
         return available_webhooks[0]
 
     async def proxy_message(self, message: discord.Message = None, identity: Identity = None):
-        print("Proxying message.")
         webhook = await self.get_webhook_for(message)
 
         message_content = message.content
@@ -39,7 +38,6 @@ class Webhook_Handler():
         if drone_id is not None and identity.display_name_with_id is not None:
             print("User has a drone ID. Enforcing drone ID display name.")
             proxy_name = identity.display_name_with_id.format(drone_id)
-
 
         occurrences = None
         if identity.allowance_lexicon != None and identity.replacement_lexicon != None:

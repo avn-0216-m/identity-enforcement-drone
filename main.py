@@ -242,7 +242,7 @@ async def release(context, arg: discord.Member):
 
 @bot.event
 async def on_ready():
-    print("Identity Enforcement Drone #3161 ready.")
+    logger.info("Identity Enforcement Drone #3161 ready.")
     global culling_roles
     if not culling_roles:
         culling_roles = True
