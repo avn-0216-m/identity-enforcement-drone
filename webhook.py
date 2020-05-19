@@ -2,12 +2,14 @@ import discord
 from data_classes import Identity
 from serialize import string_to_lexicon
 from utils import scrape_drone_id
+import logging
 import random
 import re
 
 class Webhook_Handler():
     def __init__(self, bot):
         self.bot = bot
+        self.logger = logging.getLogger('Identity Enforcement Drone')
 
     def get_occurrences_of_allowance_lexicon(self, allowance_lexicon: str, message: str) -> list:
         allowance_lexicon = string_to_lexicon(allowance_lexicon)
