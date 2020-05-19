@@ -15,7 +15,7 @@ class Enforcement_Handler():
         self.logger = logging.getLogger("Identity Enforcement Drone")
 
     async def enforce(self, message: discord.Message = None, role: discord.Role = None):
-        self.logger.info(f"Enforcing {message.author.display_name} with role {role.name} in {message.author.guild.name}")
+        self.logger.info(f"Enforcing {message.author.display_name} with role {role.name[3:]} in {message.author.guild.name}")
         #Find the identity that corresponds with the role.
         #Roles have the same name as the identity, without the four-pointed star and colon.
         identity = self.db.get_identity_by_role_name(role.name[3:], message.author.guild.id).data

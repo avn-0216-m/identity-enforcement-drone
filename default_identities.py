@@ -142,7 +142,37 @@ PUPPY = Identity(
         colour = "FF66FF"
 )
 
-DEFAULT_IDENTITIES = [PUPPY]
+STRICT_PUPPY = Identity(
+        name = "Strict_Puppy",
+        display_name = None,
+        display_name_with_id = None,
+        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
+        replacement_lexicon = None,
+        allowance_lexicon = lexicon_to_string(["Hello", "World"]),
+        strict = 1,
+        override_lexicon = None,
+        override_chance = 0,
+        owner_type = "user",
+        owner_id = ENFORCEMENT_DRONE,
+        colour = "FF66FF"
+)
+
+EZ_PUPPY = Identity(
+        name = "EZ_Puppy",
+        display_name = None,
+        display_name_with_id = None,
+        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
+        replacement_lexicon = None,
+        allowance_lexicon = lexicon_to_string(["Hello", "World"]),
+        strict = 0,
+        override_lexicon = None,
+        override_chance = 0,
+        owner_type = "user",
+        owner_id = ENFORCEMENT_DRONE,
+        colour = "FF66FF"
+)
+
+DEFAULT_IDENTITIES = [PUPPY, STRICT_PUPPY, EZ_PUPPY]
 
 
 

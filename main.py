@@ -179,6 +179,23 @@ async def list(context, arg1: str = None, arg2: str = None):
         for identity in identities:
             reply += f'"{identity.name}",\n'
 
+@bot.command(aliases = ['list_ids'])
+async def list_identities(context, arg: discord.Member = None):
+    logger.warning("list_identities command not implemented.")
+    if arg is None:
+        #List server identities.
+        return
+    else:
+        #List tagged user identities.
+        return
+
+@bot.command(aliases = ['yeet'])
+async def uncollar(context, arg: discord.Member = None):
+    if arg is None:
+        #Reprimand user for not tagging someone.
+        return
+    #Check if they have a relationship with the user here and delete it if true.
+
 @bot.command()
 async def set(context, arg1: str = None, arg2 = None):
 
@@ -242,7 +259,7 @@ async def release(context, arg: discord.Member):
 
 @bot.event
 async def on_ready():
-    logger.info("Identity Enforcement Drone #3161 ready.")
+    logger.info("Identity Enforcement Drone #3161 online.")
     global culling_roles
     if not culling_roles:
         culling_roles = True
@@ -289,5 +306,5 @@ async def on_message(message):
     
     await bot.process_commands(message)
 
-print("Starting bot.")
+logger.info("Starting up Identity Enforcement Drone #3161.")
 bot.run(bot_token)
