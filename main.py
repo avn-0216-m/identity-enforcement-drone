@@ -63,6 +63,7 @@ async def cull_roles():
     while True:
         await asyncio.sleep(60 * 60 * 24) #60 * 60 * 24 = 24 hours
         for guild in bot.guilds:
+            total_culled = 0
             for member in guild.members:
                 for role in member.roles:
                     if role.name.startswith(ENFORCEMENT_PREFIX):
