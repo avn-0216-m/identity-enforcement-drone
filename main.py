@@ -9,6 +9,7 @@ import json
 import mysql.connector
 import asyncio
 import random
+import traceback
 
 #import handler modules
 from relationship import Relationship_Handler
@@ -78,6 +79,10 @@ async def cull_roles():
 
         total_culled = 0
         do_not_cull.clear()
+
+@bot.command()
+async def fake_error(context):
+    raise TypeError("Well ain't this a fuckin' shame?")
 
 @bot.command()
 async def healthcheck(context):
@@ -312,6 +317,16 @@ async def on_message(message):
         await message.channel.send("Y-You too... <3")
     
     await bot.process_commands(message)
+
+@bot.event
+async def on_command_error(context, error):
+    logger.error(f"!!! --- Exception caught in {context.command} command --- !!!")
+    logger.error(error)
+    exception_file = open("log.txt", "a")
+    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+    traceback.print_exception(type(error), error, error.__traceback__, file=exception_file)
+    exception_file.close()
+    logger.info("!!! --- End exception log. --- !!!")
 
 logger.info("Starting up Identity Enforcement Drone #3161.")
 bot.run(bot_token)
