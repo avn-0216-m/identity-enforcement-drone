@@ -4,6 +4,7 @@ from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities_for_guild
 from rowmapper import result_to_identity, result_to_relationship, result_to_user
+import sys
 
 database = None
 cursor = None
@@ -37,10 +38,9 @@ class Database_Handler():
 
     def healthcheck(self) -> Status:
         try:
-            cursor.exectue("USE enforcement_drone")
+            cursor.execute("USE enforcement_drone")
         except:
             return Status.INTERNAL_ERROR
-        
         return Status.OK
 
     #General
