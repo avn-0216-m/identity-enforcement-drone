@@ -79,6 +79,12 @@ async def cull_roles():
         total_culled = 0
         do_not_cull.clear()
 
+@bot.command()
+async def healthcheck(context):
+    if db.healthcheck() is Status.OK:
+        await context.send("I can connect to the DB. Everything should(?) be fine.")
+    else:
+        await context.send("I can't connect to my database. I don't know why. Sorry. :(")
 
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):

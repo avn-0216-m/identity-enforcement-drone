@@ -35,6 +35,14 @@ class Database_Handler():
         print("Database completely reset.")
         return Status.OK
 
+    def healthcheck(self) -> Status:
+        try:
+            cursor.exectue("USE enforcement_drone")
+        except:
+            return Status.INTERNAL_ERROR
+        
+        return Status.OK
+
     #General
     def get_recent_from_table(self, table_name, key, amount) -> list:
         cursor.execute(f'SELECT * FROM {table_name} ORDER BY {key} DESC LIMIT {amount}')

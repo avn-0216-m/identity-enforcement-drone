@@ -70,6 +70,9 @@ class Status(Enum):
     ENFORCE_STRICT_ACCEPT = 703
     ENFORCE_STRICT_REJECT = 704
 
+    #Internal errors
+    INTERNAL_ERROR = 500
+
     #Relationships
     DUPLICATE_REQUEST = 601
     HOLY_MATRIHORNY = 602
