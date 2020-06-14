@@ -39,6 +39,3 @@ class Relationship_Handler():
         else:
             #Disregard the duplicate request.
             return Status.DUPLICATE_REQUEST
-
-
-        return 
