@@ -2,3 +2,5 @@ secret_details.json
 .vscode
 __pycache__
 log.txt
+identity_enforcement_drone.sqlite3
+identity_enforcement_drone.sqlite3-journal
