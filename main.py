@@ -52,7 +52,7 @@ with open("secret_details.json") as secret_file:
     bot_token = secret_details['bot_token']
 logger.info("Secret details successfully loaded.")
 
-db = Database_Handler(db_host, db_user, db_pass)
+db = Database_Handler()
 rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
 
@@ -327,6 +327,10 @@ async def on_command_error(context, error):
     traceback.print_exception(type(error), error, error.__traceback__, file=exception_file)
     exception_file.close()
     logger.info("!!! --- End exception log. --- !!!")
+
+logger.info("Doing data migration.")
+db.migration()
+logger.info("Data migration done.")
 
 logger.info("Starting up Identity Enforcement Drone #3161.")
 bot.run(bot_token)
