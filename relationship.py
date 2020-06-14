@@ -34,7 +34,7 @@ class Relationship_Handler():
             return Status.CREATED
         elif current_relationship.pending == 1 and current_relationship.initiated_by == submissive.id:
             #Confirm the relationship.
-            self.db_confirm_relationship(current_relationship.relationship_id)
+            self.db.confirm_relationship(current_relationship.relationship_id)
             return Status.HOLY_MATRIHORNY
         else:
             #Disregard the duplicate request.
