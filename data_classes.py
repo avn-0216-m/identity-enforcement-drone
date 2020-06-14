@@ -2,7 +2,8 @@ from enum import Enum
 
 #Data objects
 class Relationship():
-    def __init__(self, dominant_id = None, submissive_id = None, initiated_by = None):
+    def __init__(self, relationship_id = None, dominant_id = None, submissive_id = None, initiated_by = None):
+        self.relationship_id = relationship_id
         self.dominant_id = dominant_id
         self.submissive_id = submissive_id
         self.initiated_by = initiated_by

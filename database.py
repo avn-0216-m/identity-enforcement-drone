@@ -91,6 +91,17 @@ class Database_Handler():
         data = self.cursor.fetchall()
         return Response(Status.OK, result_to_relationship(data))
 
+    def relationship_already_exists(self, dom_id, sub_id) -> bool:
+        self.logger.info(f"Checking if {dom_id} and {sub_id} already have a relationship.")
+        self.cursor.execute(f"SELECT * FROM Relationships WHERE dominant_id = {dom_id} AND submissive_id = {sub_id}")
+        return self.cursor.fetchone() is not None
+
+    def get_relationship(self, dom_id, sub_id) -> Response:
+        self.logger.info(f"Finding relationship between {dom_id} and {sub_id}")
+        self.cursor.execute(f"SELECT * FROM Relationships WHERE dominant_id = {dom_id} and submissive_id = {sub_id}")
+        data = self.cursor.fetchone()
+        return Response(Status.OK, result_to_relationship(data))
+
     def find_confirmed_relationship(self, dom_id, sub_id) -> Response:
         self.cursor.execute(f'SELECT relationship_id FROM relationships WHERE dominant_id = {dom_id} AND submissive_id = {sub_id} AND pending = 0')
         data = self.cursor.fetchall()
@@ -107,7 +118,7 @@ class Database_Handler():
         return len(data)
 
     def add_relationship(self, relationship: Relationship) -> Status:
-        self.cursor.execute(f'INSERT INTO {RELATIONSHIPS}(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant_id}","{relationship.submissive_id}","{relationship.initiated_by}","{relationship.pending}");')
+        self.cursor.execute(f'INSERT INTO Relationships(dominant_id, submissive_id, initiated_by, pending) VALUES("{relationship.dominant_id}","{relationship.submissive_id}","{relationship.initiated_by}",1);')
         return Status.OK
 
     def get_all_submissives(self, dom_id: int) -> list:
