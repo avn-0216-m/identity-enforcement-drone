@@ -56,6 +56,8 @@ db = Database_Handler()
 rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
 
+#Utility Methods
+
 async def cull_roles():
 
     do_not_cull = []
@@ -80,6 +82,7 @@ async def cull_roles():
         total_culled = 0
         do_not_cull.clear()
 
+#Commands
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
@@ -130,8 +133,6 @@ async def submit(context, dominant: discord.Member):
     elif response is Status.HOLY_MATRIHORNY:
         await context.send("By the power invested in my processor, I now pronounce you dom and sub. Huzzah!")
     
-@bot.command()
-async def list(context, arg1: str = None, arg2: str = None):
 
     logger.info(f"{context.message.author.display_name} has requested to list something.")
 
@@ -180,56 +181,12 @@ async def list(context, arg1: str = None, arg2: str = None):
         for identity in identities:
             reply += f'"{identity.name}",\n'
 
-@bot.command(aliases = ['list_ids'])
-async def list_identities(context, arg: discord.Member = None):
-    logger.warning("list_identities command not implemented.")
-    if arg is None:
-        #List server identities.
-        return
-    else:
-        #List tagged user identities.
-        return
-
 @bot.command(aliases = ['yeet', 'relenquish'])
 async def uncollar(context, arg: discord.Member = None):
     if arg is None:
         #Reprimand user for not tagging someone.
         return
     #Check if they have a relationship with the user here and delete it if true.
-
-@bot.command()
-async def set(context, arg1: str = None, arg2 = None):
-
-    '''
-    Set a wide array of parameters with this function.
-    '''
-    if arg1 is None:
-        await context.send("What would you like to set?")
-        return
-    elif arg1 == "command_channel":
-        await context.send("cool beanzo")
-    
-@bot.command()
-async def register(context):
-    if db.get_registered_user(context.message.author.id).data != []:
-        await context.send("You're already registered.")
-        return
-
-    drone_id = scrape_drone_id(context.message.author.display_name)
-
-    if drone_id is not None:
-        db.register_user_with_id(context.message.author.id, drone_id)
-        await context.send("We've registered you in the database- and I couldn't help but notice your cute little drone ID, so we've made a note of that too. <3")
-        return
-
-    db.register_user(context.message.author.id)
-    await context.send("You've been registered in our database. :)")
-
-@bot.command()
-async def refresh(context):
-    logger.info(f"Refreshing default identities for guild {context.guild}")
-    en.refresh_default_identities(context.guild)
-    await context.send("Default identities for this guild have been refreshed.")
 
 @bot.command(aliases = ['assign'])
 async def enforce(context, arg1: discord.Member, arg2: str):
@@ -258,6 +215,7 @@ async def release(context, arg: discord.Member):
             return
     await context.send("That user does not have an assigned identity.")
 
+#Events
 @bot.event
 async def on_ready():
     logger.info("Identity Enforcement Drone #3161 online.")
@@ -268,18 +226,6 @@ async def on_ready():
 
     game = discord.Game("with your identity.")
     await bot.change_presence(activity = game)
-
-@bot.command()
-async def id(context):
-    if scrape_drone_id(context.message.author.display_name) is not None:
-        await context.send("But... You're _already_ a good little drone, sweetie!")
-        return
-    generated_id = en.generate_new_id(context.guild)
-    try:
-        await context.message.author.edit(nick=generated_id)
-        await context.send(f"Your wonderful new drone ID is {generated_id}! I've went ahead and assigned it to you- I know you're probably very eager to be a good drone! Enjoy.")
-    except discord.errors.Forbidden:
-        await context.send(f"Your wonderful new drone ID is {generated_id}! I would've assigned it to you, but you rank higher than me, so I can't change your nickname.")
 
 @bot.event
 async def on_message(message):
