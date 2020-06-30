@@ -1,5 +1,6 @@
 from database import Database_Handler
 from data_classes import Relationship, Status, Response
+import discord
 
 class Relationship_Handler():
     def __init__(self, db):

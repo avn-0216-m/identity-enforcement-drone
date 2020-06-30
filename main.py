@@ -196,13 +196,7 @@ async def enforce(context, arg1: discord.Member, arg2: str):
 
 @bot.command()
 async def release(context, arg: discord.Member):
-    for role in arg.roles:
-        if role.name.startswith(ENFORCEMENT_PREFIX):
-            print("Enforcable role found. Removing.")
-            await arg.remove_roles(role)
-            await context.send("Enforcable identity removed.")
-            return
-    await context.send("That user does not have an assigned identity.")
+    logger.info(f"Release command triggered. {context.message.author.name} wants to release {arg.name} in {context.guild.name}")
 
 @bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
 async def identity(context, arg1, arg2, arg3, arg4):
@@ -225,7 +219,7 @@ async def identity(context, arg1, arg2, arg3, arg4):
 
     #Validate that the identity name is valid.
     if identity is None: #No matching identities were found
-        if arg2.lower() is "new":
+        if arg2.lower() == "new":
             logger.info("Creating new identity.")
         else:
             logger.info("Invalid identity name given.")
