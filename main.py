@@ -192,11 +192,17 @@ async def enforce(context, arg1: discord.Member, arg2: str):
     '''
     Assign an identity role to a user.
     '''
-    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {arg1.name} as a(n) {arg2} in {context.guild.name}")
+    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {arg1.name} with the identity {arg2} in {context.guild.name}")
+
+    #Confirm the user has the specified identity
+    #Confirm the user is domming the target
+    #Insert an enforcement record in the enforcement table with the victim id, guild id, and the identity id.
 
 @bot.command()
 async def release(context, arg: discord.Member):
     logger.info(f"Release command triggered. {context.message.author.name} wants to release {arg.name} in {context.guild.name}")
+
+    #Delete from Enforcements table where user_id = mention.id and guild_id = guild id
 
 @bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
 async def identity(context, arg1, arg2, arg3, arg4):
@@ -266,10 +272,8 @@ async def on_message(message):
     if message.author.bot: 
         return
 
-    #Check if any user roles begin with '🟆:' (Which marks an enforcable role)
-    for role in message.author.roles:
-        if role.name.startswith('🟆: '):
-            await en.enforce(message=message, role=role)
+    #Check the db to see if the user is enforced in the guild
+    #If yes, enforce.
 
     if message.content.lower().startswith("beep"):
         await message.channel.send("Boop!")
