@@ -80,17 +80,6 @@ async def cull_roles():
         total_culled = 0
         do_not_cull.clear()
 
-@bot.command()
-async def fake_error(context):
-    raise TypeError("Well ain't this a fuckin' shame?")
-
-@bot.command()
-async def healthcheck(context):
-    if db.healthcheck() is Status.OK:
-        await context.send("I can connect to the DB. Everything should(?) be fine.")
-    else:
-        await context.send("I can't connect to my database. I don't know why. Sorry. :(")
-
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
@@ -201,7 +190,7 @@ async def list_identities(context, arg: discord.Member = None):
         #List tagged user identities.
         return
 
-@bot.command(aliases = ['yeet'])
+@bot.command(aliases = ['yeet', 'relenquish'])
 async def uncollar(context, arg: discord.Member = None):
     if arg is None:
         #Reprimand user for not tagging someone.
@@ -323,8 +312,8 @@ async def on_command_error(context, error):
     logger.error(f"!!! --- Exception caught in {context.command} command --- !!!")
     logger.error(error)
     exception_file = open("log.txt", "a")
-    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-    traceback.print_exception(type(error), error, error.__traceback__, file=exception_file)
+    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr) #Prints to console for debugging
+    traceback.print_exception(type(error), error, error.__traceback__, file=exception_file) #Prints to file for logging
     exception_file.close()
     logger.info("!!! --- End exception log. --- !!!")
 
