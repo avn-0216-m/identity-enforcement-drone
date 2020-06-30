@@ -215,6 +215,16 @@ async def release(context, arg: discord.Member):
             return
     await context.send("That user does not have an assigned identity.")
 
+@bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
+async def identity(context, arg1, arg2, arg3, arg4):
+    #This is the big boy command, the real fat schmeat of the program.
+    #Here's a fucken docstring for ya:
+    #arg1: Either a Discord mention or an identity name.
+    #arg2: Either an identity attribute (name/desc/lexicon/etc) or a command (new/rename/delete)
+    #arg3: The new value for the attribute specified in arg2
+    #arg4: Optional mode for value setting (replace/append/delete)
+    pass
+
 #Events
 @bot.event
 async def on_ready():
