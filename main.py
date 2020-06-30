@@ -205,7 +205,7 @@ async def release(context, arg: discord.Member):
     #Delete from Enforcements table where user_id = mention.id and guild_id = guild id
 
 @bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
-async def identity(context, arg1, arg2, arg3, arg4):
+async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
     #This is the big boy command, the real fat schmeat of the program.
     #Here's a fucken docstring for ya:
     #arg1: An identity name.
@@ -213,12 +213,19 @@ async def identity(context, arg1, arg2, arg3, arg4):
     #arg3: The new value for the attribute specified in arg2
     #arg4: Optional mode for value setting (replace/append/delete)
 
-    #List another users identities.
-    if context.message.mentions > 0:
+    #List another users identities if they are mentioned.
+    if context.message.mentions != []:
         logger.info("Listing all identities belonging to mentioned users.")
         for user in context.message.mentions:
-            logger.info(f"Getting identities for {user}")
+            logger.info(f"Getting identities for {user.name}")
 
+            reply += f"{user.display_name} has:"
+            #Get all IDs belonging to mentioned user and append their name + description
+
+        return
+    
+    #Validate that they've given an identity name.
+    elif arg1 is None:
         return
 
     identity = db.get_user_identity_by_name(context.message.author.id, arg1)
