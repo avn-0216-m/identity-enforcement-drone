@@ -1,33 +1,30 @@
 from data_classes import Relationship, Identity, User
+import logging
+logger = logging.getLogger('Identity Enforcement Drone')
 
-def result_to_identity(results: list) -> list: #Of identities:
-    reply = []
-    for result in results:
-        identity = Identity()
-        for key in result.keys():
+def map_row(rows, output_class):
 
-            value = result[key]
-            if value == "None":
-                value = None
-            setattr(identity, key, value)
-        reply.append(identity)
-    return reply
+    #fetchone() returns a single dictionary, whereas
+    #fetchall() returns a list.
+    #We need to account for it here.
 
-def result_to_relationship(results: list) -> list: #Of relationships
-    reply = []
-    for result in results:
-        relationship = Relationship()
-        for key in result.keys():
-            setattr(relationship, key, result[key])
-        reply.append(relationship)
-    return reply
+    if type(rows) is dict:
+        logger.info("Mapping one row.")
+        dictionary = rows
+        for key in dictionary:
+            output_object = output_class()
+            setattr(output_object, key, dictionary[key])
+        return[output_object]
 
-def result_to_user(results: list) -> list: #Of users
-    reply = []
-    for result in results:
-        user = User()
-        for key in result.keys():
-            setattr(user, key, result[key])
-        reply.append(user)
-    return reply    
+    else:
+        logger.info("Mapping many rows.")
+        reply = []
+        for row in rows:
+            output_object = output_class()
+            for key in row:
+                setattr(output_object, key, row[key])
+            reply.append(output_object)
+        return reply
+            
+                
 

@@ -4,7 +4,7 @@ from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities_for_guild
-from rowmapper import result_to_identity, result_to_relationship, result_to_user
+from rowmapper import result_to_identity, result_to_relationship, result_to_user, map_row
 import logging
 import sys
 
@@ -83,5 +83,12 @@ class Database_Handler():
     def get_all_user_identities(self, user):
         self.cursor.execute("SELECT name, description FROM Identities WHERE user_id = ?", (user.id,))
         data = self.cursor.fetchall()
-        return result_to_identity(data)
+        return map_row(data, Identity)
 
+    def get_user_identity_by_name(self, user, name: str):
+        self.cursor.execute("SELECT * FROM Identities WHERE user_id = ? AND name = ?", (user.id, name))
+        data = self.cursor.fetchone()
+
+        self.logger.info(f"DB RESULT IS {data} AND TYPE IS {type(data)}")
+
+        return map_row(data, Identity)

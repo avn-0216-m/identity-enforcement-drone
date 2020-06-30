@@ -195,6 +195,12 @@ async def enforce(context, arg1: discord.Member, arg2: str):
     logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {arg1.name} with the identity {arg2} in {context.guild.name}")
 
     #Confirm the user has the specified identity
+
+    if db.get_user_identity_by_name(context.message.author, arg2) is None:
+        await context.send("You do not have that specified identity.")
+    else:
+        await context.send("Right away baws!")
+
     #Confirm the user is domming the target
     #Insert an enforcement record in the enforcement table with the victim id, guild id, and the identity id.
 
@@ -223,11 +229,16 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
             logger.info(f"Getting identities for {user.name}")
             #Get all IDs belonging to mentioned user and append their name + description
 
-            identities = db.get_all_user_identities(user).data
+            identities = db.get_all_user_identities(user)
+
             id_text = ""
             for identity in identities:
-                id_text += f'{identity.name} - "{identity.description}"'
-            reply.add_field(name = user.display_name, value = id_text, inline = False)
+                id_text += identity.name
+                if identity.description is not None:
+                    id_text += f': "{identity.description}"'
+                id_text += "\n"
+            if id_text != "":
+                reply.add_field(name = user.display_name, value = id_text, inline = False)
         await context.send(embed=reply)
         return
     
