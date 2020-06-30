@@ -225,6 +225,13 @@ async def identity(context, arg1, arg2, arg3, arg4):
     #arg4: Optional mode for value setting (replace/append/delete)
     pass
 
+    if context.message.mentions > 0:
+        logger.info("Clone command triggered.")
+
+@bot.command(aliases = ['yoink'])
+async def clone(context, target, identity_name):
+    logger.info("Clone command triggered.")
+
 #Events
 @bot.event
 async def on_ready():
