@@ -216,12 +216,16 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
     #List another users identities if they are mentioned.
     if context.message.mentions != []:
         logger.info("Listing all identities belonging to mentioned users.")
+
+        reply = discord.Embed()
+
         for user in context.message.mentions:
             logger.info(f"Getting identities for {user.name}")
-
-            reply += f"{user.display_name} has:"
             #Get all IDs belonging to mentioned user and append their name + description
+            reply.add_field(name = user.display_name, value = "beep - 'here's a loooooooooooong description'\nboop - 'here's a short description'\nnya", inline = False)
 
+
+        await context.send(embed=reply)
         return
     
     #Validate that they've given an identity name.
