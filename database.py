@@ -66,6 +66,13 @@ class Database_Handler():
                                 initiated_by INTEGER NOT NULL,
                                 pending INTEGER NOT NULL
                             );
+
+                            CREATE TABLE IF NOT EXISTS Enforcements(
+                                enforcement_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                enforced_id INTEGER NOT NULL,
+                                server_id INTEGER NOT NULL
+                            );
+
                             """)
         self.connection.commit()
 

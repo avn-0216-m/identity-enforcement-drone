@@ -16,7 +16,7 @@ from relationship import Relationship_Handler
 from database import Database_Handler
 from enforcement import Enforcement_Handler
 #import utility modules 
-from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE
+from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
 from utils import scrape_drone_id
 #import data structure modules
 from database_constants import DATABASE_NAME, MESSAGES
@@ -223,12 +223,35 @@ async def identity(context, arg1, arg2, arg3, arg4):
     #arg2: Either an identity attribute (name/desc/lexicon/etc) or a command (new/rename/delete)
     #arg3: The new value for the attribute specified in arg2
     #arg4: Optional mode for value setting (replace/append/delete)
-    pass
 
+    #List another users identities.
     if context.message.mentions > 0:
         logger.info("Listing all identities belonging to mentioned users.")
         for user in context.message.mentions:
             logger.info(f"Getting identities for {user}")
+
+        return
+
+    identity = db.get_user_identity_by_name(context.message.author.id, arg1)
+
+    #Validate that the identity name is valid.
+    if identity is None: #No matching identities were found
+        if arg2.lower() is "new":
+            logger.info("Creating new identity.")
+        else:
+            logger.info("Invalid identity name given.")
+
+    #Validate attribute/command.
+    if arg2.lower() not in ALLOWED_ATTRIBUTES_AND_COMMANDS:
+        logger.info("Invalid attribute/command specified.")
+
+    #Validate mode.
+    if arg4.lower() not in ALLOWED_MODES:
+        logger.info("Invalid mode specified.")
+
+    
+
+    
 
 @bot.command(aliases = ['yoink'])
 async def clone(context, target, identity_name):
