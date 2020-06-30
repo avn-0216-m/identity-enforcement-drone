@@ -222,9 +222,12 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
         for user in context.message.mentions:
             logger.info(f"Getting identities for {user.name}")
             #Get all IDs belonging to mentioned user and append their name + description
-            reply.add_field(name = user.display_name, value = "beep - 'here's a loooooooooooong description'\nboop - 'here's a short description'\nnya", inline = False)
 
-
+            identities = db.get_all_user_identities(user).data
+            id_text = ""
+            for identity in identities:
+                id_text += f'{identity.name} - "{identity.description}"'
+            reply.add_field(name = user.display_name, value = id_text, inline = False)
         await context.send(embed=reply)
         return
     

@@ -23,7 +23,7 @@ class Identity():
         strict = 0,
         override_lexicon = "",
         override_chance = 0,
-        owner_id = None,
+        user_id = None,
         colour = None
     ):
         self.identity_id = identity_id
@@ -37,7 +37,7 @@ class Identity():
         self.strict = strict
         self.override_lexicon = override_lexicon
         self.override_chance = override_chance
-        self.owner_id = owner_id
+        self.user_id = user_id
         self.colour = colour
 
 class Enforcement():

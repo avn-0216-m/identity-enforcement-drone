@@ -122,7 +122,7 @@ TEMPLATE = Identity(
         strict = 0,
         override_lexicon = "",
         override_chance = 0,
-        owner_id = None,
+        user_id = None,
         colour = None
 )
 
@@ -136,7 +136,7 @@ PUPPY = Identity(
         strict = 0,
         override_lexicon = None,
         override_chance = 0,
-        owner_id = ENFORCEMENT_DRONE,
+        user_id = ENFORCEMENT_DRONE,
         colour = "FF66FF"
 )
 
@@ -150,7 +150,7 @@ STRICT_PUPPY = Identity(
         strict = 1,
         override_lexicon = None,
         override_chance = 0,
-        owner_id = ENFORCEMENT_DRONE,
+        user_id = ENFORCEMENT_DRONE,
         colour = "FF66FF"
 )
 
@@ -164,7 +164,7 @@ EZ_PUPPY = Identity(
         strict = 0,
         override_lexicon = None,
         override_chance = 0,
-        owner_id = ENFORCEMENT_DRONE,
+        user_id = ENFORCEMENT_DRONE,
         colour = "FF66FF"
 )
 
