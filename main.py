@@ -219,18 +219,27 @@ async def release(context, arg: discord.Member):
 async def identity(context, arg1, arg2, arg3, arg4):
     #This is the big boy command, the real fat schmeat of the program.
     #Here's a fucken docstring for ya:
-    #arg1: Either a Discord mention or an identity name.
+    #arg1: An identity name.
     #arg2: Either an identity attribute (name/desc/lexicon/etc) or a command (new/rename/delete)
     #arg3: The new value for the attribute specified in arg2
     #arg4: Optional mode for value setting (replace/append/delete)
     pass
 
     if context.message.mentions > 0:
-        logger.info("Clone command triggered.")
+        logger.info("Listing all identities belonging to mentioned users.")
+        for user in context.message.mentions:
+            logger.info(f"Getting identities for {user}")
 
 @bot.command(aliases = ['yoink'])
 async def clone(context, target, identity_name):
     logger.info("Clone command triggered.")
+
+    if target is None or identity_name is None:
+        return
+
+    #Check user does not already have an ID with the given name
+    #Query DB for IDs beloning to target user with specified name,
+    #If exists, insert duplicate entry into DB where owner ID = message author ID
 
 #Events
 @bot.event
