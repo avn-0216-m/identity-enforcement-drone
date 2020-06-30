@@ -57,7 +57,6 @@ rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
 
 #Utility Methods
-
 async def cull_roles():
 
     do_not_cull = []
@@ -193,17 +192,7 @@ async def enforce(context, arg1: discord.Member, arg2: str):
     '''
     Assign an identity role to a user.
     '''
-    print("Enforcing.")
-
-    if not en.check_permissions(context.message.author.id, arg1.id):
-        await context.send("You cannot enforce users who are not submissive to you.")
-        return
-
-    status = await en.assign(arg1, arg2)
-    if status is Status.OK:
-        await context.send("Identity assigned.")
-    elif status is Status.BAD_REQUEST:
-        await context.send("Not a valid identity. See server identities by typing 'list identities'")
+    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {arg1.name} as a(n) {arg2} in {context.guild.name}")
 
 @bot.command()
 async def release(context, arg: discord.Member):
