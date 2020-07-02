@@ -43,13 +43,8 @@ culling_roles = False
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
 logger.info("Loading secret details from file.")
-with open("secret_details.json") as secret_file:
-    secret_details = json.load(secret_file)
-    db_host = secret_details['db_host']
-    db_user = secret_details['db_user']
-    db_pass = secret_details['db_pass']
-    bot_token = secret_details['bot_token']
-logger.info("Secret details successfully loaded.")
+with open("bot_token.txt") as secret_file:
+    bot_token = secret_file.readline()
 
 db = Database_Handler()
 rl = Relationship_Handler(db)
@@ -146,15 +141,19 @@ async def uncollar(context, arg: discord.Member = None):
     #Check if they have a relationship with the user here and delete it if true.
 
 @bot.command(aliases = ['assign'])
-async def enforce(context, arg1: discord.Member, arg2: str):
+async def enforce(context, target: discord.Member, identity: str):
     '''
     Assign an identity role to a user.
     '''
-    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {arg1.name} with the identity {arg2} in {context.guild.name}")
+
+    #Validate args
+    if target is not discord.Member or identity is not str: return
+
+    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity} in {context.guild.name}")
 
     #Confirm the user has the specified identity
 
-    if db.get_user_identity_by_name(context.message.author, arg2) is None:
+    if db.get_user_identity_by_name(context.message.author, identity) is None:
         await context.send("You do not have that specified identity.")
     else:
         await context.send("Right away baws!")
