@@ -27,7 +27,7 @@ class Relationship_Handler():
 
     def handle_dominate_query(self, dominant: discord.Member, submissive: discord.Member) -> Response:
 
-        current_relationship = self.db.get_relationship(dominant.id, submissive.id).data
+        current_relationship = self.db.get_relationship(dominant, submissive)
 
         if current_relationship is None:
             #Register the request in the DB.

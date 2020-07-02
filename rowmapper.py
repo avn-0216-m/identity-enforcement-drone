@@ -2,7 +2,7 @@ from data_classes import Relationship, Identity, User
 import logging
 logger = logging.getLogger('Identity Enforcement Drone')
 
-def map_row(rows, output_class):
+def map_rows(rows, output_class):
 
     #fetchone() returns a single dictionary, whereas
     #fetchall() returns a list.
