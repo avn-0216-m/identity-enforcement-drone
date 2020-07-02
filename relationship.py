@@ -5,38 +5,20 @@ import discord
 class Relationship_Handler():
     def __init__(self, db):
         self.db = db
+        
+    def handle_relationship_request(self, dominant: discord.Member, submissive: discord.Member, initiated_by: discord.Member):
 
-    def handle_submit_query(self) -> bool:
-        print("Someone wants to submit.")
-
-    def handle_submit_query(self, submissive, dominant) -> Response:
-        results = self.db.find_potential_relationship(dominant.id, submissive.id).data
-        print("Results are")
-        print(results)
-        if results == []:
-            print("No duplicate results found. Continuing.")
-            pass
-        else:
-            for result in results:
-                if result.initiated_by == result.dominant_id and result.pending == 1:
-                    self.db.confirm_relationship(result.relationship_id)
-                    return Status.HOLY_MATRIHORNY
-                else:
-                    return Status.DUPLICATE_REQUEST
-        return self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = submissive.id))
-
-    def handle_dominate_query(self, dominant: discord.Member, submissive: discord.Member) -> Response:
+        #Validate arguments
+        if dominant is not discord.Member or submissive is not discord.Member or initiated_by is not discord.Member: return Status.BAD_REQUEST
 
         current_relationship = self.db.get_relationship(dominant, submissive)
 
         if current_relationship is None:
-            #Register the request in the DB.
-            self.db.add_relationship(Relationship(dominant_id = dominant.id, submissive_id = submissive.id, initiated_by = dominant.id))
-            return Status.CREATED
-        elif current_relationship.pending == 1 and current_relationship.initiated_by == submissive.id:
-            #Confirm the relationship.
+            #No pre-existing relationship, register it in DB.
+            self.db.add_relationship(Relationship(dominant = dominant, submissive = submissive, initiated_by = initiated_by))
+        elif current_relationship.pending == 1 and current_relationship.initiated_by != initiated_by.id
+            #Relationship mutually confirmed.
             self.db.confirm_relationship(current_relationship.relationship_id)
-            return Status.HOLY_MATRIHORNY
         else:
-            #Disregard the duplicate request.
+            #It's a duplicate request, disregard it.
             return Status.DUPLICATE_REQUEST
