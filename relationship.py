@@ -12,7 +12,6 @@ class Relationship_Handler():
         if dominant is not discord.Member or submissive is not discord.Member or initiated_by is not discord.Member: return Status.BAD_REQUEST
 
         current_relationship = self.db.get_relationship(dominant, submissive)
-
         if current_relationship is None:
             #No pre-existing relationship, register it in DB.
             self.db.add_relationship(Relationship(dominant = dominant, submissive = submissive, initiated_by = initiated_by))
