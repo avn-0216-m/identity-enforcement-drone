@@ -90,6 +90,14 @@ class Database_Handler():
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
 
+    def create_identity(self, user: discord.Member, name: str):
+        self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);" (user.id, name))
+        self.connection.commit()
+
+    def update_identity(self, identity: Identity, field: str, new_value: str):
+        self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?" (field, new_value, identity.identity_id))
+        self.connection.commit()
+
     #Relationship
     def get_relationship(self, dominant, submissive):
         self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? and submissive_id = ?", (dominant.id, submissive.id))
