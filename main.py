@@ -88,6 +88,8 @@ async def dominate(context, submissive: discord.Member):
     They must respond by submitting to you with the submit command.
     '''
 
+    if submissive is not discord.Member: return #Bad request!!
+
     logger.info(f'{context.message.author.display_name} is trying to dominate {submissive.display_name}')
 
     if context.message.author is submissive:
@@ -98,7 +100,7 @@ async def dominate(context, submissive: discord.Member):
         await context.send("Thanks, but no thanks.")
         return
 
-    response = rl.handle_dominate_query(context.message.author, submissive)
+    response = rl.handle_relationship_request(context.message.author, submissive, context.message.author)
     if response is Status.DUPLICATE_REQUEST:
         await context.send("You are already dominating/attempting to dominate that person.")
     elif response is Status.OK:
@@ -113,6 +115,8 @@ async def submit(context, dominant: discord.Member):
     They must respond by dominating you with the dominate command.
     '''
 
+    if dominant is not discord.Member: return
+
     logger.info(f'{context.message.author.display_name} is trying to submit to {dominant.display_name}')
 
     if context.message.author is dominant:
@@ -123,7 +127,7 @@ async def submit(context, dominant: discord.Member):
         await context.send("Thanks, but no thanks.")
         return
 
-    response = rl.handle_submit_query(context.message.author, dominant)
+    response = rl.handle_relationship_query(context.message.author, dominant, context.message.author)
     if response is Status.DUPLICATE_REQUEST:
         await context.send("You are already submissive to/attempting to submit to that person. You needy fucking bottom, chill out.")
     elif response is Status.OK:
@@ -133,51 +137,6 @@ async def submit(context, dominant: discord.Member):
     
 
     logger.info(f"{context.message.author.display_name} has requested to list something.")
-
-    if arg1 is None:
-        await context.send("What would you like to list?")
-        return
-    elif arg1 == "submissives" or arg1 == "subs":
-        results = db.get_all_submissives(context.message.author.id).data
-        reply = "On this server, you own the following submissives:\n"
-
-        subs_in_other_servers = 0
-
-        for result in results:
-            sub_as_user = context.guild.get_member(int(result.submissive_id))
-            if sub_as_user is not None:
-                reply += f"{sub_as_user.display_name}\n"
-            else:
-                subs_in_other_servers += 1
-        plural = ("sub" if subs_in_other_servers == 1 else "subs")
-        reply += f"...and {subs_in_other_servers} other {plural} elsewhere on Discord~\n"
-        if len(reply) > 2000:
-            reply = "You own too many submissives to count. Well done."
-        await context.send(reply)
-    elif arg1 == "server":
-        identities = db.get_all_identities_for_guild(context.guild.id).data
-        if len(identities) == 0:
-            await context.send("This server hosts no identities.")
-            return
-        reply = "This server hosts the following identities:\n"
-        for identity in identities:
-            if identity.display_name == None and identity.display_name_with_id == None:
-                reply += f'"{identity.name}",'
-            elif identity.display_name == None:
-                reply += f'"{identity.name}", with the display name "{identity.display_name_with_id}" if you\'re a drone.\n'
-            elif identity.display_name_with_id == None:
-                reply += f'"{identity.name}", with the display name "{identity.display_name}"\n'
-            else:
-                reply += f'"{identity.name}, with the display name "{identity.display_name}" or {identity.display_name} if you\'re a drone.\n'
-        await context.send(reply)
-    elif arg1 == "my":
-        identities = db.get_all_identities_for_user(context.message.author.id).data
-        if len(identities) == 0:
-            await context.send("You possess no identities right now. Kinda hot! Why not make one?")
-            return
-        reply = "You own the following identities:\n"
-        for identity in identities:
-            reply += f'"{identity.name}",\n'
 
 @bot.command(aliases = ['yeet', 'relenquish'])
 async def uncollar(context, arg: discord.Member = None):
