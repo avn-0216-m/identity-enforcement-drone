@@ -16,7 +16,7 @@ class Relationship_Handler():
         if current_relationship is None:
             #No pre-existing relationship, register it in DB.
             self.db.add_relationship(Relationship(dominant = dominant, submissive = submissive, initiated_by = initiated_by))
-        elif current_relationship.pending == 1 and current_relationship.initiated_by != initiated_by.id
+        elif current_relationship.pending == 1 and current_relationship.initiated_by != initiated_by.id:
             #Relationship mutually confirmed.
             self.db.confirm_relationship(current_relationship.relationship_id)
         else:

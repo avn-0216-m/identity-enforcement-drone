@@ -141,25 +141,28 @@ async def uncollar(context, arg: discord.Member = None):
     #Check if they have a relationship with the user here and delete it if true.
 
 @bot.command(aliases = ['assign'])
-async def enforce(context, target: discord.Member, identity: str):
+async def enforce(context, target: discord.Member, identity_name: str):
     '''
     Assign an identity role to a user.
     '''
 
     #Validate args
-    if target is not discord.Member or identity is not str: return
+    if target is not discord.Member or identity_name is not str: return
 
-    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity} in {context.guild.name}")
+    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity_name} in {context.guild.name}")
 
     #Confirm the user has the specified identity
-
-    if db.get_user_identity_by_name(context.message.author, identity) is None:
+    if identity := db.get_user_identity_by_name(context.message.author, identity_name) is None:
         await context.send("You do not have that specified identity.")
-    else:
-        await context.send("Right away baws!")
 
     #Confirm the user is domming the target
+    if relationship := db.get_relationship(context.message.author, target) is None:
+        return
+    elif relationship.pending != 0:
+        return
+
     #Insert an enforcement record in the enforcement table with the victim id, guild id, and the identity id.
+    db.add_enforcement(target, identity, context.guild)
 
 @bot.command()
 async def release(context, arg: discord.Member):

@@ -2,7 +2,6 @@ import sqlite3
 import discord
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
-from default_identities import init_default_identities_for_guild
 from rowmapper import map_rows
 import logging
 import sys
@@ -31,6 +30,7 @@ class Database_Handler():
             Database_Handler.connection = new_connection
         self.connection = Database_Handler.connection
         if Database_Handler.cursor is None:
+            #Get a new cursor
             Database_Handler.cursor = Database_Handler.connection.cursor()
         self.cursor = Database_Handler.cursor
 
@@ -72,6 +72,7 @@ class Database_Handler():
                             CREATE TABLE IF NOT EXISTS Enforcements(
                                 enforcement_id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 user_id INTEGER NOT NULL,
+                                identity_id INTEGER NOT NULL,
                                 guild_id INTEGER NOT NULL
                             );
 
@@ -90,8 +91,13 @@ class Database_Handler():
         return map_rows(data, Identity)
 
     #Relationship
-
     def get_relationship(self, dominant, submissive):
         self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? and submissive_id = ?", (dominant.id, submissive.id))
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
+
+    #Enforcement
+    def add_enforcement(self, user, identity, guild):
+        self.cursor.execute("INSERT INTO Enforcments(user_id, identity_id, guild_id) VALUES(?,?,?);", (user.id, identity.id, guild.id))
+        self.connection.commit()
+        return True
