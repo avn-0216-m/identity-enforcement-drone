@@ -19,7 +19,6 @@ from enforcement import Enforcement_Handler
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
 from utils import scrape_drone_id
 #import data structure modules
-from database_constants import DATABASE_NAME, MESSAGES
 from data_classes import Status
 
 #Setup logger

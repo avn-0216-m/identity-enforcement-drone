@@ -1,6 +1,5 @@
 import sqlite3
 import discord
-from database_constants import DATABASE_NAME, MESSAGES, get_migration, RELATIONSHIPS
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from default_identities import init_default_identities_for_guild
