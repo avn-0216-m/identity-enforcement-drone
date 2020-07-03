@@ -8,13 +8,15 @@ def map_rows(rows, output_class):
     #fetchall() returns a list.
     #We need to account for it here.
 
+    if rows is None: return None
+
     if type(rows) is dict:
         logger.info("Mapping one row.")
         dictionary = rows
+        output_object = output_class()
         for key in dictionary:
-            output_object = output_class()
             setattr(output_object, key, dictionary[key])
-        return[output_object]
+        return output_object
 
     else:
         logger.info("Mapping many rows.")
@@ -24,6 +26,7 @@ def map_rows(rows, output_class):
             for key in row:
                 setattr(output_object, key, row[key])
             reply.append(output_object)
+        logger.info(f"Returning {len(reply)} rows mapped as {output_class}")
         return reply
             
                 

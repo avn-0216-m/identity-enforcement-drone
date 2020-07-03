@@ -67,7 +67,7 @@ class Database_Handler():
                                 dominant_id INTEGER NOT NULL,
                                 submissive_id INTEGER NOT NULL,
                                 initiated_by INTEGER NOT NULL,
-                                pending INTEGER NOT NULL
+                                confirmed INTEGER DEFAULT 0
                             );
 
                             CREATE TABLE IF NOT EXISTS Enforcements(
@@ -114,10 +114,9 @@ class Database_Handler():
                                     strict,
                                     override_lexicon,
                                     override_chance,
-                                    user_id,
-                                    colour)
-                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
-                                """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, user.id, identity.colour))
+                                    user_id)
+                                VALUES(?,?,?,?,?,?,?,?,?,?,?);
+                                """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, user.id))
         self.connection.commit()
         return True
 
@@ -125,20 +124,21 @@ class Database_Handler():
     def get_relationship(self, dominant, submissive):
         self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? and submissive_id = ?", (dominant.id, submissive.id))
         data = self.cursor.fetchone()
-        return map_rows(data, Identity)
+        return map_rows(data, Relationship)
 
     def add_relationship(self, dominant: discord.Member, submissive: discord.Member, initiated_by: discord.Member):
         try:
             self.cursor.execute("INSERT INTO Relationships(dominant_id, submissive_id, initiated_by) VALUES(?,?,?)", (dominant.id, submissive.id, initiated_by.id))
             self.connection.commit()
             return True
-        except:
-            self.logger.error("Adding the relationship failed.")
+        except Exception as e:
+            self.logger.error(f"Adding the relationship failed: {e}")
             return False
 
     def confirm_relationship(self, relationship: Relationship):
         try:
-            self.cursor.execute("UPDATE Relationships SET pending = 0 WHERE relationship_id = ?", (relationship.relationship_id,))
+            self.logger.info(f"Confirming relationship ID: {relationship.relationship_id}")
+            self.cursor.execute("UPDATE Relationships SET confirmed = 1 WHERE relationship_id = ?", (relationship.relationship_id,))
             self.connection.commit()
             return True
         except:

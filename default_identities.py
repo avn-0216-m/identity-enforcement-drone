@@ -123,9 +123,8 @@ TEMPLATE = Identity(
         strict = 0,
         override_lexicon = "",
         override_chance = 0,
-        user_id = None,
-        colour = None
-)
+        user_id = None
+        )
 
 PUPPY = Identity(
         name = "Puppy",
@@ -138,9 +137,8 @@ PUPPY = Identity(
         strict = 0,
         override_lexicon = None,
         override_chance = 0,
-        user_id = ENFORCEMENT_DRONE,
-        colour = "FF66FF"
-)
+        user_id = ENFORCEMENT_DRONE
+    )
 
 DEFAULT_IDENTITIES = [PUPPY]
 
