@@ -104,7 +104,7 @@ class Database_Handler():
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
 
-    def add_relationship(self, dominant, submissive, initiated_by):
+    def add_relationship(self, dominant: discord.Member, submissive: discord.Member, initiated_by: discord.Member):
         try:
             self.cursor.execute("INSERT INTO Relationships(dominant_id, submissive_id, initiated_by) VALUES(?,?,?)", (dominant.id, submissive.id, initiated_by.id))
             self.connection.commit()
@@ -113,9 +113,9 @@ class Database_Handler():
             self.logger.error("Adding the relationship failed.")
             return False
 
-    def confirm_relationship(self, relationship: Relationship):
+    def confirm_relationship(self, relationship_id: int):
         try:
-            self.cursor.execute("UPDATE Relationships SET pending = 0 WHERE relationship_id = ?", (relationship.relationship_id,))
+            self.cursor.execute("UPDATE Relationships SET pending = 0 WHERE relationship_id = ?", (relationship_id,))
             self.connection.commit()
             return True
         except:
@@ -124,7 +124,7 @@ class Database_Handler():
 
     def end_relationship(self, relationship: Relationship):
         try:
-            self.cursor.execute("DELETE FROM Relationships WHERE relationship_id = ?", (relationship.relationship_idid,))
+            self.cursor.execute("DELETE FROM Relationships WHERE relationship_id = ?", (relationship.relationship_id,))
             self.connection.commit()
             return True
         except:

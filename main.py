@@ -133,12 +133,24 @@ async def submit(context, dominant: discord.Member):
 
     logger.info(f"{context.message.author.display_name} has requested to list something.")
 
-@bot.command(aliases = ['yeet', 'relenquish'])
-async def uncollar(context, arg: discord.Member = None):
-    if arg is None:
-        #Reprimand user for not tagging someone.
+@bot.command(aliases = ['yeet', 'uncollar', 'goodbye'])
+async def relenquish(context, target: discord.Member = None):
+    #Validate argument
+    if target is not discord.Member:
         return
-    #Check if they have a relationship with the user here and delete it if true.
+
+    reply = discord.Embed(title = f"Relationship changes: {context.message.author.display_name}")
+
+    #End relationship where user is submissive to target
+    if sub_relationship := db.get_relationship(target, context.message.author) is not None:
+        db.end_relationship(sub_relationship.relationship_id)
+        reply.add_field(inline = false, value = f"No longer submissive to {target.display_name}")
+    #End relationship where user is dominant to target
+    if dom_relationship := db.get_relationship(context.message.author, target) is not None:
+        db.end_relationship(dom_relationship.relationship_id)
+        reply.add_field(inline = false, value = f"No longer dominant to {target.display_name}")
+
+    
 
 @bot.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str):
