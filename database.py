@@ -3,6 +3,7 @@ import discord
 from data_classes import Relationship, Identity, Status, Response
 from notable_entities import ENFORCEMENT_DRONE
 from rowmapper import map_rows
+from default_identities import DEFAULT_IDENTITIES
 import logging
 import sys
 
@@ -97,6 +98,28 @@ class Database_Handler():
     def update_identity(self, identity: Identity, field: str, new_value: str):
         self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?" (field, new_value, identity.identity_id))
         self.connection.commit()
+
+    def set_default_identities(self, user: discord.Member):
+        for id in DEFAULT_IDENTITIES:
+            self.cursor.execute("DELETE FROM Identities WHERE user_id = ? AND name = ?;", (user.id, id.name))
+            self.cursor.execute("""
+                                INSERT INTO Identities(
+                                    name,
+                                    description,
+                                    display_name,
+                                    display_name_with_id,
+                                    avatar,
+                                    replacement_lexicon,
+                                    allowance_lexicon,
+                                    strict,
+                                    override_lexicon,
+                                    override_chance,
+                                    user_id,
+                                    colour)
+                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
+                                """, (id.name, id.description, id.display_name, id.display_name_with_id, id.avatar, id.replacement_lexicon, id.allowance_lexicon, id.strict, id.override_lexicon, id.override_chance, user.id, id.colour))
+        self.connection.commit()
+        return True
 
     #Relationship
     def get_relationship(self, dominant, submissive):

@@ -20,6 +20,7 @@ from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTR
 from utils import scrape_drone_id
 #import data structure modules
 from data_classes import Status
+from default_identities import DEFAULT_IDENTITIES
 
 #Setup logger
 logger = logging.getLogger('Identity Enforcement Drone')
@@ -150,7 +151,15 @@ async def relenquish(context, target: discord.Member = None):
         db.end_relationship(dom_relationship.relationship_id)
         reply.add_field(inline = false, value = f"No longer dominant to {target.display_name}")
 
+    await context.send(embed = reply)
     
+@bot.command(aliases = ['init'])
+async def defaults(context):
+    db.set_default_identities(context.message.author)
+    reply = discord.Embed(title = f"Identities added for {context.message.author.display_name}:")
+    for identity in DEFAULT_IDENTITIES:
+        reply.add_field(inline = false, name = f"{identity.name} - {identity.description}")
+    await context.send(embed = reply)
 
 @bot.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str):
