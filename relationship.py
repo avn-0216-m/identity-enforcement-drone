@@ -17,7 +17,7 @@ class Relationship_Handler():
             self.db.add_relationship(Relationship(dominant = dominant, submissive = submissive, initiated_by = initiated_by))
         elif current_relationship.pending == 1 and current_relationship.initiated_by != initiated_by.id:
             #Relationship mutually confirmed.
-            self.db.confirm_relationship(current_relationship.relationship_id)
+            self.db.confirm_relationship(current_relationship)
         else:
             #It's a duplicate request, disregard it.
             return Status.DUPLICATE_REQUEST

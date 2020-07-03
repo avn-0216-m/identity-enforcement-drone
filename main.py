@@ -182,7 +182,11 @@ async def enforce(context, target: discord.Member, identity_name: str):
     elif relationship.pending != 0:
         return
 
-    #Insert an enforcement record in the enforcement table with the victim id, guild id, and the identity id.
+    #If the user is already enforced, update the identity
+    if current_enforcement := db.get_enforcement(target, context.guild) is not None:
+        db.update_enforcement(current_enforcement, identity)
+
+    #Otherwise, add an enforcement record in the enforcement table.
     db.add_enforcement(target, identity, context.guild)
 
 @bot.command()

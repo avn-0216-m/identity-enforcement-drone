@@ -1,6 +1,6 @@
 import sqlite3
 import discord
-from data_classes import Relationship, Identity, Status, Response
+from data_classes import Relationship, Identity, Status, Response, Enforcement
 from notable_entities import ENFORCEMENT_DRONE
 from rowmapper import map_rows
 from default_identities import DEFAULT_IDENTITIES
@@ -100,8 +100,8 @@ class Database_Handler():
         self.connection.commit()
 
     def set_default_identities(self, user: discord.Member):
-        for id in DEFAULT_IDENTITIES:
-            self.cursor.execute("DELETE FROM Identities WHERE user_id = ? AND name = ?;", (user.id, id.name))
+        for identity in DEFAULT_IDENTITIES:
+            self.cursor.execute("DELETE FROM Identities WHERE user_id = ? AND name = ?;", (user.id, identity.name))
             self.cursor.execute("""
                                 INSERT INTO Identities(
                                     name,
@@ -117,7 +117,7 @@ class Database_Handler():
                                     user_id,
                                     colour)
                                 VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
-                                """, (id.name, id.description, id.display_name, id.display_name_with_id, id.avatar, id.replacement_lexicon, id.allowance_lexicon, id.strict, id.override_lexicon, id.override_chance, user.id, id.colour))
+                                """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, user.id, identity.colour))
         self.connection.commit()
         return True
 
@@ -136,9 +136,9 @@ class Database_Handler():
             self.logger.error("Adding the relationship failed.")
             return False
 
-    def confirm_relationship(self, relationship_id: int):
+    def confirm_relationship(self, relationship: Relationship):
         try:
-            self.cursor.execute("UPDATE Relationships SET pending = 0 WHERE relationship_id = ?", (relationship_id,))
+            self.cursor.execute("UPDATE Relationships SET pending = 0 WHERE relationship_id = ?", (relationship.relationship_id,))
             self.connection.commit()
             return True
         except:
@@ -159,3 +159,13 @@ class Database_Handler():
         self.cursor.execute("INSERT INTO Enforcments(user_id, identity_id, guild_id) VALUES(?,?,?);", (user.id, identity.id, guild.id))
         self.connection.commit()
         return True
+
+    def end_enforcement(self, user, identity, guild):
+        return True
+
+    def get_enforcement(self, user, guild):
+        self.cursor.execute("SELECT identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
+        return map_rows(self.cursor.fetchone(), Enforcement)
+
+    def update_enforcement(self, enforcement, new_identity):
+        self.cursor.execute("UPDATE Enforcements SET identity_id = ? WHERE enforcement_id = ?", (new_identity.id, enforcement.id))
