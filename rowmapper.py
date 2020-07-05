@@ -26,7 +26,7 @@ def map_rows(rows, output_class):
             for key in row:
                 setattr(output_object, key, row[key])
             reply.append(output_object)
-        logger.info(f"Returning {len(reply)} rows mapped as {output_class}")
+        logger.info(f"Mapped {len(reply)} rows to {output_class}")
         return reply
             
                 
