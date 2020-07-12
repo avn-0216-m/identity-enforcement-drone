@@ -53,11 +53,6 @@ class Enforcement_Handler():
         await proxy_webhook.send(proxy_message_content, username=proxy_username)
         return True
 
-    def refresh_default_identities(self, guild: discord.Guild) -> Status:
-        self.logger.info(f"Refreshing default identities for guild {guild.name}")
-        self.db.refresh_default_identities(guild.id)
-        return Status.OK
-
     async def assign(self, target: discord.Member = None, role: str = None):
         #Check if given string is a valid identity.
         if len(self.db.get_identity_by_role_name(role, target.guild.id).data) == 0:
@@ -75,38 +70,3 @@ class Enforcement_Handler():
         #Finally, assign the new enforcement role.
         await target.add_roles(role_to_assign)
         return Status.OK
-
-    def check_permissions(self, dom_id, sub_id) -> bool:
-        if dom_id == sub_id:
-            return True
-
-        results = self.db.find_confirmed_relationship(dom_id, sub_id).data
-        if len(results) != 0:
-            return True
-        return False
-
-    def generate_new_id(self, guild: discord.Guild) -> str:
-
-        preexisting_ids = []
-
-        #Get all registered drone IDs from database.
-        drones = self.db.get_all_registered_drones().data
-
-        for drone in drones:
-            preexisting_ids.append(drone.drone_id)
-        #Get all registered drone IDs from the server.
-        for member in guild.members:
-            drone_id = scrape_drone_id(member.display_name)
-            if drone_id is not None:
-                preexisting_ids.append(drone_id)
-
-        generated_id = random.randint(0,9999)
-        generated_id = f"{generated_id:04}"
-
-        while generated_id in preexisting_ids:
-            generated_id = random.randint(0,9999)
-            generated_id = f"{generated_id:04}"
-
-        return generated_id
-
-
