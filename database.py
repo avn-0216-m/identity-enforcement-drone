@@ -164,8 +164,9 @@ class Database_Handler():
         self.connection.commit()
         return True
 
-    def end_enforcement(self, user, identity, guild):
-        return True
+    def end_enforcement(self, user, guild):
+        self.cursor.execute("DELETE FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
+        self.connection.commit()
 
     def get_enforcement(self, user, guild):
         self.cursor.execute("SELECT enforcement_id, identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))

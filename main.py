@@ -161,7 +161,7 @@ async def defaults(context):
     await context.send(embed = reply)
 
 @bot.command(aliases = ['assign'])
-async def enforce(context, target: discord.Member, identity_name: str):
+async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
     '''
     Assign an identity role to a user.
     '''
@@ -182,17 +182,23 @@ async def enforce(context, target: discord.Member, identity_name: str):
     if (current_enforcement := db.get_enforcement(target, context.guild)) is not None:
         logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
         db.update_enforcement(current_enforcement, identity)
+
+        await context.send("DEBUG: Enforcement updated.")
+
         return
 
     #Otherwise, add an enforcement record in the enforcement table.
     logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
     db.add_enforcement(target, identity, context.guild)
 
-@bot.command()
-async def release(context, arg: discord.Member):
-    logger.info(f"Release command triggered. {context.message.author.name} wants to release {arg.name} in {context.guild.name}")
+    await context.send("DEBUG: Enforcement added.")
 
-    #Delete from Enforcements table where user_id = mention.id and guild_id = guild id
+@bot.command()
+async def release(context, target: discord.Member):
+    logger.info(f"Release command triggered. {context.message.author.name} wants to release {target.name} in {context.guild.name}")
+    db.end_enforcement(target, context.guild)
+
+    await context.send("DEBUG: User released.")
 
 @bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
 async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):

@@ -154,7 +154,31 @@ TALKATIVE = Identity(
         user_id = ENFORCEMENT_DRONE
     )
 
-DEFAULT_IDENTITIES = [PUPPY, TALKATIVE]
+MILDMANNERED = Identity(
+        name = "mildmannered",
+        description = "This identity keeps to themselves and can only answer questions with a calm 'yes' or 'no.'",
+        display_name = None,
+        display_name_with_id = None,
+        avatar = None,
+        replacement_lexicon = None,
+        allowance_lexicon = lexicon_to_string(["Yes.", "No."]),
+        strict = 0,
+        override_lexicon = None,
+        override_chance = 0,
+        user_id = ENFORCEMENT_DRONE
+    )
+
+BEEPYDRONE = Identity(
+    name = "Beepydrone",
+    description = "This identity is on loan from HexCorp. It comes with greatly increased productivity and obedience. Beep boop!",
+    display_name_with_id = "HexDrone #{}",
+    avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/drone.png",
+    user_id = ENFORCEMENT_DRONE
+)
+
+
+
+DEFAULT_IDENTITIES = [PUPPY, TALKATIVE, MILDMANNERED, BEEPYDRONE]
 
 
 

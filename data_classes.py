@@ -18,10 +18,10 @@ class Identity():
         display_name = None,
         display_name_with_id = None,
         avatar = None,
-        replacement_lexicon = "",
-        allowance_lexicon = "",
+        replacement_lexicon = None,
+        allowance_lexicon = None,
         strict = 0,
-        override_lexicon = "",
+        override_lexicon = None,
         override_chance = 0,
         user_id = None,
         colour = None
