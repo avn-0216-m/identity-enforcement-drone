@@ -49,8 +49,11 @@ class Enforcement_Handler():
             #If there is a display name to use, set it.
             proxy_username = identity.display_name
 
+        #TODO: The rest of the enforcement workflow (message content etc)
+
         proxy_webhook = get_webhook(message.channel)
         await proxy_webhook.send(proxy_message_content, username=proxy_username)
+
         return True
 
     async def assign(self, target: discord.Member = None, role: str = None):
