@@ -2,7 +2,7 @@ import discord
 import random
 import logging
 from discord.utils import get
-from data_classes import Status
+from data_classes import Status, Enforcement, Identity
 from webhook import Webhook_Handler
 from notable_entities import ENFORCEMENT_PREFIX
 from utils import scrape_drone_id
@@ -24,6 +24,34 @@ class Enforcement_Handler():
             await message.author.remove_roles(role)
             return
         await self.wh.proxy_message(message = message, identity = identity[0])
+
+    async def get_webhook(self, channel: discord.Channel) -> discord.Webhook:
+        self.logger.info(f'Getting a webhook for "{channel.name}"')
+        available_webhooks = await channel.webhooks()
+        if len(available_webhooks) == 0:
+            self.logger.info(f'Creating webhook for "{channel.name}"')
+            available_webhooks = [await message.channel.create_webhook(name = "Identity Enforcement Drone")]
+        return available_webhooks[0]
+
+    async def enforce_user(self, message: discord.Message, enforcement: Enforcement):
+        self.logger.info("In enforce_user function.")
+        #Get identity via identity ID from enforcement.
+        identity = self.db.get_identity_by_id(enforcement)
+
+        proxy_username = message.author.display_name
+        proxy_message_content = ""
+
+        #Drone ID name takes priority over non-drone ID name, so check that first.
+        if identity.display_name_with_id is not None and scrape_drone_id(message.author.display_name) is not None:
+            #If there is a display name for drones AND the user has an id. Set it.
+
+        elif identity.display_name is not None:
+            #If there is a display name to use, set it.
+            proxy_username = identity.display_name
+
+        proxy_webhook = get_webhook(message.channel)
+        await proxy_webhook.send(proxy_message_content, username=proxy_username)
+        return True
 
     def refresh_default_identities(self, guild: discord.Guild) -> Status:
         self.logger.info(f"Refreshing default identities for guild {guild.name}")

@@ -280,6 +280,10 @@ async def on_message(message):
 
     #Check the db to see if the user is enforced in the guild
     #If yes, enforce.
+    if (enforcement := db.get_enforcement(message.author, message.guild)) is not None:
+        logger.info(f"Enforcing {message.author.name} with identity of ID {enforcement.identity_id}")
+        await en.enforce_user(message, enforcement)
+        return
 
     if message.content.lower().startswith("beep"):
         await message.channel.send("Boop!")

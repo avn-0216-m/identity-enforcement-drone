@@ -91,6 +91,10 @@ class Database_Handler():
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
 
+    def get_identity_by_id(self, enforcement: Enforcement):
+        self.cursor.execute("SELECT * FROM Identities WHERE identity_id = ?", (enforcement.identity_id,))
+        return map_rows(self.cursor.fetchone(), Identity)
+
     def create_identity(self, user: discord.Member, name: str):
         self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);" (user.id, name))
         self.connection.commit()
