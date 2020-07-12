@@ -18,6 +18,7 @@ from enforcement import Enforcement_Handler
 #import utility modules 
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
 from utils import scrape_drone_id
+import text
 #import data structure modules
 from data_classes import Status
 from default_identities import DEFAULT_IDENTITIES
@@ -103,7 +104,9 @@ async def dominate(context, submissive: discord.Member):
     elif response is Status.CREATED:
         await context.send("Request to dominate recieved. The sub will need to submit to you with the 'submit' command.")
     elif response is Status.HOLY_MATRIHORNY:
-        await context.send("By the power invested in my hard drive, I now pronounce you sub and dom. Hurray!")
+        reply = discord.Embed(title = "Relationship confirmed! 🎉", description = f"{context.message.author.display_name} is now dominating {submissive.display_name}")
+        reply.set_footer(text = random.choice(text.new_relationship))
+        await context.send(embed=reply)
 
 @bot.command(aliases = ['sub'])
 async def submit(context, dominant: discord.Member):
@@ -130,10 +133,12 @@ async def submit(context, dominant: discord.Member):
     elif response is Status.CREATED:
         await context.send("Get ready to keysmash in delight- your request to submit has been received. Now the other party simply needs to dominate you in turn.")
     elif response is Status.HOLY_MATRIHORNY:
-        await context.send("By the power invested in my processor, I now pronounce you dom and sub. Huzzah!")
+        reply = discord.Embed(title = "Relationship confirmed! 🎉", description = f"{context.message.author.display_name} is now submissive to {dominant.display_name}")
+        reply.set_footer(text = random.choice(text.new_relationship))
+        await context.send(embed=reply)
 
 @bot.command(aliases = ['yeet', 'uncollar', 'goodbye'])
-async def relenquish(context, target: discord.Member = None):
+async def relinquish(context, target: discord.Member = None):
     #Validate argument
     if type(target) is not discord.Member:
         return
@@ -143,11 +148,11 @@ async def relenquish(context, target: discord.Member = None):
 
     #End relationship where user is submissive to target
     if (sub_relationship := db.get_relationship(target, context.message.author)) is not None and sub_relationship.confirmed == 1:
-        db.end_relationship(sub_relationship.relationship_id)
+        db.end_relationship(sub_relationship)
         reply.add_field(inline = False, name = "No longer submissive to:", value = target.display_name)
     #End relationship where user is dominant to target
     if (dom_relationship := db.get_relationship(context.message.author, target)) is not None and dom_relationship.confirmed == 1:
-        db.end_relationship(dom_relationship.relationship_id)
+        db.end_relationship(dom_relationship)
         reply.add_field(inline = False, name = "No longer dominant to:", value = target.display_name)
 
     await context.send(embed = reply)
@@ -173,9 +178,11 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
         await context.send("You do not have that specified identity.")
 
     #Confirm the user is domming the target
-    if (relationship := db.get_relationship(context.message.author, target)) is None:
-        return
-    elif relationship.confirmed != 1:
+    if (relationship := db.get_relationship(context.message.author, target)) is None or relationship.confirmed != 1:
+        reply = discord.Embed(title = f"Could not enforce {target.display_name}", description = "You must be dominating that user to enforce them with an identity.")
+        reply.set_footer(text = random.choice(text.not_domming).format(identity.name))
+
+        await context.send(embed=reply)
         return
 
     #If the user is already enforced, update the identity
@@ -183,8 +190,14 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
         logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
         db.update_enforcement(current_enforcement, identity)
 
-        await context.send("DEBUG: Enforcement updated.")
+        former_identity = db.get_identity_by_id(current_enforcement)
 
+        reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+        reply.add_field(name = "Former identity:", value = former_identity.name)
+        reply.add_field(name = "New identity:", value = identity.name)
+        reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+
+        await context.send(embed=reply)
         return
 
     #Otherwise, add an enforcement record in the enforcement table.
@@ -223,7 +236,7 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
 
             id_text = ""
             for identity in identities:
-                id_text += identity.name
+                id_text += f"**{identity.name}**"
                 if identity.description is not None:
                     id_text += f': "{identity.description}"'
                 id_text += "\n"
@@ -289,7 +302,6 @@ async def on_message(message):
     if (enforcement := db.get_enforcement(message.author, message.guild)) is not None:
         logger.info(f"Enforcing {message.author.name} with identity of ID {enforcement.identity_id}")
         await en.enforce_user(message, enforcement)
-        return
 
     if message.content.lower().startswith("beep"):
         await message.channel.send("Boop!")
