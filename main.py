@@ -31,7 +31,7 @@ fh = logging.FileHandler('log.txt')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 logger.info("-----------------------------------------------")
 logger.info("It's a new day~!")
@@ -166,9 +166,6 @@ async def enforce(context, target: discord.Member, identity_name: str):
     Assign an identity role to a user.
     '''
 
-    #Validate args
-    if target is not discord.Member or identity_name is not str: return
-
     logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity_name} in {context.guild.name}")
 
     #Confirm the user has the specified identity
@@ -178,14 +175,17 @@ async def enforce(context, target: discord.Member, identity_name: str):
     #Confirm the user is domming the target
     if (relationship := db.get_relationship(context.message.author, target)) is None:
         return
-    elif relationship.pending != 0:
+    elif relationship.confirmed != 1:
         return
 
     #If the user is already enforced, update the identity
     if (current_enforcement := db.get_enforcement(target, context.guild)) is not None:
+        logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
         db.update_enforcement(current_enforcement, identity)
+        return
 
     #Otherwise, add an enforcement record in the enforcement table.
+    logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
     db.add_enforcement(target, identity, context.guild)
 
 @bot.command()

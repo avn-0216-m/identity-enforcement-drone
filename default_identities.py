@@ -140,7 +140,21 @@ PUPPY = Identity(
         user_id = ENFORCEMENT_DRONE
     )
 
-DEFAULT_IDENTITIES = [PUPPY]
+TALKATIVE = Identity(
+        name = "Talkative!",
+        description = "Wuff wuff! This is a default identity created by the identity enforcement drone!",
+        display_name = "A talkative little puppy!",
+        display_name_with_id = None,
+        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
+        replacement_lexicon = lexicon_to_string(PUPPY_WORDS),
+        allowance_lexicon = None,
+        strict = 0,
+        override_lexicon = None,
+        override_chance = 0,
+        user_id = ENFORCEMENT_DRONE
+    )
+
+DEFAULT_IDENTITIES = [PUPPY, TALKATIVE]
 
 
 

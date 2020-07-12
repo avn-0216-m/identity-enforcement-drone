@@ -95,12 +95,12 @@ class Database_Handler():
         self.cursor.execute("SELECT * FROM Identities WHERE identity_id = ?", (enforcement.identity_id,))
         return map_rows(self.cursor.fetchone(), Identity)
 
-    def create_identity(self, user: discord.Member, name: str):
-        self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);" (user.id, name))
+    def create_identity(self, user: discord.Member, identity_name: str):
+        self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);", (user.id, identity_name))
         self.connection.commit()
 
     def update_identity(self, identity: Identity, field: str, new_value: str):
-        self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?" (field, new_value, identity.identity_id))
+        self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?", (field, new_value, identity.identity_id))
         self.connection.commit()
 
     def set_default_identities(self, user: discord.Member):
@@ -160,7 +160,7 @@ class Database_Handler():
 
     #Enforcement
     def add_enforcement(self, user, identity, guild):
-        self.cursor.execute("INSERT INTO Enforcments(user_id, identity_id, guild_id) VALUES(?,?,?);", (user.id, identity.id, guild.id))
+        self.cursor.execute("INSERT INTO Enforcements(user_id, identity_id, guild_id) VALUES(?,?,?);", (user.id, identity.identity_id, guild.id))
         self.connection.commit()
         return True
 
@@ -168,8 +168,11 @@ class Database_Handler():
         return True
 
     def get_enforcement(self, user, guild):
-        self.cursor.execute("SELECT identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
+        self.cursor.execute("SELECT enforcement_id, identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         return map_rows(self.cursor.fetchone(), Enforcement)
 
     def update_enforcement(self, enforcement, new_identity):
-        self.cursor.execute("UPDATE Enforcements SET identity_id = ? WHERE enforcement_id = ?", (new_identity.id, enforcement.id))
+        self.logger.debug(f"Updating enforcement. Enforcement ID: {enforcement.enforcement_id}, Identity ID: {new_identity.identity_id}")
+        self.cursor.execute("UPDATE Enforcements SET identity_id = ? WHERE enforcement_id = ?", (new_identity.identity_id, enforcement.enforcement_id))
+        self.connection.commit()
+        return True
