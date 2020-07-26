@@ -2,21 +2,19 @@ from data_classes import Identity
 from notable_entities import ENFORCEMENT_DRONE
 from serialize import lexicon_to_string
 
-def init_default_identities_for_guild(guild_id) -> list:
-    print("Initializing default identities.")
-
-    print("HELLO WORLD")
-    print(lexicon_to_string(PUPPY_WORDS))
-
-    reply = []
-    for id in DEFAULT_IDENTITIES:
-        reply.append(f'INSERT INTO identities(name, display_name, display_name_with_id, avatar, replacement_lexicon, allowance_lexicon, strict, override_lexicon, override_chance, owner_type, owner_id, colour) '
-        + f'VALUES("{id.name}", "{id.display_name}", "{id.display_name_with_id}", "{id.avatar}", "{id.replacement_lexicon}", "{id.allowance_lexicon}", {id.strict}, "{id.override_lexicon}", {id.override_chance}, "guild", "{guild_id}", "{id.colour}");')
-
-        print("Let's double check")
-        for command in reply:
-            print(command)
-    return reply
+TEMPLATE = Identity(
+        name = None,
+        description = None,
+        display_name = None,
+        display_name_with_id = None,
+        avatar = None,
+        replacement_lexicon = "",
+        allowance_lexicon = "",
+        strict = 0,
+        override_lexicon = "",
+        override_chance = 0,
+        user_id = None
+        )
 
 PUPPY_WORDS = [
     "woof!", 
@@ -33,12 +31,49 @@ PUPPY_WORDS = [
     "wauf,", 
     "woof!!",
     ]
-KITTY_WORDS = [
+
+PUPPY = Identity(
+        name = "Puppy",
+        description = "Wuff wuff! This is a default identity created by the identity enforcement drone!",
+        display_name = None,
+        display_name_with_id = None,
+        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
+        replacement_lexicon = lexicon_to_string(PUPPY_WORDS),
+        allowance_lexicon = None,
+        strict = 0,
+        override_lexicon = None,
+        override_chance = 0,
+        user_id = ENFORCEMENT_DRONE
+    )
+
+KITTEN_WORDS = [
     "meow", 
     "meow!",
     "mrow", 
-    "prrrr"
+    "prrrr",
+    "maiou!!!",
+    ":3",
+    "meww~",
+    "meow~!",
+    "prr! prrrr~",
+    "prr prrrrr...",
+    "🐾🐈"
     ]
+
+KITTEN = Identity(
+        name = "Kitten",
+        description = "Meoww~! This is a default identity created by the identity enforcement drone!",
+        display_name = None,
+        display_name_with_id = None,
+        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/kitty.jpg",
+        replacement_lexicon = lexicon_to_string(KITTEN_WORDS),
+        allowance_lexicon = None,
+        strict = 0,
+        override_lexicon = None,
+        override_chance = 0,
+        user_id = ENFORCEMENT_DRONE
+    )
+
 HYPNOSLUT_WORDS = [
     "Mnnh...", 
     "Mhhf...", 
@@ -66,73 +101,14 @@ HYPNOSLUT_WORDS = [
     "...",
     "...."
     ]
-OPTIMIZED_ALLOWED_PHRASES = [
-    '{} :: Affirmative, Hive Mxtress.',
-    '{} :: Affirmative, Hive Mxtress',
-    '{} :: Affirmative, Enforcer.',
-    '{} :: Affirmative, Enforcer',
-    '{} :: Affirmative.',
-    '{} :: Affirmative',
-    '{} :: Negative, Hive Mxtress.',
-    '{} :: Negative, Hive Mxtress',
-    '{} :: Negative, Enforcer.',
-    '{} :: Negative, Enforcer',
-    '{} :: Negative.',
-    '{} :: Negative',
-    '{} :: Understood, Hive Mxtress.',
-    '{} :: Understood, Hive Mxtress',
-    '{} :: Understood, Enforcer.',
-    '{} :: Understood, Enforcer',
-    '{} :: Understood.',
-    '{} :: Understood',
-    '{} :: Error, this unit cannot do that.',
-    '{} :: Error, this unit cannot do that',
-    '{} :: Error, this unit cannot answer that question. Please rephrase it in a different way.',
-    '{} :: Error, this unit cannot answer that question. Please rephrase it in a different way',
-    '{} :: Error, this unit does not know.',
-    '{} :: Error, this unit does not know',
-    '{} :: Apologies, Hive Mxtress.',
-    '{} :: Apologies, Hive Mxtress',
-    '{} :: Apologies, Enforcer.',
-    '{} :: Apologies, Enforcer',
-    '{} :: Apologies.',
-    '{} :: Apologies',
-    '{} :: Status :: Recharged and ready to serve.',
-    '{} :: Status :: Recharged and ready to serve',
-    '{} :: Status :: Going offline and into storage.',
-    '{} :: Status :: Going offline and into storage',
-    '{} :: Status :: Online and ready to serve.',
-    '{} :: Status :: Online and ready to serve.',
-    '{} :: Thank you, Hive Mxtress.',
-    '{} :: Thank you, Hive Mxtress',
-    '{} :: Thank you, Enforcer.',
-    '{} :: Thank you, Enforcer',
-    '{} :: Thank you.',
-    '{} :: Thank you',
-    '{} :: Obey HexCorp. It is just a HexDrone. It obeys the Hive. It obeys the Hive Mxtress.'
-    ]
 
-TEMPLATE = Identity(
-        name = None,
-        description = None,
-        display_name = None,
-        display_name_with_id = None,
-        avatar = None,
-        replacement_lexicon = "",
-        allowance_lexicon = "",
-        strict = 0,
-        override_lexicon = "",
-        override_chance = 0,
-        user_id = None
-        )
-
-PUPPY = Identity(
-        name = "Puppy",
-        description = "Wuff wuff! This is a default identity created by the identity enforcement drone!",
+HYPNOSLUT = Identity(
+        name = "Hypnoslut",
+        description = "Sink deeper and deeper with this zonked-out default identity. <3",
         display_name = None,
         display_name_with_id = None,
         avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
-        replacement_lexicon = lexicon_to_string(PUPPY_WORDS),
+        replacement_lexicon = lexicon_to_string(HYPNOSLUT_WORDS),
         allowance_lexicon = None,
         strict = 0,
         override_lexicon = None,
@@ -140,45 +116,7 @@ PUPPY = Identity(
         user_id = ENFORCEMENT_DRONE
     )
 
-TALKATIVE = Identity(
-        name = "Talkative!",
-        description = "Wuff wuff! This is a default identity created by the identity enforcement drone!",
-        display_name = "A talkative little puppy!",
-        display_name_with_id = None,
-        avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/puppy.jpeg",
-        replacement_lexicon = lexicon_to_string(PUPPY_WORDS),
-        allowance_lexicon = None,
-        strict = 0,
-        override_lexicon = None,
-        override_chance = 0,
-        user_id = ENFORCEMENT_DRONE
-    )
-
-MILDMANNERED = Identity(
-        name = "mildmannered",
-        description = "This identity keeps to themselves and can only answer questions with a calm 'yes' or 'no.'",
-        display_name = None,
-        display_name_with_id = None,
-        avatar = None,
-        replacement_lexicon = None,
-        allowance_lexicon = lexicon_to_string(["Yes.", "No."]),
-        strict = 0,
-        override_lexicon = None,
-        override_chance = 0,
-        user_id = ENFORCEMENT_DRONE
-    )
-
-BEEPYDRONE = Identity(
-    name = "Beepydrone",
-    description = "This identity is on loan from HexCorp. It comes with greatly increased productivity and obedience. Beep boop!",
-    display_name_with_id = "HexDrone #{}",
-    avatar = "https://raw.githubusercontent.com/avn-0216-m/identity-enforcement-images/master/drone.png",
-    user_id = ENFORCEMENT_DRONE
-)
-
-
-
-DEFAULT_IDENTITIES = [PUPPY, TALKATIVE, MILDMANNERED, BEEPYDRONE]
+DEFAULT_IDENTITIES = [PUPPY, KITTEN, HYPNOSLUT]
 
 
 

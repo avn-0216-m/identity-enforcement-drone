@@ -163,8 +163,7 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
         logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
         db.update_enforcement(current_enforcement, identity)
 
-        former_identity = db.get_identity_by_id(current_enforcement)
-
+        former_identity = db.get_identity_by_id(current_enforcement.identity_id)
         reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
         reply.add_field(name = "Former identity:", value = former_identity.name)
         reply.add_field(name = "New identity:", value = identity.name)
@@ -177,14 +176,27 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
     logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
     db.add_enforcement(target, identity, context.guild)
 
-    await context.send("DEBUG: Enforcement added.")
+    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+    reply.add_field(name = "Former identity:", value = "Themselves")
+    reply.add_field(name = "New identity:", value = identity.name)
+    reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+    await context.send(embed = reply)
 
 @bot.command()
 async def release(context, target: discord.Member):
     logger.info(f"Release command triggered. {context.message.author.name} wants to release {target.name} in {context.guild.name}")
+
+    current_enforcement = db.get_enforcement(target, context.guild)
+    former_identity = db.get_identity_by_id(current_enforcement.identity_id)
+
     db.end_enforcement(target, context.guild)
 
-    await context.send("DEBUG: User released.")
+    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+    reply.add_field(name = "Former identity:", value = former_identity.name)
+    reply.add_field(name = "New identity:", value = "Themselves")
+    reply.set_footer(text = random.choice(text.identity_release))
+
+    await context.send(embed=reply)
 
 @bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
 async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
@@ -218,13 +230,26 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
         await context.send(embed=reply)
         return
 
+    #Validate that they've given an identity name.
+    elif arg1 is None:
+
+        #TODO: This is a temporary way to list self owned identities. Delete later.
+        reply = discord.Embed()
+        identities = db.get_all_user_identities(context.author)
+        id_text = ""
+        for identity in identities:
+            id_text += f"**{identity.name}**"
+            if identity.description is not None:
+                id_text += f': "{identity.description}"'
+            id_text += "\n"
+        if id_text != "":
+            reply.add_field(name = context.author.display_name, value = id_text, inline = False)
+        await context.send(embed=reply)
+        return
+
     #TODO: Delete this when identity command is finished.
     else:
         await context.send("Sorry, you can't make new commands yet. Initialize the defaults with the `!default` command.")
-        return
-    
-    #Validate that they've given an identity name.
-    elif arg1 is None:
         return
 
     identity = db.get_user_identity_by_name(context.message.author.id, arg1)
@@ -260,11 +285,6 @@ async def clone(context, target, identity_name):
 @bot.event
 async def on_ready():
     logger.info("Identity Enforcement Drone #3161 online.")
-    global culling_roles
-    if not culling_roles:
-        culling_roles = True
-        asyncio.ensure_future(cull_roles())
-
     game = discord.Game("with your identity.")
     await bot.change_presence(activity = game)
 

@@ -10,6 +10,8 @@ from serialize import string_to_lexicon
 
 db = Database()
 
+LOGGER = logging.getLogger("Identity Enforcement Drone")
+
 async def get_webhook(channel: discord.channel) -> discord.Webhook:
     available_webhooks = await channel.webhooks()
     if len(available_webhooks) == 0:
@@ -22,10 +24,10 @@ def get_drone_id(display_name: str) -> str:
     except AttributeError:
         return None
 
-async def enforce_user(self, message: discord.Message, enforcement: Enforcement):
-    logger.info("In enforce_user function.")
+async def enforce_user(message: discord.Message, enforcement: Enforcement):
+    LOGGER.info("In enforce_user function.")
     #Get identity via identity ID from enforcement.
-    identity = db.get_identity_by_id(enforcement)
+    identity = db.get_identity_by_id(enforcement.identity_id)
 
     proxy_username = message.author.display_name
     proxy_avatar_url = message.author.avatar_url
@@ -33,10 +35,10 @@ async def enforce_user(self, message: discord.Message, enforcement: Enforcement)
 
     #Enforce the display name (drone ID) if applicable.
 
-    logger.debug(get_drone_id(message.author.display_name))
+    LOGGER.debug(get_drone_id(message.author.display_name))
 
     if identity.display_name_with_id is not None and (drone_id := get_drone_id(message.author.display_name)) is not None:
-        logger.debug("Setting proxy name to use drone ID.")
+        LOGGER.debug("Setting proxy name to use drone ID.")
         proxy_username = identity.display_name_with_id.format(drone_id)
 
     #Enforce the display name if applicable.

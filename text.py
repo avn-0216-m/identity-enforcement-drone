@@ -5,3 +5,5 @@ not_domming = ["I'm not saying they wouldn't make a good {}, but...", "Consent i
 new_relationship = ["Ah, young love.", "Get a room, you two!", "By the power invested in my CPU, I now pronounce you dom and sub.", "You love to see it!", "Looking forward to the honeymoon~?", "Excited for the honeymoon?", "Have fun, you two~"]
 
 end_relationship = ["Yeah! You deserve better.", "You hate to see it.", "You're a strong independant BDSM practitioner and you don't need no partner."]
+
+identity_release = ["Hope you had fun~", "Yeah, I'm sure that'll last.", "Come again soon!", "Have fun?", "Aw, but we were just getting to the good part..."]
