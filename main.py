@@ -12,9 +12,9 @@ import random
 import traceback
 
 #import handler modules
-import relationship
-from database import Database_Handler
-import enforcement
+import relationship as rl
+import enforcement as en
+from database import Database
 #import utility modules 
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
 import text
@@ -47,9 +47,8 @@ logger.info("Loading secret details from file.")
 with open("bot_token.txt") as secret_file:
     bot_token = secret_file.readline()
 
-db = Database_Handler()
-rl = Relationship_Handler(db)
-en = Enforcement_Handler(bot, db)
+#Initalize DAO
+db = Database()
 
 #Commands
 @bot.command(aliases = ['dom'])

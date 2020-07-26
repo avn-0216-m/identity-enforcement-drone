@@ -3,12 +3,12 @@ import re
 import random
 import logging
 from discord.utils import get
-from database import Database_Handler
+from database import Database
 from data_classes import Status, Enforcement, Identity
 from notable_entities import ENFORCEMENT_PREFIX
 from serialize import string_to_lexicon
 
-db = Database_Handler()
+db = Database()
 
 async def get_webhook(channel: discord.channel) -> discord.Webhook:
     available_webhooks = await channel.webhooks()

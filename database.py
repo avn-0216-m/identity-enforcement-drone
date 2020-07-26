@@ -7,7 +7,7 @@ from default_identities import DEFAULT_IDENTITIES
 import logging
 import sys
 
-class Database_Handler():
+class Database():
 
     database_name = "identity_enforcement_drone.sqlite3"
     connection = None
@@ -24,16 +24,16 @@ class Database_Handler():
 
         self.logger = logging.getLogger("Identity Enforcement Drone")
 
-        if Database_Handler.connection is None:
+        if Database.connection is None:
             #Create a new connection.
-            new_connection = sqlite3.connect(Database_Handler.database_name)
+            new_connection = sqlite3.connect(Database.database_name)
             new_connection.row_factory = self.dict_factory
-            Database_Handler.connection = new_connection
-        self.connection = Database_Handler.connection
-        if Database_Handler.cursor is None:
+            Database.connection = new_connection
+        self.connection = Database.connection
+        if Database.cursor is None:
             #Get a new cursor
-            Database_Handler.cursor = Database_Handler.connection.cursor()
-        self.cursor = Database_Handler.cursor
+            Database.cursor = Database.connection.cursor()
+        self.cursor = Database.cursor
 
 
     #General
