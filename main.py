@@ -6,7 +6,6 @@ import discord
 import logging
 from discord.ext import commands
 import json
-import mysql.connector
 import asyncio
 import random
 import traceback
