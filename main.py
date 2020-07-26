@@ -120,11 +120,14 @@ async def relinquish(context, target: discord.Member = None):
     reply_info = ""
 
     #End relationship where user is submissive to target
-    if (sub_relationship := db.get_relationship(target, context.message.author)) is not None and sub_relationship.confirmed == 1:
+    sub_relationship = db.get_relationship(target, context.message.author)
+    if sub_relationship is not None and sub_relationship.confirmed == 1:
         db.end_relationship(sub_relationship)
         reply.add_field(inline = False, name = "No longer submissive to:", value = target.display_name)
+
     #End relationship where user is dominant to target
-    if (dom_relationship := db.get_relationship(context.message.author, target)) is not None and dom_relationship.confirmed == 1:
+    dom_relationship = db.get_relationship(context.message.author, target)
+    if dom_relationship is not None and dom_relationship.confirmed == 1:
         db.end_relationship(dom_relationship)
         reply.add_field(inline = False, name = "No longer dominant to:", value = target.display_name)
 
