@@ -12,12 +12,11 @@ import random
 import traceback
 
 #import handler modules
-from relationship import Relationship_Handler
+import relationship
 from database import Database_Handler
-from enforcement import Enforcement_Handler
+import enforcement
 #import utility modules 
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
-from utils import scrape_drone_id
 import text
 #import data structure modules
 from data_classes import Status
@@ -51,31 +50,6 @@ with open("bot_token.txt") as secret_file:
 db = Database_Handler()
 rl = Relationship_Handler(db)
 en = Enforcement_Handler(bot, db)
-
-#Utility Methods
-async def cull_roles():
-
-    do_not_cull = []
-    total_culled = 0
-
-    while True:
-        await asyncio.sleep(60 * 60 * 24) #60 * 60 * 24 = 24 hours
-        for guild in bot.guilds:
-            total_culled = 0
-            for member in guild.members:
-                for role in member.roles:
-                    if role.name.startswith(ENFORCEMENT_PREFIX):
-                        do_not_cull.append(role)
-            for role in guild.roles:
-                if role not in do_not_cull and role.name.startswith(ENFORCEMENT_PREFIX):
-                    logger.info(f'Culling unused enforcement role "{role.name[3:]}" in guild "{guild.name}"')
-                    total_culled += 1
-                    await role.delete()
-            if total_culled > 0: 
-                logger.info(f'Culled {total_culled} roles in "{guild.name}"')
-
-        total_culled = 0
-        do_not_cull.clear()
 
 #Commands
 @bot.command(aliases = ['dom'])
@@ -168,7 +142,7 @@ async def defaults(context):
 @bot.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
     '''
-    Assign an identity role to a user.
+    Assign an identity to a user.
     '''
 
     logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity_name} in {context.guild.name}")
@@ -243,6 +217,11 @@ async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
             if id_text != "":
                 reply.add_field(name = user.display_name, value = id_text, inline = False)
         await context.send(embed=reply)
+        return
+
+    #TODO: Delete this when identity command is finished.
+    else:
+        await context.send("Sorry, you can't make new commands yet. Initialize the defaults with the `!default` command.")
         return
     
     #Validate that they've given an identity name.

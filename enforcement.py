@@ -3,11 +3,12 @@ import re
 import random
 import logging
 from discord.utils import get
+from database import Database_Handler
 from data_classes import Status, Enforcement, Identity
-from webhook import Webhook_Handler
 from notable_entities import ENFORCEMENT_PREFIX
-from utils import scrape_drone_id
 from serialize import string_to_lexicon
+
+db = Database_Handler()
 
 async def get_webhook(channel: discord.channel) -> discord.Webhook:
     available_webhooks = await channel.webhooks()
@@ -21,63 +22,56 @@ def get_drone_id(display_name: str) -> str:
     except AttributeError:
         return None
 
-class Enforcement_Handler():
-    def __init__(self, bot, db):
-        self.bot = bot
-        self.db = db
-        self.wh = Webhook_Handler(bot)
-        self.logger = logging.getLogger("Identity Enforcement Drone")
+async def enforce_user(self, message: discord.Message, enforcement: Enforcement):
+    logger.info("In enforce_user function.")
+    #Get identity via identity ID from enforcement.
+    identity = db.get_identity_by_id(enforcement)
 
-    async def enforce_user(self, message: discord.Message, enforcement: Enforcement):
-        self.logger.info("In enforce_user function.")
-        #Get identity via identity ID from enforcement.
-        identity = self.db.get_identity_by_id(enforcement)
+    proxy_username = message.author.display_name
+    proxy_avatar_url = message.author.avatar_url
+    proxy_message_content = message.content
 
-        proxy_username = message.author.display_name
-        proxy_avatar_url = message.author.avatar_url
-        proxy_message_content = message.content
+    #Enforce the display name (drone ID) if applicable.
 
-        #Enforce the display name (drone ID) if applicable.
+    logger.debug(get_drone_id(message.author.display_name))
 
-        self.logger.debug(get_drone_id(message.author.display_name))
+    if identity.display_name_with_id is not None and (drone_id := get_drone_id(message.author.display_name)) is not None:
+        logger.debug("Setting proxy name to use drone ID.")
+        proxy_username = identity.display_name_with_id.format(drone_id)
 
-        if identity.display_name_with_id is not None and (drone_id := get_drone_id(message.author.display_name)) is not None:
-            self.logger.debug("Setting proxy name to use drone ID.")
-            proxy_username = identity.display_name_with_id.format(drone_id)
+    #Enforce the display name if applicable.
+    elif identity.display_name is not None:
+        #If there is a display name to use, set it.
+        proxy_username = identity.display_name
 
-        #Enforce the display name if applicable.
-        elif identity.display_name is not None:
-            #If there is a display name to use, set it.
-            proxy_username = identity.display_name
+    #Enforce the avatar if applicable.
+    if identity.avatar is not None:
+        proxy_avatar_url = identity.avatar
 
-        #Enforce the avatar if applicable.
-        if identity.avatar is not None:
-            proxy_avatar_url = identity.avatar
+    #Enforce the message body if applicable.
+    if identity.replacement_lexicon is not None and identity.allowance_lexicon is None:
+        #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
+        replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+        proxy_message_content = random.choice(replacement_lexicon)
+        for word in range(1, len(message.content)//5):
+            proxy_message_content += f"{random.choice(replacement_lexicon)} "
 
-        #Enforce the message body if applicable.
-        if identity.replacement_lexicon is not None and identity.allowance_lexicon is None:
-            #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
-            replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
-            proxy_message_content = random.choice(replacement_lexicon)
-            for word in range(1, len(message.content)//5):
-                proxy_message_content += f"{random.choice(replacement_lexicon)} "
+    elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None:
+        #ENFORCEMENT MODE 2: Replace message with words from the replacement lexicon, and insert any allowed words from the original message roughly where they first occured.
+        pass
 
-        elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None:
-            #ENFORCEMENT MODE 2: Replace message with words from the replacement lexicon, and insert any allowed words from the original message roughly where they first occured.
-            pass
+    elif identity.replacement_lexicon is None and identity.allowance_lexicon is not None:
+        #ENFORCEMENT MODE 3: If the message content does not equal a sentence in the allowance lexicon, delete it.
+        allowance_lexicon = string_to_lexicon(identity.allowance_lexicon)
+        if message.content not in allowance_lexicon:
+            await message.delete()
 
-        elif identity.replacement_lexicon is None and identity.allowance_lexicon is not None:
-            #ENFORCEMENT MODE 3: If the message content does not equal a sentence in the allowance lexicon, delete it.
-            allowance_lexicon = string_to_lexicon(identity.allowance_lexicon)
-            if message.content not in allowance_lexicon:
-                await message.delete()
+    #The message only needs to be proxied if any of the 3 fields have changed via enforcement (message, avatar, or username).
+    if (proxy_message_content == message.content) and (proxy_avatar_url == message.author.avatar_url) and (proxy_username == message.author.display_name):
+        return
 
-        #The message only needs to be proxied if any of the 3 fields have changed via enforcement (message, avatar, or username).
-        if (proxy_message_content == message.content) and (proxy_avatar_url == message.author.avatar_url) and (proxy_username == message.author.display_name):
-            return
+    proxy_webhook = await get_webhook(message.channel)
+    await message.delete()
+    await proxy_webhook.send(proxy_message_content, username=proxy_username, avatar_url = proxy_avatar_url)
 
-        proxy_webhook = await get_webhook(message.channel)
-        await message.delete()
-        await proxy_webhook.send(proxy_message_content, username=proxy_username, avatar_url = proxy_avatar_url)
-
-        return True
+    return True
