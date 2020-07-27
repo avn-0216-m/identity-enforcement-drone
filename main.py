@@ -153,12 +153,13 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
         await context.send("You do not have that specified identity.")
 
     #Confirm the user is domming the target
-    if (relationship := db.get_relationship(context.message.author, target)) is None or relationship.confirmed != 1:
-        reply = discord.Embed(title = f"Could not enforce {target.display_name}", description = "You must be dominating that user to enforce them with an identity.")
-        reply.set_footer(text = random.choice(text.not_domming).format(identity.name))
+    if target.id != context.author.id:
+        if (relationship := db.get_relationship(context.message.author, target)) is None or relationship.confirmed != 1:
+            reply = discord.Embed(title = f"Could not enforce {target.display_name}", description = "You must be dominating that user to enforce them with an identity.")
+            reply.set_footer(text = random.choice(text.not_domming).format(identity.name))
 
-        await context.send(embed=reply)
-        return
+            await context.send(embed=reply)
+            return
 
     #If the user is already enforced, update the identity
     if (current_enforcement := db.get_enforcement(target, context.guild)) is not None:
