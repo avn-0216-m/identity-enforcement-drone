@@ -130,6 +130,7 @@ async def relinquish(context, target: discord.Member = None):
         db.end_relationship(dom_relationship)
         reply.add_field(inline = False, name = "No longer dominant to:", value = target.display_name)
 
+    reply.set_footer(text = random.choice(text.end_relationship))
     await context.send(embed = reply)
     
 @bot.command(aliases = ['init'])
