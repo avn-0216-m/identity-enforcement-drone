@@ -321,12 +321,19 @@ async def on_message(message):
 
 @bot.event
 async def on_command_error(context, error):
-    logger.error(f"!!! --- Exception caught in {context.command} command --- !!!")
+    logger.error(f"!!! --- EXCEPTION CAUGHT IN {context.command} COMMAND --- !!!")
     logger.error(error)
-    exception_file = open("log.txt", "a")
+    with open("log.txt", "a") as exception_file:
+        traceback.print_exception(type(error), error, error.__traceback__, file=exception_file) #Prints to file for logging
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr) #Prints to console for debugging
-    traceback.print_exception(type(error), error, error.__traceback__, file=exception_file) #Prints to file for logging
-    exception_file.close()
+    logger.info("!!! --- End exception log. --- !!!")
+
+@bot.event
+async def on_error(event, *args, **kwargs):
+    logger.error(f'!!! --- EXCEPTION CAUGHT IN {event} --- !!!')
+    with open("log.txt", "a") as exception_file:
+        traceback.print_exc(file=exception_file)
+    traceback.print_exc()
     logger.info("!!! --- End exception log. --- !!!")
 
 logger.info("Doing data migration.")
