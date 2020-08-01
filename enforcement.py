@@ -15,7 +15,7 @@ LOGGER = logging.getLogger("Identity Enforcement Drone")
 async def get_webhook(channel: discord.channel) -> discord.Webhook:
     available_webhooks = await channel.webhooks()
     if len(available_webhooks) == 0:
-        available_webhooks = [await message.channel.create_webhook(name = "Identity Enforcement Drone")]
+        available_webhooks = [await channel.create_webhook(name = "Identity Enforcement Drone")]
     return available_webhooks[0]
 
 def get_drone_id(display_name: str) -> str:
