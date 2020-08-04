@@ -5,3 +5,4 @@ log.txt
 *.sqlite3
 *.sqlite3-journal
 bot_token.txt
+note_to_self
