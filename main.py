@@ -18,7 +18,7 @@ from database import Database
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
 import text
 #import data structure modules
-from data_classes import Status
+from data_classes import Status, Identity
 from default_identities import DEFAULT_IDENTITIES
 
 #Setup logger
@@ -239,7 +239,11 @@ async def new(context, id_name = None, id_desc = None, id_words = None):
     if id_name is None:
         await context.send("No name provided.")
         return
-    await context.send(f"New identity called {id_name} made")
+
+    new_identity = Identity(name = id_name, user_id = context.author.id, description = id_desc, replacement_lexicon = id_words)
+
+    db.create_identity(new_identity)
+    await context.send(f"New identity called {id_name} made! :)")
 
 @identities.command()
 async def add(context, id_name, attribute, words):

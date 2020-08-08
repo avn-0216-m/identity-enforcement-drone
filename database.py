@@ -91,12 +91,13 @@ class Database():
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
 
-    def delete_user_identity_by_name(sef, user, name: str):
+    def delete_user_identity_by_name(self, user, name: str):
         try:
             self.cursor.execute("DELETE FROM Identities WHERE user_id = ? AND name = ?", (user.id, name))
             self.connection.commit()
             return True
         except:
+            self.logger.error("Something went wrong with deleting user identity.")
             return False
 
     def get_identity_by_id(self, identity_id: int):
@@ -104,8 +105,34 @@ class Database():
         return map_rows(self.cursor.fetchone(), Identity)
 
     def create_identity(self, user: discord.Member, identity_name: str):
+        '''
+        Creates a barebones identity with only a name and an owner ID in the database.
+        '''
         self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);", (user.id, identity_name))
         self.connection.commit()
+
+    def create_identity(self, identity: Identity):
+        '''
+        Creates an identity entry in the DB
+        with whatever values are present in the provided identity object.
+        '''
+        self.cursor.execute("""
+        INSERT INTO Identities(
+            name,
+            description,
+            display_name,
+            display_name_with_id,
+            avatar,
+            replacement_lexicon,
+            allowance_lexicon,
+            strict,
+            override_lexicon,
+            override_chance,
+            user_id)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?);
+        """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, identity.user_id))
+        self.connection.commit()
+        return True
 
     def update_identity(self, identity: Identity, field: str, new_value: str):
         self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?", (field, new_value, identity.identity_id))
