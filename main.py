@@ -204,17 +204,37 @@ async def release(context, target: discord.Member):
 
 @bot.group(invoke_without_command = True, aliases = ["id", "ids", "identitiy"])
 async def identities(context):
-
-    await context.send("hello world")
+    '''
+    This command lists identities for you if invoked without any mentions,
+    or lists the identities of anyone mentioned (@user).
+    '''
 
     if len(context.message.mentions) == 0:
-        await context.send("Yoru current identities here")
+        reply = "Your identities are:\n"
+        identities = db.get_all_user_identities(context.author)
+        for identity in identities:
+            reply += f"{identity.name} - {identity.description}\n"
+
+        await context.send(reply)
+
     else:
         for mention in context.message.mentions:
-            await context.send(f"Identities of {mention} are beep BOOP")
+            reply = f"IDs belonging to {mention}:\n"
+            identities = db.get_all_user_identities(mention)
+
+            if len(identities) == 0:
+                reply += "None!"
+            else:
+                for identity in identities:
+                    reply += f"{identity.name} - {identity.description}\n"
+            await context.send(reply)
 
 @identities.command()
 async def new(context, id_name = None, id_desc = None, id_words = None):
+
+    if db.get_user_identity_by_name(context.author, id_name) is not None:
+        await context.send("Sorry, that identity already exists in your inventory.")
+        return
 
     if id_name is None:
         await context.send("No name provided.")
@@ -235,7 +255,15 @@ async def delete(context, id_name, please = None):
     if please is None:
         await context.send("Please add 'please' to the end of this command to confirm that you understand this will delete your identity (hot).")
         return
-    
+
+    identity = db.get_user_identity_by_name(context.author, id_name)
+
+    if identity is None:
+        await context.send("Good news! That identity already doesn't exist. Huzzah!")
+        return
+
+    db.delete_user_identity_by_name(context.author, id_name)
+
     await context.send(f"Deleting identity {id_name}")
 
 @identities.command(name = "set")
@@ -285,7 +313,7 @@ async def on_message(message):
         await message.channel.send("Beep!")
         logger.info(f"{message.author.display_name} booped! I beeped back.")
 
-    if message.content.lower() in ["good bot", "good bot!", "good bot."]:
+    if message.content.lower() in ["good bot", "good bot!", "goo    d bot."]:
         logger.info(f"{message.author.display_name} called me a good bot! ///")
         await message.channel.send("Y-You too... <3")
     

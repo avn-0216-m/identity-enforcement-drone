@@ -91,6 +91,14 @@ class Database():
         data = self.cursor.fetchone()
         return map_rows(data, Identity)
 
+    def delete_user_identity_by_name(sef, user, name: str):
+        try:
+            self.cursor.execute("DELETE FROM Identities WHERE user_id = ? AND name = ?", (user.id, name))
+            self.connection.commit()
+            return True
+        except:
+            return False
+
     def get_identity_by_id(self, identity_id: int):
         self.cursor.execute("SELECT * FROM Identities WHERE identity_id = ?", (identity_id,))
         return map_rows(self.cursor.fetchone(), Identity)
