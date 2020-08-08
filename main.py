@@ -18,6 +18,7 @@ from database import Database
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, SERIALIZER_DIVIDER
 from serialize import lexicon_to_string
 import text
+from enforcement import get_webhook
 #import data structure modules
 from data_classes import Status, Identity
 from default_identities import DEFAULT_IDENTITIES
@@ -53,7 +54,7 @@ with open("bot_token.txt") as secret_file:
 db = Database()
 
 #Commands
-@bot.group(invoke_without_command = True, aliases=["rel", "rl"])
+@bot.group(invoke_without_command = True, aliases=["rel", "rl", "relationship"])
 async def relationships(context):
 
     dom_list_text = ""
@@ -422,6 +423,20 @@ async def clone(context, target, identity_name):
     #Check user does not already have an ID with the given name
     #Query DB for IDs beloning to target user with specified name,
     #If exists, insert duplicate entry into DB where owner ID = message author ID
+
+@bot.command(aliases = ['assume-direct-control', 'puppeteer', "amplify"])
+async def puppet(context, target: discord.Member, message):
+    relationship = db.get_relationship(context.author, target)
+    if relationship is None:
+        # Not domming.
+        return
+    elif relationship.confirmed != 1:
+        # Also not domming.
+        return
+    
+    webhook = await get_webhook(context.channel)
+    await webhook.send(message, username=target.display_name, avatar_url=target.avatar_url)
+
 
 #Events
 @bot.event

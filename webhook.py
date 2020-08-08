@@ -15,7 +15,7 @@ def get_occurrences_of_allowance_lexicon(self, allowance_lexicon: str, message: 
     occurrences.sort(key=lambda x: x[0])
     return occurrences
 
-async def get_webhook_for(self, message: discord.Message = None) -> discord.Webhook:
+async def get_webhook_for_channel(self, message: discord.Message = None) -> discord.Webhook:
     self.logger.info(f'Getting a webhook for "{message.channel.name}" in "{message.guild.name}".')
     available_webhooks = await message.channel.webhooks()
     if len(available_webhooks) == 0:
@@ -24,7 +24,7 @@ async def get_webhook_for(self, message: discord.Message = None) -> discord.Webh
     return available_webhooks[0]
 
 async def proxy_message(self, message: discord.Message = None, identity: Identity = None):
-    webhook = await self.get_webhook_for(message)
+    webhook = await self.get_webhook_for_channel(message)
 
     message_content = message.content
 
