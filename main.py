@@ -266,7 +266,10 @@ async def new(context, id_name = None, id_desc = None, *id_words):
         await context.send("No name provided.")
         return
 
-    lexicon_string = lexicon_to_string(id_words)
+    if len(id_words) == 0:
+        lexicon_string = None
+    else:
+        lexicon_string = lexicon_to_string(id_words)
 
     new_identity = Identity(name = id_name, user_id = context.author.id, description = id_desc, replacement_lexicon = lexicon_string)
 
@@ -275,7 +278,7 @@ async def new(context, id_name = None, id_desc = None, *id_words):
     reply = discord.Embed(title="New identity created. 🎉")
     reply.add_field(name="Name:", value=id_name, inline=False)
     reply.add_field(name="Description:", value=id_desc, inline=False)
-    reply.add_field(name="Replacement words:", value=id_words, inline=False)
+    reply.add_field(name="Replacement words:", value=id_words if len(id_words) > 0 else None, inline=False)
 
     await context.send(embed=reply)
 
