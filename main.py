@@ -85,9 +85,9 @@ async def relationships(context):
         sub_list_text = "You have no submissives."
 
     if external_subs > 0:
-        sub_list_text += f"...and {external_subs} on other servers!"
+        sub_list_text += f"...and {external_subs} more on other server(s)!"
     if external_doms > 0:
-        dom_list_text += f"...and {external_doms} on other servers!"
+        dom_list_text += f"...and {external_doms} more on other server(s)!"
 
     reply = discord.Embed(title="Your relationships:")
     reply.add_field(name="Submissives:", value=sub_list_text, inline=False)
