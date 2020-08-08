@@ -135,7 +135,7 @@ class Database():
         return True
 
     def update_identity(self, identity: Identity, field: str, new_value: str):
-        self.cursor.execute("UPDATE Identities SET ? = ? WHERE user_id = ?", (field, new_value, identity.identity_id))
+        self.cursor.execute(f"UPDATE Identities SET {field} = ? WHERE user_id = ?", (new_value, identity.user_id))
         self.connection.commit()
 
     def set_default_identities(self, user: discord.Member):

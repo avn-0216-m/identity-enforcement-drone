@@ -40,7 +40,7 @@ logger.info("-----------------------------------------------")
 # Valid attributes for certain commands
 viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "user_id"]
 addable_attributes = ["replacement_lexicon", "allowance_lexicon", "override_lexicon"]
-settable_attributes = ["name", "description"]
+settable_attributes = ["name", "description", "replacement_lexicon", "avatar", "display_name"]
 # TODO: add all necessary attributes
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
@@ -136,7 +136,7 @@ async def clear(context):
     db.delete_all_pending_relationships(context.author)
     await context.send(embed=discord.Embed(title="All incoming pending relationships have been cleared."))
 
-@bot.command(aliases = ['dom'])
+@relationships.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
     Attempt to dominate someone
@@ -166,7 +166,7 @@ async def dominate(context, submissive: discord.Member):
         reply.set_footer(text = random.choice(text.new_relationship))
         await context.send(embed=reply)
 
-@bot.command(aliases = ['sub'])
+@relationships.command(aliases = ['sub'])
 async def submit(context, dominant: discord.Member):
     '''
     Attempt to submit to someone
@@ -195,7 +195,7 @@ async def submit(context, dominant: discord.Member):
         reply.set_footer(text = random.choice(text.new_relationship))
         await context.send(embed=reply)
 
-@bot.command(aliases = ['yeet', 'uncollar', 'goodbye'])
+@relationships.command(aliases = ['yeet', 'uncollar', 'goodbye'])
 async def relinquish(context, target: discord.Member = None):
     #Validate argument
     if type(target) is not discord.Member:
@@ -219,74 +219,13 @@ async def relinquish(context, target: discord.Member = None):
     reply.set_footer(text = random.choice(text.end_relationship))
     await context.send(embed = reply)
     
-@bot.command(aliases = ['init'])
+@bot.command(aliases = ['init', 'gimmie'])
 async def defaults(context):
     db.set_default_identities(context.message.author)
     reply = discord.Embed(title = f"Identities added for {context.message.author.display_name}:")
     for identity in DEFAULT_IDENTITIES:
         reply.add_field(inline = False, name = identity.name, value = identity.description)
     await context.send(embed = reply)
-
-@bot.command(aliases = ['assign'])
-async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
-    '''
-    Assign an identity to a user.
-    '''
-
-    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity_name} in {context.guild.name}")
-
-    #Confirm the user has the specified identity
-    if (identity := db.get_user_identity_by_name(context.message.author, identity_name)) is None:
-        await context.send("You do not have that specified identity.")
-
-    #Confirm the user is domming the target
-    if target.id != context.author.id:
-        if (relationship := db.get_relationship(context.message.author, target)) is None or relationship.confirmed != 1:
-            reply = discord.Embed(title = f"Could not enforce {target.display_name}", description = "You must be dominating that user to enforce them with an identity.")
-            reply.set_footer(text = random.choice(text.not_domming).format(identity.name))
-
-            await context.send(embed=reply)
-            return
-
-    #If the user is already enforced, update the identity
-    if (current_enforcement := db.get_enforcement(target, context.guild)) is not None:
-        logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
-        db.update_enforcement(current_enforcement, identity)
-
-        former_identity = db.get_identity_by_id(current_enforcement.identity_id)
-        reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
-        reply.add_field(name = "Former identity:", value = former_identity.name)
-        reply.add_field(name = "New identity:", value = identity.name)
-        reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
-
-        await context.send(embed=reply)
-        return
-
-    #Otherwise, add an enforcement record in the enforcement table.
-    logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
-    db.add_enforcement(target, identity, context.guild)
-
-    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
-    reply.add_field(name = "Former identity:", value = "Themselves")
-    reply.add_field(name = "New identity:", value = identity.name)
-    reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
-    await context.send(embed = reply)
-
-@bot.command()
-async def release(context, target: discord.Member):
-    logger.info(f"Release command triggered. {context.message.author.name} wants to release {target.name} in {context.guild.name}")
-
-    current_enforcement = db.get_enforcement(target, context.guild)
-    former_identity = db.get_identity_by_id(current_enforcement.identity_id)
-
-    db.end_enforcement(target, context.guild)
-
-    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
-    reply.add_field(name = "Former identity:", value = former_identity.name)
-    reply.add_field(name = "New identity:", value = "Themselves")
-    reply.set_footer(text = random.choice(text.identity_release))
-
-    await context.send(embed=reply)
 
 @bot.group(invoke_without_command = True, aliases = ["id", "ids", "identity"])
 async def identities(context):
@@ -365,8 +304,33 @@ async def delete(context, id_name, please = None):
     await context.send(f"Deleting identity {id_name}")
 
 @identities.command(name = "set")
-async def _set(context, id_name, attribute, words):
-    await context.send(f"Setting {attribute} of {identity} to have the following words: {words}")
+async def _set(context, id_name, attribute, *new_values):
+    
+    if attribute is None or attribute not in settable_attributes:
+        reply = discord.Embed(title="No valid attribute found.", description="Settable attributes are:\nname\ndescription\ndisplay_name\nreplacement_lexicon\navatar_url")
+        await context.send(embed=reply)
+        return
+
+    identity = db.get_user_identity_by_name(context.author, id_name)
+
+    if identity is None:
+        await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
+        return
+
+    if "lexicon" in attribute:
+        update_value = lexicon_to_string(new_values)
+    else:
+        update_value = new_values[0]
+
+    db.update_identity(identity, attribute, update_value)
+
+    reply = discord.Embed(title=f"{id_name} successfully updated.")
+    reply.add_field(name=f"New {attribute}:",value=new_values if len(new_values) > 1 else new_values[0])
+
+    if attribute == "avatar":
+        reply.set_thumbnail(url=new_values[0])
+
+    await context.send(embed=reply)
 
 @identities.command()
 async def view(context, id_name, attribute = None):
@@ -387,6 +351,66 @@ async def view(context, id_name, attribute = None):
 
     await context.send(embed = reply)
 
+@identities.command(aliases = ['assign'])
+async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
+    '''
+    Assign an identity to a user.
+    '''
+
+    logger.info(f"Enforcement command triggered. {context.message.author.name} wants to enforce {target.name} with the identity {identity_name} in {context.guild.name}")
+
+    #Confirm the user has the specified identity
+    if (identity := db.get_user_identity_by_name(context.message.author, identity_name)) is None:
+        await context.send("You do not have that specified identity.")
+
+    #Confirm the user is domming the target
+    if target.id != context.author.id:
+        if (relationship := db.get_relationship(context.message.author, target)) is None or relationship.confirmed != 1:
+            reply = discord.Embed(title = f"Could not enforce {target.display_name}", description = "You must be dominating that user to enforce them with an identity.")
+            reply.set_footer(text = random.choice(text.not_domming).format(identity.name))
+
+            await context.send(embed=reply)
+            return
+
+    #If the user is already enforced, update the identity
+    if (current_enforcement := db.get_enforcement(target, context.guild)) is not None:
+        logger.info(f"Updating enforcement for {target.id} with new identity {identity.identity_id}")
+        db.update_enforcement(current_enforcement, identity)
+
+        former_identity = db.get_identity_by_id(current_enforcement.identity_id)
+        reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+        reply.add_field(name = "Former identity:", value = former_identity.name)
+        reply.add_field(name = "New identity:", value = identity.name)
+        reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+
+        await context.send(embed=reply)
+        return
+
+    #Otherwise, add an enforcement record in the enforcement table.
+    logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
+    db.add_enforcement(target, identity, context.guild)
+
+    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+    reply.add_field(name = "Former identity:", value = "Themselves")
+    reply.add_field(name = "New identity:", value = identity.name)
+    reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+    await context.send(embed = reply)
+
+@identities.command()
+async def release(context, target: discord.Member):
+    logger.info(f"Release command triggered. {context.message.author.name} wants to release {target.name} in {context.guild.name}")
+
+    current_enforcement = db.get_enforcement(target, context.guild)
+    former_identity = db.get_identity_by_id(current_enforcement.identity_id)
+
+    db.end_enforcement(target, context.guild)
+
+    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+    reply.add_field(name = "Former identity:", value = former_identity.name)
+    reply.add_field(name = "New identity:", value = "Themselves")
+    reply.set_footer(text = random.choice(text.identity_release))
+
+    await context.send(embed=reply)
 
 @bot.command(aliases = ['yoink'])
 async def clone(context, target, identity_name):
