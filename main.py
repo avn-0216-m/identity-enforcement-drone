@@ -202,77 +202,49 @@ async def release(context, target: discord.Member):
 
     await context.send(embed=reply)
 
-@bot.command(aliases = ['id', 'identities', 'ids', 'idsnuts'])
-async def identity(context, arg1 = None, arg2 = None, arg3 = None, arg4 = None):
-    #This is the big boy command, the real fat schmeat of the program.
-    #Here's a fucken docstring for ya:
-    #arg1: An identity name.
-    #arg2: Either an identity attribute (name/desc/lexicon/etc) or a command (new/rename/delete)
-    #arg3: The new value for the attribute specified in arg2
-    #arg4: Optional mode for value setting (replace/append/delete)
+@bot.group(invoke_without_command = True, aliases = ["id", "ids", "identitiy"])
+async def identities(context):
 
-    #List another users identities if they are mentioned.
-    if context.message.mentions != []:
-        logger.info("Listing all identities belonging to mentioned users.")
+    await context.send("hello world")
 
-        reply = discord.Embed()
-
-        for user in context.message.mentions:
-            logger.info(f"Getting identities for {user.name}")
-            #Get all IDs belonging to mentioned user and append their name + description
-
-            identities = db.get_all_user_identities(user)
-
-            id_text = ""
-            for identity in identities:
-                id_text += f"**{identity.name}**"
-                if identity.description is not None:
-                    id_text += f': "{identity.description}"'
-                id_text += "\n"
-            if id_text != "":
-                reply.add_field(name = user.display_name, value = id_text, inline = False)
-        await context.send(embed=reply)
-        return
-
-    #Validate that they've given an identity name.
-    elif arg1 is None:
-
-        #TODO: This is a temporary way to list self owned identities. Delete later.
-        reply = discord.Embed()
-        identities = db.get_all_user_identities(context.author)
-        id_text = ""
-        for identity in identities:
-            id_text += f"**{identity.name}**"
-            if identity.description is not None:
-                id_text += f': "{identity.description}"'
-            id_text += "\n"
-        if id_text != "":
-            reply.add_field(name = context.author.display_name, value = id_text, inline = False)
-        await context.send(embed=reply)
-        return
-
-    #TODO: Delete this when identity command is finished.
+    if len(context.message.mentions) == 0:
+        await context.send("Yoru current identities here")
     else:
-        await context.send("Sorry, you can't make new commands yet. Initialize the defaults with the `!default` command.")
+        for mention in context.message.mentions:
+            await context.send(f"Identities of {mention} are beep BOOP")
+
+@identities.command()
+async def new(context, id_name = None, id_desc = None, id_words = None):
+
+    if id_name is None:
+        await context.send("No name provided.")
         return
+    await context.send(f"New identity called {id_name} made")
 
-    identity = db.get_user_identity_by_name(context.message.author.id, arg1)
+@identities.command()
+async def add(context, id_name, attribute, words):
+    await context.send(f"Adding {words} to {attribute} for {id_name}")
 
-    #Validate that the identity name is valid.
-    if identity is None: #No matching identities were found
-        if arg2.lower() == "new":
-            logger.info("Creating new identity.")
-        else:
-            logger.info("Invalid identity name given.")
+@identities.command()
+async def remove(context, id_name, attribute, words):
+    await context.send(f"Removing {words} from {attribute} for {id_name}")
 
-    #Validate attribute/command.
-    if arg2.lower() not in ALLOWED_ATTRIBUTES_AND_COMMANDS:
-        logger.info("Invalid attribute/command specified.")
+@identities.command()
+async def delete(context, id_name, please = None):
 
-    #Validate mode.
-    if arg4.lower() not in ALLOWED_MODES:
-        logger.info("Invalid mode specified.")
+    if please is None:
+        await context.send("Please add 'please' to the end of this command to confirm that you understand this will delete your identity (hot).")
+        return
+    
+    await context.send(f"Deleting identity {id_name}")
 
+@identities.command(name = "set")
+async def _set(context, id_name, attribute, words):
+    await context.send(f"Setting {attribute} of {identity} to have the following words: {words}")
+
+@identities.command()
+async def view(context, id_name, attribute = None):
+    await context.send(f"Have a look at {id_name} and its attributes WOW")
 
 @bot.command(aliases = ['yoink'])
 async def clone(context, target, identity_name):
