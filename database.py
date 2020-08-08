@@ -161,9 +161,25 @@ class Database():
 
     #Relationship
     def get_relationship(self, dominant, submissive):
-        self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? and submissive_id = ?", (dominant.id, submissive.id))
+        self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? AND submissive_id = ?", (dominant.id, submissive.id))
         data = self.cursor.fetchone()
         return map_rows(data, Relationship)
+
+    def get_all_pending_relationships(self, user):
+        self.cursor.execute("SELECT * FROM Relationships WHERE (submissive_id = ? OR dominant_id = ?) AND confirmed = 0", (user.id, user.id))
+        return map_rows(self.cursor.fetchall(), Relationship)
+
+    def delete_all_pending_relationships(self, user):
+        self.cursor.execute("DELETE FROM Relationships WHERE (submissive_id = ? OR dominant_id = ?) AND confirmed = 0", (user.id, user.id))
+        self.connection.commit()
+
+    def get_all_relationships_where_user_is_sub(self, user):
+        self.cursor.execute("SELECT * FROM Relationships WHERE submissive_id = ? AND confirmed = 1", (user.id,))
+        return map_rows(self.cursor.fetchall(), Relationship)
+
+    def get_all_relationships_where_user_is_dom(self, user):
+        self.cursor.execute("SELECT * FROM Relationships WHERE dominant_id = ? AND confirmed = 1", (user.id,))
+        return map_rows(self.cursor.fetchall(), Relationship)
 
     def add_relationship(self, dominant: discord.Member, submissive: discord.Member, initiated_by: discord.Member):
         try:

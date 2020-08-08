@@ -18,7 +18,7 @@ TEMPLATE = Identity(
 
 PUPPY_WORDS = [
     "woof!", 
-    "snff,", 
+    "snff", 
     "bark!", 
     "bork!", 
     "wauf!", 
@@ -28,7 +28,7 @@ PUPPY_WORDS = [
     "🐾", 
     "🐶‼️", 
     "💖", 
-    "wauf,", 
+    "wauf", 
     "woof!!",
     ]
 

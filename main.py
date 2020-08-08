@@ -15,7 +15,8 @@ import relationship as rl
 import enforcement as en
 from database import Database
 #import utility modules 
-from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, ALLOWED_ATTRIBUTES_AND_COMMANDS, ALLOWED_MODES
+from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, SERIALIZER_DIVIDER
+from serialize import lexicon_to_string
 import text
 #import data structure modules
 from data_classes import Status, Identity
@@ -36,9 +37,11 @@ logger.info("-----------------------------------------------")
 logger.info("It's a new day~!")
 logger.info("-----------------------------------------------")
 
-
-#on_ready checkers
-culling_roles = False
+# Valid attributes for certain commands
+viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "user_id"]
+addable_attributes = ["replacement_lexicon", "allowance_lexicon", "override_lexicon"]
+settable_attributes = ["name", "description"]
+# TODO: add all necessary attributes
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
@@ -50,6 +53,89 @@ with open("bot_token.txt") as secret_file:
 db = Database()
 
 #Commands
+@bot.group(invoke_without_command = True, aliases=["rel", "rl"])
+async def relationships(context):
+
+    dom_list_text = ""
+    sub_list_text = ""
+    external_doms = 0
+    external_subs = 0
+
+    dom_list = db.get_all_relationships_where_user_is_sub(context.author)
+    sub_list = db.get_all_relationships_where_user_is_dom(context.author)
+
+    if dom_list is not None and len(dom_list) > 0:
+        for relationship in dom_list:
+            dom_user = context.guild.get_member(relationship.dominant_id)
+            if dom_user is not None:
+                dom_list_text += dom_user.display_name + "\n"
+            else:
+                external_doms += 1
+    else:
+        dom_list_text = "You have no dominants"
+
+    if sub_list is not None and len(sub_list) > 0:
+        for relationship in sub_list:
+            sub_user = context.guild.get_member(relationship.submissive_id)
+            if sub_user is not None:
+                sub_list_text += sub_user.display_name + "\n"
+            else:
+                external_subs += 1
+    else:
+        sub_list_text = "You have no submissives."
+
+    if external_subs > 0:
+        sub_list_text += f"...and {external_subs} on other servers!"
+    if external_doms > 0:
+        dom_list_text += f"...and {external_doms} on other servers!"
+
+    reply = discord.Embed(title="Your relationships:")
+    reply.add_field(name="Submissives:", value=sub_list_text, inline=False)
+    reply.add_field(name="Dominants:",value=dom_list_text, inline=False)
+    await context.send(embed=reply)
+
+@relationships.group(invoke_without_command = True)
+async def pending(context):
+
+    reply = discord.Embed(title="Incoming relationship requests in this server:")
+
+    pending_doms = ""
+    pending_subs = ""
+
+    pending_relationships = db.get_all_pending_relationships(context.author)
+
+    if pending_relationships is None or len(pending_relationships) == 0:
+        reply.description = "You have no pending submissives or dominants."
+        await context.send(embed=reply)
+        return
+
+    for relationship in pending_relationships:
+        if relationship.submissive_id == context.author.id:
+            pending_user = context.guild.get_member(relationship.dominant_id)
+            if pending_user is None:
+                continue
+            else:
+                pending_doms += f"{pending_user.display_name}\n"
+        else:
+            pending_user = context.guild.get_member(relationship.submissive_id)
+            if pending_user is None:
+                continue
+            else:
+                pending_subs += f"{pending_user.display_name}\n"
+
+    else:
+        if pending_doms != "":
+            reply.add_field(name = "Pending dominants:", value = pending_doms, inline = False)
+        if pending_subs != "":
+            reply.add_field(name = "Pending submissives:", value = pending_subs, inline = False)
+
+    await context.send(embed=reply)
+
+@pending.command()
+async def clear(context):
+    db.delete_all_pending_relationships(context.author)
+    await context.send(embed=discord.Embed(title="All incoming pending relationships have been cleared."))
+
 @bot.command(aliases = ['dom'])
 async def dominate(context, submissive: discord.Member):
     '''
@@ -202,7 +288,7 @@ async def release(context, target: discord.Member):
 
     await context.send(embed=reply)
 
-@bot.group(invoke_without_command = True, aliases = ["id", "ids", "identitiy"])
+@bot.group(invoke_without_command = True, aliases = ["id", "ids", "identity"])
 async def identities(context):
     '''
     This command lists identities for you if invoked without any mentions,
@@ -230,7 +316,7 @@ async def identities(context):
             await context.send(reply)
 
 @identities.command()
-async def new(context, id_name = None, id_desc = None, id_words = None):
+async def new(context, id_name = None, id_desc = None, *id_words):
 
     if db.get_user_identity_by_name(context.author, id_name) is not None:
         await context.send("Sorry, that identity already exists in your inventory.")
@@ -240,10 +326,18 @@ async def new(context, id_name = None, id_desc = None, id_words = None):
         await context.send("No name provided.")
         return
 
-    new_identity = Identity(name = id_name, user_id = context.author.id, description = id_desc, replacement_lexicon = id_words)
+    lexicon_string = lexicon_to_string(id_words)
+
+    new_identity = Identity(name = id_name, user_id = context.author.id, description = id_desc, replacement_lexicon = lexicon_string)
 
     db.create_identity(new_identity)
-    await context.send(f"New identity called {id_name} made! :)")
+
+    reply = discord.Embed(title="New identity created. 🎉")
+    reply.add_field(name="Name:", value=id_name, inline=False)
+    reply.add_field(name="Description:", value=id_desc, inline=False)
+    reply.add_field(name="Replacement words:", value=id_words, inline=False)
+
+    await context.send(embed=reply)
 
 @identities.command()
 async def add(context, id_name, attribute, words):
@@ -276,7 +370,23 @@ async def _set(context, id_name, attribute, words):
 
 @identities.command()
 async def view(context, id_name, attribute = None):
-    await context.send(f"Have a look at {id_name} and its attributes WOW")
+
+    if attribute is None or attribute not in viewable_attributes:
+        reply = discord.Embed(title="No valid attribute found.", description="Viewable attributes are:\nname\ndescription\ndisplay_name\nreplacement_lexicon\nallowance_lexicon\noverride_lexicon\noverride_chance\nuser_id")
+        await context.send(embed=reply)
+        return
+    
+    identity = db.get_user_identity_by_name(context.author, id_name)
+
+    if identity is None:
+        await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
+        return
+
+    reply = discord.Embed(title=f"{id_name}:")
+    reply.add_field(name=attribute, value=getattr(identity, attribute).replace(SERIALIZER_DIVIDER, "\n"))
+
+    await context.send(embed = reply)
+
 
 @bot.command(aliases = ['yoink'])
 async def clone(context, target, identity_name):
