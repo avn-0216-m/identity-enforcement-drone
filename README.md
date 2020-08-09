@@ -141,6 +141,16 @@ Usage: `!id release [@user]`
 
 This command releases a user from their enforcement, assuming they are already enforced. Currently, anyone can release anyone from enforcement, including themselves.
 
+### !release
+
+Aliases: `!aa`, `!aaa`, `!aaaa`
+
+Usage: `!release <@user>`
+
+Example: `!release`
+
+This command is a _faster way_ to quickly release yourself from enforcement. If you invoke this command without a user, it will use you as the target instead.
+
 ### !id new
 
 Aliases: None
