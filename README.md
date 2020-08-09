@@ -11,7 +11,7 @@ Identities are the foundation of this bot. They come with a few attributes:
 - avatar: The picture that will be used when enforcing an identity.
 - display_name: The display name that will replace an enforced users original display name when enforcing an identity.
 - replacement_lexicon: A list of words and phrases that will be used to build a "replacement message" roughly the length of the user's original message.
-- user_id: The discord ID of the identity's owner. Not usually used.
+- user_id: The discord ID of the identity's owner. Only used for grouping and storing identities in 3161's database.
 
 # Enforcements
 
