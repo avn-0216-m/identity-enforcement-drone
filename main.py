@@ -383,7 +383,7 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
 
         former_identity = db.get_identity_by_id(current_enforcement.identity_id)
         reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
-        reply.add_field(name = "Former identity:", value = former_identity.name)
+        reply.add_field(name = "Former identity:", value = former_identity.name if former_identity is not None else "[Identity missing]")
         reply.add_field(name = "New identity:", value = identity.name)
         reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
 
@@ -400,8 +400,19 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
     reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
     await context.send(embed = reply)
 
+@bot.command(aliases = ['aa','aaa','aaaa'], name = "release")
+async def _release(context, target: discord.Member = None):
+    '''
+    Quick release command
+    '''
+    await release(context,target)
+
 @identities.command()
-async def release(context, target: discord.Member):
+async def release(context, target: discord.Member = None):
+
+    if target is None:
+        target = context.author
+
     logger.info(f"Release command triggered. {context.message.author.name} wants to release {target.name} in {context.guild.name}")
 
     current_enforcement = db.get_enforcement(target, context.guild)
@@ -410,7 +421,7 @@ async def release(context, target: discord.Member):
     db.end_enforcement(target, context.guild)
 
     reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
-    reply.add_field(name = "Former identity:", value = former_identity.name)
+    reply.add_field(name = "Former identity:", value = former_identity.name if former_identity is not None else "Themselves")
     reply.add_field(name = "New identity:", value = "Themselves")
     reply.set_footer(text = random.choice(text.identity_release))
 
