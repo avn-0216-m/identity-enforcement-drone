@@ -13,6 +13,48 @@ Identities are the foundation of this bot. They come with a few attributes:
 - replacement_lexicon: A list of words and phrases that will be used to build a "replacement message" roughly the length of the user's original message.
 - user_id: The discord ID of the identity's owner. Not usually used.
 
+# Enforcements
+
+Enforcements are the act of making sure a cutie with an identity _acts_ that way on a given server. There are several types of enforcements.
+
+## 1. Replacement lexicon but no allowance lexicon.
+
+If a replacement lexicon is present but not an allowance lexicon, then the message will be deleted and replaced with random words from the replacement lexicon roughly equivalent to the length of the original message.
+
+Example:
+
+Replacement lexicon: `woof, woof!!, bark`
+
+Original message: `I love being a dog!`
+
+Replacement message: `woof woof!! woof bark`
+
+## 2. Allowance lexicon but no replacement lexicon.
+
+If only an allowance lexicon is present, then the message will be deleted outright if the message does not exactly match any of the phrases in the allowance lexicon.
+
+Example:
+
+Allowance lexicon: `It feels good to obey.`
+
+Message: `I'm a very disobedient subject` will be deleted.
+
+Message: `It feels good to obey.` will be let through, and replaced with a bot message if other attributes (such as display name or avatar) are different from the original author's.
+
+## 3. Replacement lexicon and allowance lexicon.
+
+If both lexicons are present, then any allowed words from the original message will be spliced into the replacement message.
+
+Example:
+
+Replacement lexicon: `woof, woof!`
+
+Allowance lexicon: `yes, no`
+
+Original message: `I love you Miss, Yes I love to be enforced!`
+
+Replacement message: `woof woof yes woof!`
+
 # Commands
 
 Any parameter in [square brackets] is mandatory, anything in \<these weird bois\> is optional.
@@ -162,3 +204,8 @@ Example: `!init` (Shocker, I know)
 This command will give you the three basic identites that come built in with this bot: Puppy, Kitten, and Hypnoslut (one of these things is not like the other).
 
 **WARNING**: This will overwrite any identities with the same name. Please refrain from using this command if you have a "Puppy"/"Kitten"/"Hypnoslut" identity you'd like to keep.
+
+# Upcoming features
+
+- Infectious identities: Toggle this mode on, and every so often this identity will spread like a very anonymizing goop to one of your submissives! Wow!
+- More utility features like `add` and `delete` to easily append or remove words from your lexicons.
