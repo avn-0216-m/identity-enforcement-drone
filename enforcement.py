@@ -55,7 +55,7 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
         #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
         LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon}")
         replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
-        proxy_message_content = random.choice(replacement_lexicon)
+        proxy_message_content = f"{random.choice(replacement_lexicon)} "
         for word in range(1, len(message.content)//5):
             proxy_message_content += f"{random.choice(replacement_lexicon)} "
 
