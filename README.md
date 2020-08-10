@@ -2,6 +2,12 @@
 
 Have you ever wished PluralKit was, like, horny? This is the bot for you.
 
+Invite it to your server using the link below!
+
+https://discord.com/api/oauth2/authorize?client_id=694984579995533313&permissions=536955904&scope=bot
+
+Please consult your doctor to see if Identity Enforcement Drone is right for you.
+
 # Identites
 
 Identities are the foundation of this bot. They come with a few attributes:
