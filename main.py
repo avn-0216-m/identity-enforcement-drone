@@ -262,6 +262,10 @@ async def new(context, id_name = None, id_desc = None, *id_words):
         await context.send("Sorry, that identity already exists in your inventory.")
         return
 
+    if len(db.get_all_user_identities(context.author)) > 20:
+        await context.send("Sorry, you have too many identities. Please delete some.")
+        return
+
     if id_name is None:
         await context.send("No name provided.")
         return
