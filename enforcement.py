@@ -29,6 +29,12 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
     #Get identity via identity ID from enforcement.
     identity = db.get_identity_by_id(enforcement.identity_id)
 
+    if identity is None:
+        # Somehow, there is no identity. Inform the user that the enforcement has ended.
+        db.end_enforcement(enforcement)
+        await message.channel.send("Terribly sorry, but you seem to be enforced with an identity that no longer exists. You are no longer enforced, and we apologize for any inconvenience.")
+        return
+
     proxy_username = message.author.display_name
     proxy_avatar_url = message.author.avatar_url
     proxy_message_content = message.content

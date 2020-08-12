@@ -219,17 +219,27 @@ class Database():
         self.cursor.execute("DELETE FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         self.connection.commit()
 
+    def end_enforcement(self, enforcement):
+        try:
+            self.cursor.execute("DELETE FROM Enforcements WHERE enforcement_id = ?", (enforcement.enforcement_id,))
+            self.connection.commit()
+            return True
+        except:
+            self.logger.error("Something went wrong with ending the enforcement via enforcement ID.")
+            return False
+
     def get_enforcement(self, user, guild):
         self.cursor.execute("SELECT enforcement_id, identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         return map_rows(self.cursor.fetchone(), Enforcement)
 
     def end_all_enforcements_of_identity(self, identity):
         try:
-            self.cursor.execute("DELETE FROM Enforcements WHERE identity_id = ?", (identity.identity_id))
+            self.logger.info(f"Deleting all enforcements of identity ID {identity.identity_id}")
+            self.cursor.execute("DELETE FROM Enforcements WHERE identity_id = ?", (identity.identity_id,))
             self.connection.commit()
             return True
-        except:
-            self.logger.error(f"Deleting all enforcements of identity {identity.identity_id} failed.")
+        except Exception as e:
+            self.logger.error(f"Deleting all enforcements of identity {identity.identity_id} failed: {e}")
             return False
 
     def update_enforcement(self, enforcement, new_identity):
