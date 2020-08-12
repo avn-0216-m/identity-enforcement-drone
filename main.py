@@ -304,6 +304,7 @@ async def delete(context, id_name, please = None):
         return
 
     db.delete_user_identity_by_name(context.author, id_name)
+    db.end_all_enforcements_of_identity(identity)
 
     await context.send(f"Deleting identity {id_name}")
 

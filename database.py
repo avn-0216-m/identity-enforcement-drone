@@ -223,6 +223,15 @@ class Database():
         self.cursor.execute("SELECT enforcement_id, identity_id FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         return map_rows(self.cursor.fetchone(), Enforcement)
 
+    def end_all_enforcements_of_identity(self, identity):
+        try:
+            self.cursor.execute("DELETE FROM Enforcements WHERE identity_id = ?", (identity.identity_id))
+            self.connection.commit()
+            return True
+        except:
+            self.logger.error(f"Deleting all enforcements of identity {identity.identity_id} failed.")
+            return False
+
     def update_enforcement(self, enforcement, new_identity):
         self.logger.debug(f"Updating enforcement. Enforcement ID: {enforcement.enforcement_id}, Identity ID: {new_identity.identity_id}")
         self.cursor.execute("UPDATE Enforcements SET identity_id = ? WHERE enforcement_id = ?", (new_identity.identity_id, enforcement.enforcement_id))
