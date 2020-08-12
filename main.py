@@ -322,6 +322,13 @@ async def _set(context, id_name, attribute, *new_values):
         await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
         return
 
+    if attribute == "display_name" and len(new_values[0]) > 80: 
+        reply = discord.Embed(title="Could not update display name.")
+        reply.add_field(name="Maximum length:", value="80")
+        reply.add_field(name="Your length:", value=len(attribute))
+        await context.send(embed=reply)
+        return
+
     if "lexicon" in attribute:
         update_value = lexicon_to_string(new_values)
     else:
