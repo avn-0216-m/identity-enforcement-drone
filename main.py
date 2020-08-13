@@ -16,7 +16,7 @@ import enforcement as en
 from database import Database
 #import utility modules 
 from notable_entities import ENFORCEMENT_PREFIX, ENFORCEMENT_DRONE, SERIALIZER_DIVIDER
-from serialize import lexicon_to_string
+from serialize import lexicon_to_string, string_to_lexicon
 import text
 from enforcement import get_webhook
 #import data structure modules
@@ -287,8 +287,30 @@ async def new(context, id_name = None, id_desc = None, *id_words):
     await context.send(embed=reply)
 
 @identities.command()
-async def add(context, id_name, attribute, words):
-    await context.send(f"Adding {words} to {attribute} for {id_name}")
+async def add(context, id_name, attribute, *words):
+    if attribute not in addable_attributes:
+        return
+
+    identity = db.get_user_identity_by_name(context.author, id_name)
+    if identity is None:
+        return
+
+    original_lexicon_string = getattr(identity, attribute)
+    original_lexicon = string_to_lexicon(original_lexicon_string)
+
+    if original_lexicon is None:
+        original_lexicon = []
+
+    for entry in words:
+        original_lexicon.append(entry)
+
+    modified_lexicon_string = lexicon_to_string(original_lexicon)
+
+    db.update_identity(identity, attribute, modified_lexicon_string)
+
+    reply = discord.Embed(title="Lexicon successfully updated.")
+    reply.add_field(name="New lexicon:", value=modified_lexicon_string.replace(SERIALIZER_DIVIDER, "\n"))
+    await context.send(embed=reply)
 
 @identities.command()
 async def remove(context, id_name, attribute, words):
