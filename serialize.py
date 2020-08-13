@@ -11,5 +11,7 @@ def lexicon_to_string(lexicon: list) -> str:
     return reply
 
 def string_to_lexicon(string: str) -> list:
+    if string is None:
+        return []
     return string.split(SERIALIZER_DIVIDER)
 

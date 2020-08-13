@@ -313,8 +313,31 @@ async def add(context, id_name, attribute, *words):
     await context.send(embed=reply)
 
 @identities.command()
-async def remove(context, id_name, attribute, words):
-    await context.send(f"Removing {words} from {attribute} for {id_name}")
+async def remove(context, id_name, attribute, *words):
+    if attribute not in addable_attributes:
+        return
+
+    identity = db.get_user_identity_by_name(context.author, id_name)
+    if identity is None:
+        return
+
+    lexicon_string = getattr(identity, attribute)
+    lexicon = string_to_lexicon(lexicon_string)
+
+    for word in words:
+        logger.debug(f"removing {word} from {lexicon}")
+        try:
+            lexicon.remove(word)
+        except:
+            logger.info(f"Couldn't remove {word} from {lexicon}, already not present.")
+
+    modified_lexicon_string = lexicon_to_string(lexicon)
+
+    db.update_identity(identity, attribute, modified_lexicon_string)
+
+    reply = discord.Embed(title="Lexicon successfully updated.")
+    reply.add_field(name="New lexicon:", value=modified_lexicon_string.replace(SERIALIZER_DIVIDER, "\n"))
+    await context.send(embed=reply)
 
 @identities.command()
 async def delete(context, id_name, please = None):
