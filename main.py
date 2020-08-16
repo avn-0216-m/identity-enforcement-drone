@@ -461,6 +461,8 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
         reply.add_field(name = "Former identity:", value = former_identity.name if former_identity is not None else "[Identity missing]")
         reply.add_field(name = "New identity:", value = identity.name)
         reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+        if identity.avatar is not None:
+            reply.set_thumbnail(url=identity.avatar)
 
         await context.send(embed=reply)
         return
@@ -473,6 +475,8 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
     reply.add_field(name = "Former identity:", value = "Themselves")
     reply.add_field(name = "New identity:", value = identity.name)
     reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
+    if identity.avatar is not None:
+            reply.set_thumbnail(url=identity.avatar)
     await context.send(embed = reply)
 
 @identities.command()
@@ -516,6 +520,7 @@ async def release(context, target: discord.Member = None):
     reply.add_field(name = "Former identity:", value = former_identity.name if former_identity is not None else "Themselves")
     reply.add_field(name = "New identity:", value = "Themselves")
     reply.set_footer(text = random.choice(text.identity_release))
+    reply.set_thumbnail(url=target.avatar_url)
 
     await context.send(embed=reply)
 
