@@ -471,7 +471,7 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
     logger.info(f"Adding new enforcement for {target.id} with new identity {identity.identity_id}")
     db.add_enforcement(target, identity, context.guild)
 
-    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
+    reply = discord.Embed(title = f"Enforcement for {target.display_name} has been added.")
     reply.add_field(name = "Former identity:", value = "Themselves")
     reply.add_field(name = "New identity:", value = identity.name)
     reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
