@@ -245,31 +245,30 @@ async def defaults(context):
     await context.send(embed = reply)
 
 @bot.group(invoke_without_command = True, aliases = ["id", "ids", "identity"])
-async def identities(context):
+async def identities(context, target: discord.Member = None):
     '''
     This command lists identities for you if invoked without any mentions,
     or lists the identities of anyone mentioned (@user).
     '''
 
-    if len(context.message.mentions) == 0:
-        reply = "Your identities are:\n"
-        identities = db.get_all_user_identities(context.author)
-        for identity in identities:
-            reply += f"{identity.name} - {identity.description}\n"
-
-        await context.send(reply)
-
+    reply = discord.Embed()
+    identities = []
+    if target is not None and type(target) is discord.Member:
+        reply.title = f"Identities of {target.display_name}:"
+        reply.set_thumbnail(url=target.avatar_url)
+        identities = db.get_all_user_identities(target)
     else:
-        for mention in context.message.mentions:
-            reply = f"IDs belonging to {mention}:\n"
-            identities = db.get_all_user_identities(mention)
+        reply.title = f"Your identities:"
+        reply.set_thumbnail(url=context.author.avatar_url)
+        identities = db.get_all_user_identities(context.author)
 
-            if len(identities) == 0:
-                reply += "None!"
-            else:
-                for identity in identities:
-                    reply += f"{identity.name} - {identity.description}\n"
-            await context.send(reply)
+    if identities is None or len(identities) == 0:
+        reply.description = "None!"
+    else:
+        for identity in identities:
+            reply.add_field(name=identity.name, value=identity.description, inline=False)
+
+    await context.send(embed=reply)
 
 @identities.command()
 async def new(context, id_name = None, id_desc = None, *id_words):
