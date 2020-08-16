@@ -42,6 +42,8 @@ logger.info("-----------------------------------------------")
 viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "user_id"]
 addable_attributes = ["replacement_lexicon", "allowance_lexicon", "disallowance_lexicon"]
 settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "avatar", "display_name"]
+clearable_attributes = ["description", "avatar", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "display_name"]
+newline = "\n"
 # TODO: add all necessary attributes
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
@@ -379,7 +381,7 @@ async def _set(context, id_name, attribute, *new_values):
     
     if attribute is None or attribute not in settable_attributes:
         LOGGER.debug(f"Invalid set attribute: {attribute}")
-        reply = discord.Embed(title="No valid attribute found.", description="Settable attributes are:\nname\ndescription\ndisplay_name\nreplacement_lexicon\navatar_url")
+        reply = discord.Embed(title="No valid attribute found.", description=f"Settable attributes are:\n {newline.join(viewable_attributes)}")
         await context.send(embed=reply)
         return
 
@@ -415,7 +417,7 @@ async def _set(context, id_name, attribute, *new_values):
 async def view(context, id_name, attribute = None):
 
     if attribute is None or attribute not in viewable_attributes:
-        reply = discord.Embed(title="No valid attribute found.", description="Viewable attributes are:\nname\ndescription\ndisplay_name\nreplacement_lexicon\nallowance_lexicon\noverride_lexicon\noverride_chance\nuser_id")
+        reply = discord.Embed(title="No valid attribute found.", description=f"Viewable attributes are:\n {newline.join(viewable_attributes)}")
         await context.send(embed=reply)
         return
     
@@ -432,7 +434,15 @@ async def view(context, id_name, attribute = None):
 
 @identities.command()
 async def clear(context, id_name, attribute):
-    pass
+
+    if attribute not in clearable_attributes:
+        await context.send(embed=discord.Embed(title="Not a clearable attribute.", description=f"Clearable attributes are:\n {newline.join(clearable_attributes)}"))
+
+    identity = db.get_user_identity_by_name(context.author, id_name)
+
+    if identity is None:
+        await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
+        return
 
 @identities.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
