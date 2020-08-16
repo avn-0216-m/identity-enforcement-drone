@@ -599,11 +599,12 @@ async def puppet(context, target: discord.Member, message):
     await webhook.send(message, username=target.display_name, avatar_url=target.avatar_url)
 
 @bot.command()
-async def motherfucker(context, target: discord.Member):
+async def ugly(context, target: discord.Member):
     # WARNING: THIS IS STUPID.
-    reply = discord.Embed(title="THIS UGLY SON OF A BITCH >>>>>", description="is fucking SUPER HOT GIRLS")
-    reply.add_field(name="and basically,", value="you're __fucking stupid__")
-    reply.set_thumbnail(url=target.display_name)
+    reply = discord.Embed(title="THIS UGLY SON OF A BITCH >", description="is fucking SUPER HOT GIRLS")
+    reply.add_field(name="and basically,", value="__you are fucking stupid__")
+    reply.set_thumbnail(url=target.avatar_url)
+    reply.set_footer(text="How? ...Just Watch The Free Video")
     await context.send(embed=reply)
 
 #Events
