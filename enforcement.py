@@ -125,7 +125,7 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
                 replacement_word = ""
                 while not len(replacement_word) >= len(match):
                     replacement_word += random.choice(replacement_lexicon) 
-                proxy_message_content = proxy_message_content.replace(match, "\_" * len(match), 1)
+                proxy_message_content = proxy_message_content.replace(match, replacement_word, 1)
 
     elif identity.disallowance_lexicon is not None:
         #ENFORCEMENT MODE 5: Replace disallowed words with underscores of equal length.
