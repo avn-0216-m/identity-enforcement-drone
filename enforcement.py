@@ -118,34 +118,24 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
         disallowance_lexicon = string_to_lexicon(identity.disallowance_lexicon)
         replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
 
-        continue_replacing = True
-        while continue_replacing:
-            continue_replacing = False
-            for word in disallowance_lexicon:
-                LOGGER.debug(f"Looking for word: {word}")
-                if proxy_message_content.find(word) != -1:
-                    LOGGER.debug(f"Word found. Replacing.")
-                    continue_replacing = True
-                    replacement_word = ""
-                    while not len(replacement_word) >= len(word):
-                        replacement_word += random.choice(replacement_lexicon)
-                    proxy_message_content = proxy_message_content.replace(word, replacement_word, 1)
+        disallowance_lexicon = string_to_lexicon(identity.disallowance_lexicon)
+        for naughty_word in disallowance_lexicon:
+            LOGGER.info(f"Checking for naughty word: {naughty_word}")
+            for match in re.findall(naughty_word, proxy_message_content, flags=re.IGNORECASE):
+                replacement_word = ""
+                while not len(replacement_word) >= len(match):
+                    replacement_word += random.choice(replacement_lexicon) 
+                proxy_message_content = proxy_message_content.replace(match, "\_" * len(match), 1)
 
     elif identity.disallowance_lexicon is not None:
         #ENFORCEMENT MODE 5: Replace disallowed words with underscores of equal length.
         LOGGER.debug("ENFORCEMENT MODE 5.")
 
         disallowance_lexicon = string_to_lexicon(identity.disallowance_lexicon)
-
-        continue_replacing = True
-        while continue_replacing:
-            continue_replacing = False
-            for word in disallowance_lexicon:
-                LOGGER.debug(f"Looking for word: {word}")
-                if proxy_message_content.find(word) != -1:
-                    LOGGER.debug(f"Word found. Replacing.")
-                    continue_replacing = True
-                    proxy_message_content = proxy_message_content.replace(word, "\_" * len(word), 1)
+        for naughty_word in disallowance_lexicon:
+            LOGGER.info(f"Checking for naughty word: {naughty_word}")
+            for match in re.findall(naughty_word, proxy_message_content, flags=re.IGNORECASE):
+                proxy_message_content = proxy_message_content.replace(match, "\_" * len(match), 1)
 
 
 

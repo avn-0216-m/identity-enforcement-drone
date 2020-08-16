@@ -444,6 +444,10 @@ async def clear(context, id_name, attribute):
         await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
         return
 
+    db.update_identity(identity, attribute, None)
+
+    await context.send(embed=discord.Embed(title=f"{id_name} successfully updated.", description=f"{attribute} cleared."))
+
 @identities.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
     '''

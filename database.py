@@ -104,13 +104,6 @@ class Database():
         self.cursor.execute("SELECT * FROM Identities WHERE identity_id = ?", (identity_id,))
         return map_rows(self.cursor.fetchone(), Identity)
 
-    def create_identity(self, user: discord.Member, identity_name: str):
-        '''
-        Creates a barebones identity with only a name and an owner ID in the database.
-        '''
-        self.cursor.execute("INSERT INTO Identities(user_id, name) VALUES(?,?);", (user.id, identity_name))
-        self.connection.commit()
-
     def create_identity(self, identity: Identity):
         '''
         Creates an identity entry in the DB
