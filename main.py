@@ -585,17 +585,6 @@ async def release(context, target: discord.Member = None):
 
     await context.send(embed=reply)
 
-@bot.command(aliases = ['yoink'])
-async def clone(context, target, identity_name):
-    logger.info("Clone command triggered.")
-
-    if target is None or identity_name is None:
-        return
-
-    #Check user does not already have an ID with the given name
-    #Query DB for IDs beloning to target user with specified name,
-    #If exists, insert duplicate entry into DB where owner ID = message author ID
-
 @bot.command(aliases = ['assume-direct-control', 'puppeteer', "amplify"])
 async def puppet(context, target: discord.Member, message):
     relationship = db.get_relationship(context.author, target)
