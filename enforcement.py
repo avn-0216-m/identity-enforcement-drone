@@ -81,21 +81,22 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
     if identity.replacement_lexicon is not None and identity.allowance_lexicon is None:
 
         #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
-        LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, "|")}")
+        LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, '|')}")
 
-        proxy_message_content = f"{random.choice(replacement_lexicon)} "
         replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
-        
+        proxy_message_content = f"{random.choice(replacement_lexicon)} "
+
         for word in range(1, len(message.content) // calculate_average_lexicon_length(replacement_lexicon)):
             proxy_message_content += f"{random.choice(replacement_lexicon)} "
 
     elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None:
 
         #ENFORCEMENT MODE 2: Replace message with words from the replacement lexicon, and insert any allowed words from the original message roughly where they first occured.
-        LOGGER.debug(f"ENFORCEMENT MODE 2. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, "|")} and Allowance lexicon: {identity.allowance_lexicon.replace(SERIALIZER_DIVIDER, "|")}")
+        LOGGER.debug(f"ENFORCEMENT MODE 2. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, '|')} and Allowance lexicon: {identity.allowance_lexicon.replace(SERIALIZER_DIVIDER, '|')}")
 
-        proxy_message_content = f"{random.choice(replacement_lexicon)} "
         replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+        proxy_message_content = f"{random.choice(replacement_lexicon)} "
+
 
         occurrences = get_occurrences_of_allowance_lexicon(identity.allowance_lexicon, message.content)
         for i in range(1,len(message.content) // calculate_average_lexicon_length(replacement_lexicon)):

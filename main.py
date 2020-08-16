@@ -53,6 +53,22 @@ with open("bot_token.txt") as secret_file:
 #Initalize DAO
 db = Database()
 
+#Utility functions
+def format_as_written_list(input_obj) -> str:
+    if type(input_obj) is tuple:
+        try:
+            input_obj = list(input_obj)
+        except:
+            return None
+
+    if type(input_obj) is str:
+        return input_obj.replace(SERIALIZER_DIVIDER, "\n")
+
+    if type(input_obj) is not list:
+        return None
+
+    return lexicon_to_string(input_obj).replace(SERIALIZER_DIVIDER, "\n")
+
 #Commands
 @bot.group(invoke_without_command = True, aliases=["rel", "rl", "relationship"])
 async def relationships(context):
@@ -282,7 +298,7 @@ async def new(context, id_name = None, id_desc = None, *id_words):
     reply = discord.Embed(title="New identity created. 🎉")
     reply.add_field(name="Name:", value=id_name, inline=False)
     reply.add_field(name="Description:", value=id_desc, inline=False)
-    reply.add_field(name="Replacement words:", value=id_words if len(id_words) > 0 else None, inline=False)
+    reply.add_field(name="Replacement words:", value=format_as_written_list(id_words) if len(id_words) > 0 else None, inline=False)
 
     await context.send(embed=reply)
 
@@ -387,7 +403,7 @@ async def _set(context, id_name, attribute, *new_values):
     db.update_identity(identity, attribute, update_value)
 
     reply = discord.Embed(title=f"{id_name} successfully updated.")
-    reply.add_field(name=f"New {attribute}:",value=new_values if len(new_values) > 1 else new_values[0])
+    reply.add_field(name=f"New {attribute}:",value=format_as_written_list(new_values) if len(new_values) > 1 else new_values[0])
 
     if attribute == "avatar":
         reply.set_thumbnail(url=new_values[0])
