@@ -219,6 +219,10 @@ class Database():
         self.cursor.execute("DELETE FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         self.connection.commit()
 
+    def get_all_guild_enforcements(self, guild):
+        self.cursor.execute("SELECT user_id, identity_id FROM Enforcements WHERE guild_id = ?", (guild.id,))
+        return map_rows(self.cursor.fetchall(), Enforcement)
+
     def end_enforcement_by_enforcement(self, enforcement):
         try:
             self.cursor.execute("DELETE FROM Enforcements WHERE enforcement_id = ?", (enforcement.enforcement_id,))

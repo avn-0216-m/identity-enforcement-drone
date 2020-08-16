@@ -475,6 +475,23 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
     reply.set_footer(text = random.choice(text.new_enforcement).format(identity.name))
     await context.send(embed = reply)
 
+@identities.command()
+async def enforcements(context):
+    reply = discord.Embed(title=f"Enforcements on {context.guild.name}:")
+    enforcements = db.get_all_guild_enforcements(context.guild)
+    if enforcements is None or len(enforcements) == 0:
+        reply.description = "None!"
+    else:
+        for enforcement in enforcements:
+            identity = db.get_identity_by_id(enforcement.identity_id)
+            member = context.guild.get_member(enforcement.user_id)
+            if member is None:
+                continue
+            reply.add_field(name=member.display_name, value=identity.name)
+
+    await context.send(embed=reply)
+
+
 @bot.command(aliases = ['aa','aaa','aaaa'], name = "release")
 async def _release(context, target: discord.Member = None):
     '''
