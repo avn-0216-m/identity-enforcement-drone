@@ -495,6 +495,67 @@ async def enforcements(context):
 
     await context.send(embed=reply)
 
+@identities.group(invoke_without_command = True)
+async def copy(context, id_name, copy_as):
+
+    reply = discord.Embed()
+    
+    identity = db.get_user_identity_by_name(context.author, id_name)
+    if identity is None:
+        reply.title = "Could not copy identity."
+        reply.description = f"Identity {id_name} does not exist."
+        await context.send(embed = reply)
+        return
+
+    copied_identity = db.get_user_identity_by_name(context.author, copy_as)
+    if copied_identity is not None:
+        reply.title = "Could not copy identity."
+        reply.description = f"Identity {copy_as} already exists."
+        await context.send(embed = reply)
+        return
+
+    identity.name = copy_as
+
+    db.create_identity(identity)
+
+    reply.title = "Identity successfully copied!"
+    reply.add_field(name="Original:", value=id_name)
+    reply.add_field(name="Copied as:", value=copy_as)
+
+    await context.send(embed = reply)
+
+@copy.command(name = "from")
+async def _from(context, target: discord.Member, id_name, copy_as):
+
+    reply = discord.Embed()
+
+    if type(target) is not discord.Member:
+        return
+
+    identity = db.get_user_identity_by_name(target, id_name)
+    if identity is None:
+        reply.title = "Could not copy identity."
+        reply.description = f"{target.display_name} does not own a(n) {id_name} identity."
+        await context.send(embed = reply)
+        return
+
+    copied_identity = db.get_user_identity_by_name(context.author, copy_as)
+    if copied_identity is not None:
+        reply.title = "Could not copy identity."
+        reply.description = f"You already have a(n) {copy_as} identity."
+        await context.send(embed = reply)
+        return
+
+    identity.name = copy_as
+    identity.user_id = context.author.id
+
+    db.create_identity(identity)
+
+    reply.title = f"Identity successfully copied from {target.display_name}!"
+    reply.add_field(name="Original:", value=f"{id_name}")
+    reply.add_field(name="Copied as:", value=copy_as)
+
+    await context.send(embed = reply)
 
 @bot.command(aliases = ['aa','aaa','aaaa'], name = "release")
 async def _release(context, target: discord.Member = None):
