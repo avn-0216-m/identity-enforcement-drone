@@ -20,6 +20,7 @@ class Identity():
         avatar = None,
         replacement_lexicon = None,
         allowance_lexicon = None,
+        disallowance_lexicon = None,
         strict = 0,
         override_lexicon = None,
         override_chance = 0,
@@ -34,6 +35,7 @@ class Identity():
         self.avatar = avatar
         self.replacement_lexicon = replacement_lexicon
         self.allowance_lexicon = allowance_lexicon
+        self.disallowance_lexicon = disallowance_lexicon
         self.strict = strict
         self.override_lexicon = override_lexicon
         self.override_chance = override_chance

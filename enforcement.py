@@ -71,14 +71,14 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
     #Enforce the display name if applicable.
     elif identity.display_name is not None:
         #If there is a display name to use, set it.
-        proxy_username = identity.display_name
+        proxy_username = identity.display_name.format(message.author.display_name)
 
     #Enforce the avatar if applicable.
     if identity.avatar is not None:
         proxy_avatar_url = identity.avatar
 
     #Enforce the message body if applicable.
-    if identity.replacement_lexicon is not None and identity.allowance_lexicon is None:
+    if identity.replacement_lexicon is not None and identity.allowance_lexicon is None and identity.disallowance_lexicon is None:
 
         #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
         LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, '|')}")
@@ -89,7 +89,7 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
         for word in range(1, len(message.content) // calculate_average_lexicon_length(replacement_lexicon)):
             proxy_message_content += f"{random.choice(replacement_lexicon)} "
 
-    elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None:
+    elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None and identity.disallowance_lexicon is None:
 
         #ENFORCEMENT MODE 2: Replace message with words from the replacement lexicon, and insert any allowed words from the original message roughly where they first occured.
         LOGGER.debug(f"ENFORCEMENT MODE 2. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, '|')} and Allowance lexicon: {identity.allowance_lexicon.replace(SERIALIZER_DIVIDER, '|')}")
@@ -110,6 +110,44 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
         allowance_lexicon = string_to_lexicon(identity.allowance_lexicon)
         if message.content not in allowance_lexicon:
             await message.delete()
+
+    elif identity.disallowance_lexicon is not None and identity.replacement_lexicon is not None:
+        #ENFORCEMENT MODE 4: Replace disallowed words with words from the replacement lexicon.
+        LOGGER.debug("ENFORCEMENT MODE 5.")
+
+        disallowance_lexicon = string_to_lexicon(identity.disallowance_lexicon)
+        replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+
+        continue_replacing = True
+        while continue_replacing:
+            continue_replacing = False
+            for word in disallowance_lexicon:
+                LOGGER.debug(f"Looking for word: {word}")
+                if proxy_message_content.find(word) != -1:
+                    LOGGER.debug(f"Word found. Replacing.")
+                    continue_replacing = True
+                    replacement_word = ""
+                    while not len(replacement_word) >= len(word):
+                        replacement_word += random.choice(replacement_lexicon)
+                    proxy_message_content = proxy_message_content.replace(word, replacement_word, 1)
+
+    elif identity.disallowance_lexicon is not None:
+        #ENFORCEMENT MODE 5: Replace disallowed words with underscores of equal length.
+        LOGGER.debug("ENFORCEMENT MODE 5.")
+
+        disallowance_lexicon = string_to_lexicon(identity.disallowance_lexicon)
+
+        continue_replacing = True
+        while continue_replacing:
+            continue_replacing = False
+            for word in disallowance_lexicon:
+                LOGGER.debug(f"Looking for word: {word}")
+                if proxy_message_content.find(word) != -1:
+                    LOGGER.debug(f"Word found. Replacing.")
+                    continue_replacing = True
+                    proxy_message_content = proxy_message_content.replace(word, "\_" * len(word), 1)
+
+
 
     #The message only needs to be proxied if any of the 3 fields have changed via enforcement (message, avatar, or username).
     if (proxy_message_content == message.content) and (proxy_avatar_url == message.author.avatar_url) and (proxy_username == message.author.display_name):

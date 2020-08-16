@@ -52,6 +52,7 @@ class Database():
                                 avatar TEXT,
                                 replacement_lexicon TEXT,
                                 allowance_lexicon TEXT,
+                                disallowance_lexicon TEXT,
                                 display_name TEXT,
                                 display_name_with_id TEXT,
                                 user_id INTEGER,
@@ -124,12 +125,13 @@ class Database():
             avatar,
             replacement_lexicon,
             allowance_lexicon,
+            disallowance_lexicon,
             strict,
             override_lexicon,
             override_chance,
             user_id)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?);
-        """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, identity.user_id))
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
+        """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.disallowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, identity.user_id))
         self.connection.commit()
         return True
 
@@ -149,12 +151,13 @@ class Database():
                                     avatar,
                                     replacement_lexicon,
                                     allowance_lexicon,
+                                    disallowance_lexicon,
                                     strict,
                                     override_lexicon,
                                     override_chance,
                                     user_id)
-                                VALUES(?,?,?,?,?,?,?,?,?,?,?);
-                                """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, user.id))
+                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
+                                """, (identity.name, identity.description, identity.display_name, identity.display_name_with_id, identity.avatar, identity.replacement_lexicon, identity.allowance_lexicon, identity.disallowance_lexicon, identity.strict, identity.override_lexicon, identity.override_chance, user.id))
         self.connection.commit()
         return True
 

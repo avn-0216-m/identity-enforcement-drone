@@ -39,9 +39,9 @@ logger.info("It's a new day~!")
 logger.info("-----------------------------------------------")
 
 # Valid attributes for certain commands
-viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "user_id"]
-addable_attributes = ["replacement_lexicon", "allowance_lexicon"]
-settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "avatar", "display_name"]
+viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "user_id"]
+addable_attributes = ["replacement_lexicon", "allowance_lexicon", "disallowance_lexicon"]
+settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "avatar", "display_name"]
 # TODO: add all necessary attributes
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
@@ -429,6 +429,10 @@ async def view(context, id_name, attribute = None):
     reply.add_field(name=attribute, value=getattr(identity, attribute).replace(SERIALIZER_DIVIDER, "\n"))
 
     await context.send(embed = reply)
+
+@identities.command()
+async def clear(context, id_name, attribute):
+    pass
 
 @identities.command(aliases = ['assign'])
 async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
