@@ -491,7 +491,7 @@ async def enforcements(context):
             member = context.guild.get_member(enforcement.user_id)
             if member is None:
                 continue
-            reply.add_field(name=member.display_name, value=identity.name)
+            reply.add_field(name=member.display_name, value=identity.name, inline=False)
 
     await context.send(embed=reply)
 
