@@ -358,19 +358,21 @@ async def remove(context, id_name, attribute, *words):
 async def delete(context, id_name, please = None):
 
     if please is None:
-        await context.send("Please add 'please' to the end of this command to confirm that you understand this will delete your identity (hot).")
+        reply = discord.Embed(title="Hold on one second...", description = "Append 'please' to the end of this command to confirm that you understand this will delete the selected identity.")
+        await context.send(embed = reply)
         return
 
     identity = db.get_user_identity_by_name(context.author, id_name)
 
     if identity is None:
-        await context.send("Good news! That identity already doesn't exist. Huzzah!")
+        reply = discord.Embed(title="Could not delete identity.", description= f"{id_name} already does not exist.")
         return
 
     db.delete_user_identity_by_name(context.author, id_name)
     db.end_all_enforcements_of_identity(identity)
 
-    await context.send(f"Deleting identity {id_name}")
+    reply = discord.Embed(title=f"{id_name} is dead 🦀🦀🦀" if random.randint(0, 216) == 108 else f"{id_name} successfully deleted.")
+    await context.send(embed = reply)
 
 @identities.command(name = "set")
 async def _set(context, id_name, attribute, *new_values):
