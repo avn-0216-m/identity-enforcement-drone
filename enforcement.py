@@ -5,18 +5,39 @@ import logging
 from discord.utils import get
 from database import Database
 from data_classes import Status, Enforcement, Identity
-from notable_entities import ENFORCEMENT_PREFIX
+from notable_entities import ENFORCEMENT_PREFIX, SERIALIZER_DIVIDER
 from serialize import string_to_lexicon
 
 db = Database()
 
 LOGGER = logging.getLogger("Identity Enforcement Drone")
 
+def calculate_average_lexicon_length(lexicon: list) -> int:
+    averages = []
+    average = 0
+    for entry in lexicon:
+        averages.append(len(entry))
+    for length in averages:
+        average += length
+
+    average = average // len(lexicon)
+    LOGGER.info(f"Average lexicon entry length is: {average}")
+
+    return average
+    
 async def get_webhook(channel: discord.channel) -> discord.Webhook:
     available_webhooks = await channel.webhooks()
     if len(available_webhooks) == 0:
         available_webhooks = [await channel.create_webhook(name = "Identity Enforcement Drone")]
     return available_webhooks[0]
+
+def get_occurrences_of_allowance_lexicon(allowance_lexicon: str, message: str) -> list:
+    allowance_lexicon = string_to_lexicon(allowance_lexicon)
+    occurrences = []
+    for word in allowance_lexicon:
+        occurrences.extend((m.start(), word) for m in re.finditer(word, message))
+    occurrences.sort(key=lambda x: x[0])
+    return occurrences
 
 def get_drone_id(display_name: str) -> str:
     try:
@@ -58,17 +79,29 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
 
     #Enforce the message body if applicable.
     if identity.replacement_lexicon is not None and identity.allowance_lexicon is None:
+
         #ENFORCEMENT MODE 1: Replace message with words from the replacement lexicon to a similar length.
-        LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon}")
-        replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+        LOGGER.debug(f"ENFORCEMENT MODE 1. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, "|")}")
+
         proxy_message_content = f"{random.choice(replacement_lexicon)} "
-        for word in range(1, len(message.content)//5):
+        replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+        
+        for word in range(1, len(message.content) // calculate_average_lexicon_length(replacement_lexicon)):
             proxy_message_content += f"{random.choice(replacement_lexicon)} "
 
     elif identity.replacement_lexicon is not None and identity.allowance_lexicon is not None:
-        LOGGER.debug(f"ENFORCEMENT MODE 2. Replacement lexicon: {identity.replacement_lexicon} and Allowance lexicon: {identity.allowance_lexicon}")
+
         #ENFORCEMENT MODE 2: Replace message with words from the replacement lexicon, and insert any allowed words from the original message roughly where they first occured.
-        pass
+        LOGGER.debug(f"ENFORCEMENT MODE 2. Replacement lexicon: {identity.replacement_lexicon.replace(SERIALIZER_DIVIDER, "|")} and Allowance lexicon: {identity.allowance_lexicon.replace(SERIALIZER_DIVIDER, "|")}")
+
+        proxy_message_content = f"{random.choice(replacement_lexicon)} "
+        replacement_lexicon = string_to_lexicon(identity.replacement_lexicon)
+
+        occurrences = get_occurrences_of_allowance_lexicon(identity.allowance_lexicon, message.content)
+        for i in range(1,len(message.content) // calculate_average_lexicon_length(replacement_lexicon)):
+            proxy_message_content += f"{random.choice(replacement_lexicon)} "
+            if occurrences is not None and len(occurrences) != 0 and len(proxy_message_content) > occurrences[0][0]:
+                proxy_message_content += str(occurrences.pop(0)[1]) + " "
 
     elif identity.replacement_lexicon is None and identity.allowance_lexicon is not None:
         LOGGER.debug(f"ENFORCEMENT MODE 3. Allowance lexicon: {identity.allowance_lexicon}")

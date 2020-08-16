@@ -215,11 +215,11 @@ class Database():
         self.connection.commit()
         return True
 
-    def end_enforcement(self, user, guild):
+    def end_enforcement_by_user_and_guild(self, user, guild):
         self.cursor.execute("DELETE FROM Enforcements WHERE user_id = ? AND guild_id = ?", (user.id, guild.id))
         self.connection.commit()
 
-    def end_enforcement(self, enforcement):
+    def end_enforcement_by_enforcement(self, enforcement):
         try:
             self.cursor.execute("DELETE FROM Enforcements WHERE enforcement_id = ?", (enforcement.enforcement_id,))
             self.connection.commit()

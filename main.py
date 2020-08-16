@@ -41,7 +41,7 @@ logger.info("-----------------------------------------------")
 # Valid attributes for certain commands
 viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "user_id"]
 addable_attributes = ["replacement_lexicon", "allowance_lexicon", "override_lexicon"]
-settable_attributes = ["name", "description", "replacement_lexicon", "avatar", "display_name"]
+settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "avatar", "display_name"]
 # TODO: add all necessary attributes
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
@@ -361,6 +361,7 @@ async def delete(context, id_name, please = None):
 async def _set(context, id_name, attribute, *new_values):
     
     if attribute is None or attribute not in settable_attributes:
+        LOGGER.debug(f"Invalid set attribute: {attribute}")
         reply = discord.Embed(title="No valid attribute found.", description="Settable attributes are:\nname\ndescription\ndisplay_name\nreplacement_lexicon\navatar_url")
         await context.send(embed=reply)
         return
@@ -475,7 +476,7 @@ async def release(context, target: discord.Member = None):
     current_enforcement = db.get_enforcement(target, context.guild)
     former_identity = db.get_identity_by_id(current_enforcement.identity_id)
 
-    db.end_enforcement(target, context.guild)
+    db.end_enforcement_by_user_and_guild(target, context.guild)
 
     reply = discord.Embed(title = f"Enforcement for {target.display_name} has been updated.")
     reply.add_field(name = "Former identity:", value = former_identity.name if former_identity is not None else "Themselves")
