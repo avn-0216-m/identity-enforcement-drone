@@ -40,7 +40,7 @@ logger.info("-----------------------------------------------")
 
 # Valid attributes for certain commands
 viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "user_id"]
-addable_attributes = ["replacement_lexicon", "allowance_lexicon", "override_lexicon"]
+addable_attributes = ["replacement_lexicon", "allowance_lexicon"]
 settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "avatar", "display_name"]
 # TODO: add all necessary attributes
 
