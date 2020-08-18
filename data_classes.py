@@ -52,11 +52,23 @@ class Enforcement():
         self.user_id = user_id
         self.server_id = server_id
 
-class User():
-    def __init__(self):
-        self.discord_id = None
-        self.drone_id = None
-        self.safe_words = None
+class TimedEnforcement():
+    def __init__(self,
+        enforcement_id = None,
+        minutes_left = None
+    ):
+        self.enforcement_id = enforcement_id
+        self.minutes_left = minutes_left
+
+class WoundUpDoll():
+    def __init__(self,
+        user_id = None,
+        last_channel = None,
+        ticks_left = None
+    ):
+        self.user_id = user_id
+        self.last_channel = last_channel
+        self.ticks_left = ticks_left
 
 #Database response data objects
 class Status(Enum):
