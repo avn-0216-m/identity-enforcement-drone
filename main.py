@@ -353,7 +353,7 @@ async def relinquish(context, target: discord.Member = None):
 @bot.group(
     invoke_without_command = True,
     name = "Identities",
-    description = "These commands are use to manage your identities (create, copy, update, delete) and enforce them.", 
+    description = "These commands are used to manage your identities (create, copy, update, delete) and enforce them.", 
     aliases = ["id", "ids", "identity"],
     help="Lists all of your currently owned identities with their name and description.",
     brief="!id",
