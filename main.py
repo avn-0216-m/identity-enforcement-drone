@@ -44,9 +44,16 @@ addable_attributes = ["replacement_lexicon", "allowance_lexicon", "disallowance_
 settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "avatar", "display_name"]
 clearable_attributes = ["description", "avatar", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "display_name"]
 newline = "\n"
-# TODO: add all necessary attributes
 
+# Setup the bot
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
+bot.remove_command("help")
+bot.name = "Identity Enforcement Drone"
+PREFIX = bot.command_prefix
+
+# Initialize command docfile.
+docfile = None
+other_commands = []
 
 logger.info("Loading secret details from file.")
 with open("bot_token.txt") as secret_file:
@@ -71,8 +78,88 @@ def format_as_written_list(input_obj) -> str:
 
     return lexicon_to_string(input_obj).replace(SERIALIZER_DIVIDER, "\n")
 
-#Commands
-@bot.group(invoke_without_command = True, aliases=["rel", "rl", "relationship"])
+def generate_documentation():
+    logger.info("Generating documentation. Beep boop!")
+    docfile.write("# Commands")
+    docfile.write("\n")
+    docfile.write('This is a list of commands for the Identity Enforcement Drone. When entering parameters, please enclose anything you would like to be read as a sentence in quotes. For example: `"this will be read as a sentence"`, but `these will be read as a list of seperate words.`')
+    docfile.write("\n\n")
+    docfile.write('Required command parameters are enclosed in `[square brackets]`, optional parameters are enclosed in `<these funky boys>`')
+    docfile.write("\n")
+    iterate_commands(bot.commands, True)
+    docfile.write("## Other")
+    docfile.write("\n")
+    iterate_commands(other_commands, False)
+    logger.info("Documentation generated. Goodbye!")
+
+def write_command(command):
+
+    logger.info(f"Generating documentation for: {command.name}")
+
+    docfile.write(f"### {command.name}")
+    if command.aliases:
+        docfile.write(" ")
+        alias_string = " ("
+        for alias in command.aliases:
+            alias_string += f"{alias}, "
+        alias_string = alias_string[:-2]
+        alias_string += ")"
+        logger.info(f"Aliases are: {alias_string}")
+        docfile.write(alias_string)
+    docfile.write("\n")
+
+    if command.help is None:
+        docfile.write("Command description missing.")
+    else:
+        docfile.write(command.help)
+    docfile.write("\n\n")
+
+    docfile.write("- Usage: ")
+    if command.brief is None:
+        docfile.write("`Template string missing.`")
+    else:
+        docfile.write(f"`{command.brief}`")
+    docfile.write("\n\n")
+
+    docfile.write("- Example: ")
+    if command.usage is None:
+        docfile.write("`Example string missing.`")
+    else:
+        docfile.write(f"`{command.usage}`")
+    docfile.write("\n\n")
+
+def iterate_commands(commands, top_level):
+    for command in commands:
+        if hasattr(command, "commands"):
+            logger.info(f"{command.name} has sub commands:")
+            if top_level:
+                logger.info(f"Creating new category: {command.name}")
+                docfile.write(f"## {command.name}")
+                docfile.write("\n")
+                if command.short_doc is not None:
+                    logger.info(f"Writing description for {command.name} group.")
+                    docfile.write(command.description)
+                    docfile.write("\n")
+            write_command(command)
+            iterate_commands(command.commands, False)
+        else:
+            if top_level:
+                logger.info(f"Saving {command.name} for appending at the end.")
+                other_commands.append(command)
+            else:
+                write_command(command)
+
+
+#Commands - Relationships
+@bot.group(
+    invoke_without_command = True,
+    name="Relationships",
+    description="These commands are used to manage your relationships with other users. Dominate, submit, and relinquish ownership using these.", 
+    aliases=["rel", "rl", "relationship"], 
+    help="List your current relationships with other users on the current guild.",
+    brief="!rl",
+    usage="!rl",
+)
 async def relationships(context):
 
     dom_list_text = ""
@@ -113,7 +200,12 @@ async def relationships(context):
     reply.add_field(name="Dominants:",value=dom_list_text, inline=False)
     await context.send(embed=reply)
 
-@relationships.group(invoke_without_command = True)
+@relationships.group(
+    invoke_without_command = True,
+    help="List your currently pending inbound (ones that other users have made to you) relationship requests.",
+    brief="!rl pending",
+    usage="!rl pending"
+)
 async def pending(context):
 
     reply = discord.Embed(title="Incoming relationship requests in this server:")
@@ -150,12 +242,21 @@ async def pending(context):
 
     await context.send(embed=reply)
 
-@pending.command()
+@pending.command(
+    help="Clear all pending inbound relationships requests.",
+    brief="!rl pending clear",
+    usage="!rl pending clear"
+)
 async def clear(context):
     db.delete_all_pending_relationships(context.author)
     await context.send(embed=discord.Embed(title="All incoming pending relationships have been cleared."))
 
-@relationships.command(aliases = ['dom'])
+@relationships.command(
+    aliases = ['dom'],
+    help="Attempt to dominate a user. They must respond by submitting to you with the submit command.",
+    brief="!rl dom [user]",
+    usage="!rl dom @maiden"
+)
 async def dominate(context, submissive: discord.Member):
     '''
     Attempt to dominate someone
@@ -185,7 +286,12 @@ async def dominate(context, submissive: discord.Member):
         reply.set_footer(text = random.choice(text.new_relationship))
         await context.send(embed=reply)
 
-@relationships.command(aliases = ['sub'])
+@relationships.command(
+    aliases = ['sub'],
+    help="Attempt to submit to another user. They must respond by dominating you with the dominate command.",
+    brief="!rl sub [user]",
+    usage="!rl sub @maiden"
+)
 async def submit(context, dominant: discord.Member):
     '''
     Attempt to submit to someone
@@ -214,7 +320,12 @@ async def submit(context, dominant: discord.Member):
         reply.set_footer(text = random.choice(text.new_relationship))
         await context.send(embed=reply)
 
-@relationships.command(aliases = ['yeet', 'uncollar', 'goodbye'])
+@relationships.command(
+    aliases = ['yeet', 'uncollar', 'goodbye'],
+    help="End a relationship (submissive or dominant) with another user. You will be unenforced if enforced by them.",
+    brief="!rl relinquish [user]",
+    usage="!rl relinquish @maiden"
+)
 async def relinquish(context, target: discord.Member = None):
     #Validate argument
     if type(target) is not discord.Member:
@@ -237,16 +348,17 @@ async def relinquish(context, target: discord.Member = None):
 
     reply.set_footer(text = random.choice(text.end_relationship))
     await context.send(embed = reply)
-    
-@bot.command(aliases = ['init', 'gimmie'])
-async def defaults(context):
-    db.set_default_identities(context.message.author)
-    reply = discord.Embed(title = f"Identities added for {context.message.author.display_name}:")
-    for identity in DEFAULT_IDENTITIES:
-        reply.add_field(inline = False, name = identity.name, value = identity.description)
-    await context.send(embed = reply)
 
-@bot.group(invoke_without_command = True, aliases = ["id", "ids", "identity"])
+#Commands - Identities
+@bot.group(
+    invoke_without_command = True,
+    name = "Identities",
+    description = "These commands are use to manage your identities (create, copy, update, delete) and enforce them.", 
+    aliases = ["id", "ids", "identity"],
+    help="Lists all of your currently owned identities with their name and description.",
+    brief="!id",
+    usage="!id"
+)
 async def identities(context, target: discord.Member = None):
     '''
     This command lists identities for you if invoked without any mentions,
@@ -272,7 +384,24 @@ async def identities(context, target: discord.Member = None):
 
     await context.send(embed=reply)
 
-@identities.command()
+@identities.command(
+    aliases = ['init', 'gimmie'],
+    help=f"Gives you {len(DEFAULT_IDENTITIES)} default identities automatically generated by the Identity Enforcement Drone.",
+    brief="!init",
+    usage="!init"
+)
+async def defaults(context):
+    db.set_default_identities(context.message.author)
+    reply = discord.Embed(title = f"Identities added for {context.message.author.display_name}:")
+    for identity in DEFAULT_IDENTITIES:
+        reply.add_field(inline = False, name = identity.name, value = identity.description)
+    await context.send(embed = reply)
+
+@identities.command(
+    help="Creates a new identity with a name and an optional description and replacement lexicon.",
+    brief="!id new [name] <description> <replacement_lexicon>",
+    usage='!id new Puppy "Woof woof! I\'m a puppy!!" woof! bark! woofbark!!' 
+)
 async def new(context, id_name = None, id_desc = None, *id_words):
 
     if db.get_user_identity_by_name(context.author, id_name) is not None:
@@ -303,7 +432,11 @@ async def new(context, id_name = None, id_desc = None, *id_words):
 
     await context.send(embed=reply)
 
-@identities.command()
+@identities.command(
+    help="Appends words to an identity's lexicons (replacement, allowance, disallowance, and override).",
+    brief="!id add [identity name] [lexicon name] [words and phrases]",
+    usage='!id add Kitten replacement_lexicon meoww... meow! prr. "tuna pls!" "mew :3"'
+)
 async def add(context, id_name, attribute, *words):
     if attribute not in addable_attributes:
         return
@@ -329,7 +462,11 @@ async def add(context, id_name, attribute, *words):
     reply.add_field(name="New lexicon:", value=modified_lexicon_string.replace(SERIALIZER_DIVIDER, "\n"))
     await context.send(embed=reply)
 
-@identities.command()
+@identities.command(
+    help="Removes words from an identity's lexicons if they are present.",
+    brief="!id remove [identity name] [lexicon name] [words and phrases (accepts multiple)]",
+    usage='!id remove Drone allowance_lexicon "I love having free will." "It doesn\'t feel good to obey." beep boop'
+)
 async def remove(context, id_name, attribute, *words):
     if attribute not in addable_attributes:
         return
@@ -356,7 +493,11 @@ async def remove(context, id_name, attribute, *words):
     reply.add_field(name="New lexicon:", value=modified_lexicon_string.replace(SERIALIZER_DIVIDER, "\n"))
     await context.send(embed=reply)
 
-@identities.command()
+@identities.command(
+    help='Deletes an entire identity from your inventory. Add the word "please" to the end of the command to confirm.',
+    brief="!id delete [identity name] please",
+    usage="!id delete Gamer please"
+)
 async def delete(context, id_name, please = None):
 
     if please is None:
@@ -376,7 +517,12 @@ async def delete(context, id_name, please = None):
     reply = discord.Embed(title=f"{id_name} is dead 🦀🦀🦀" if random.randint(1, 216) == 216 else f"{id_name} successfully deleted.")
     await context.send(embed = reply)
 
-@identities.command(name = "set")
+@identities.command(
+    name = "set",
+    help="Overwrites an identity attribute with a new (set of) value(s).",
+    brief="!id set [identity name] [attribute] [new value(s)]",
+    usage='!id set Kitten display_name "maiden\'s precious kitty!"'
+)
 async def _set(context, id_name, attribute, *new_values):
     
     if attribute is None or attribute not in settable_attributes:
@@ -413,7 +559,11 @@ async def _set(context, id_name, attribute, *new_values):
 
     await context.send(embed=reply)
 
-@identities.command()
+@identities.command(
+    help="View information about an identity. If no attribute is specified, all information about the identity will be listed.",
+    brief="!id view [identity name] <attribute>",
+    usage="!id view Drone disallowance_lexicon"
+)
 async def view(context, id_name, attribute = None):
 
     if attribute is None or attribute not in viewable_attributes:
@@ -432,7 +582,11 @@ async def view(context, id_name, attribute = None):
 
     await context.send(embed = reply)
 
-@identities.command()
+@identities.command(
+    help="Clear the value of an identity's attribute and reset it to being empty.",
+    brief="!id clear [identity name] [attribute]",
+    usage="!id clear Puppy allowance_lexicon"
+)
 async def clear(context, id_name, attribute):
 
     if attribute not in clearable_attributes:
@@ -603,6 +757,16 @@ async def release(context, target: discord.Member = None):
 
     await context.send(embed=reply)
 
+#Commands - Other
+@bot.command()
+async def ugly(context, target: discord.Member):
+    # WARNING: THIS IS STUPID.
+    reply = discord.Embed(title="THIS UGLY SON OF A BITCH >", description="is fucking SUPER HOT GIRLS")
+    reply.add_field(name="and basically,", value="__you are fucking stupid__")
+    reply.set_thumbnail(url=target.avatar_url)
+    reply.set_footer(text="How? ...Just Watch The Free Video")
+    await context.send(embed=reply)
+
 @bot.command(aliases = ['assume-direct-control', 'puppeteer', "amplify"])
 async def puppet(context, target: discord.Member, message):
     relationship = db.get_relationship(context.author, target)
@@ -615,15 +779,6 @@ async def puppet(context, target: discord.Member, message):
     
     webhook = await get_webhook(context.channel)
     await webhook.send(message, username=target.display_name, avatar_url=target.avatar_url)
-
-@bot.command()
-async def ugly(context, target: discord.Member):
-    # WARNING: THIS IS STUPID.
-    reply = discord.Embed(title="THIS UGLY SON OF A BITCH >", description="is fucking SUPER HOT GIRLS")
-    reply.add_field(name="and basically,", value="__you are fucking stupid__")
-    reply.set_thumbnail(url=target.avatar_url)
-    reply.set_footer(text="How? ...Just Watch The Free Video")
-    await context.send(embed=reply)
 
 #Events
 @bot.event
@@ -675,6 +830,12 @@ async def on_error(event, *args, **kwargs):
         traceback.print_exc(file=exception_file)
     traceback.print_exc()
     logger.info("!!! --- End exception log. --- !!!")
+
+
+if(len(sys.argv) > 1 and sys.argv[1] == "docs"):
+    docfile = open("COMMANDS.md", "w+")
+    generate_documentation()
+    sys.exit(216)
 
 logger.info("Doing data migration.")
 db.migration()

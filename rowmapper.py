@@ -1,4 +1,4 @@
-from data_classes import Relationship, Identity, User
+from data_classes import Relationship, Identity
 import logging
 logger = logging.getLogger('Identity Enforcement Drone')
 
