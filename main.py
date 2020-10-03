@@ -96,7 +96,7 @@ def write_command(command):
 
     logger.info(f"Generating documentation for: {command.name}")
 
-    docfile.write(f"### {command.name}")
+    docfile.write(f"### {PREFIX}{command.qualified_name}")
     if command.aliases:
         docfile.write(" ")
         alias_string = " ("
