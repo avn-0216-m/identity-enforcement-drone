@@ -17,3 +17,13 @@ Please consult your doctor to see if Identity Enforcement Drone is right for you
 [Relationships](docs/RELATIONSHIPS.md): What relationships are, and how the bot uses them.
 
 [Contributing](docs/CONTRIBUTING.md): Please don't.
+
+## Self Hosting
+
+If you'd like to host this bot yourself, you'll need:
+
+- A Discord bot token, placed in a `bot_token.txt` file in the root of this directory.
+- Installed the requirements (just `discord.py`) in requirements.txt using `pip`.
+- A pinch of fairy dust.
+
+Once you've gathered these ingredients, you should be able to start the bot by running `main.py`, unless I've forgotten a vital step.
