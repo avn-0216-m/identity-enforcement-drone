@@ -11,6 +11,9 @@ Please consult your doctor to see if Identity Enforcement Drone is right for you
 ## Further information
 
 [Commands](docs/COMMANDS.md): How to use the bot.
+
 [Identities](docs/IDENTITIES.md): What identities are, and how the bot uses them.
+
 [Relationships](docs/RELATIONSHIPS.md): What relationships are, and how the bot uses them.
+
 [Contributing](docs/CONTRIBUTING.md): Please don't.
