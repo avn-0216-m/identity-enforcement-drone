@@ -87,6 +87,7 @@ def generate_documentation():
     docfile.write('Required command parameters are enclosed in `[square brackets]`, optional parameters are enclosed in `<these funky boys>`')
     docfile.write("\n\n")
     docfile.write('The words in parentheses e.g `!id enforce (assign)` are aliases, meaning a command can be used under multiple different names where applicable.')
+    docfile.write("\n")
     iterate_commands(bot.commands, True)
     docfile.write("## Other")
     docfile.write("\n")

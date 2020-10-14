@@ -3,7 +3,8 @@ This is a list of commands for the Identity Enforcement Drone. When entering par
 
 Required command parameters are enclosed in `[square brackets]`, optional parameters are enclosed in `<these funky boys>`
 
-The words in parentheses e.g `!id enforce (assign)` are aliases, meaning a command can be used under multiple different names where applicable.## Identities
+The words in parentheses e.g `!id enforce (assign)` are aliases, meaning a command can be used under multiple different names where applicable.
+## Identities
 These commands are used to manage your identities (create, copy, update, delete) and enforce them.
 ### !id  (ids, identity, identities)
 Lists all of your currently owned identities with their name and description.
@@ -11,41 +12,6 @@ Lists all of your currently owned identities with their name and description.
 - Usage: `!id`
 
 - Example: `!id`
-
-### !id copy
-Command description missing.
-
-- Usage: `Template string missing.`
-
-- Example: `Example string missing.`
-
-### !id copy from
-Command description missing.
-
-- Usage: `Template string missing.`
-
-- Example: `Example string missing.`
-
-### !id clear
-Clear the value of an identity's attribute and reset it to being empty.
-
-- Usage: `!id clear [identity name] [attribute]`
-
-- Example: `!id clear Puppy allowance_lexicon`
-
-### !id set
-Overwrites an identity attribute with a new (set of) value(s).
-
-- Usage: `!id set [identity name] [attribute] [new value(s)]`
-
-- Example: `!id set Kitten display_name "maiden's precious kitty!"`
-
-### !id delete
-Deletes an entire identity from your inventory. Add the word "please" to the end of the command to confirm.
-
-- Usage: `!id delete [identity name] please`
-
-- Example: `!id delete Gamer please`
 
 ### !id enforcements
 Command description missing.
@@ -103,6 +69,41 @@ Removes words from an identity's lexicons if they are present.
 
 - Example: `!id remove Drone allowance_lexicon "I love having free will." "It doesn't feel good to obey." beep boop`
 
+### !id copy
+Command description missing.
+
+- Usage: `Template string missing.`
+
+- Example: `Example string missing.`
+
+### !id copy from
+Command description missing.
+
+- Usage: `Template string missing.`
+
+- Example: `Example string missing.`
+
+### !id clear
+Clear the value of an identity's attribute and reset it to being empty.
+
+- Usage: `!id clear [identity name] [attribute]`
+
+- Example: `!id clear Puppy allowance_lexicon`
+
+### !id set
+Overwrites an identity attribute with a new (set of) value(s).
+
+- Usage: `!id set [identity name] [attribute] [new value(s)]`
+
+- Example: `!id set Kitten display_name "maiden's precious kitty!"`
+
+### !id delete
+Deletes an entire identity from your inventory. Add the word "please" to the end of the command to confirm.
+
+- Usage: `!id delete [identity name] please`
+
+- Example: `!id delete Gamer please`
+
 ## Relationships
 These commands are used to manage your relationships with other users. Dominate, submit, and relinquish ownership using these.
 ### !rl  (rel, relationship, relationships)
@@ -111,13 +112,6 @@ List your current relationships with other users on the current guild.
 - Usage: `!rl`
 
 - Example: `!rl`
-
-### !rl dominate  (dom)
-Attempt to dominate a user. They must respond by submitting to you with the submit command.
-
-- Usage: `!rl dom [user]`
-
-- Example: `!rl dom @maiden`
 
 ### !rl relinquish  (yeet, uncollar, goodbye)
 End a relationship (submissive or dominant) with another user. You will be unenforced if enforced by them.
@@ -147,14 +141,14 @@ Clear all pending inbound relationships requests.
 
 - Example: `!rl pending clear`
 
+### !rl dominate  (dom)
+Attempt to dominate a user. They must respond by submitting to you with the submit command.
+
+- Usage: `!rl dom [user]`
+
+- Example: `!rl dom @maiden`
+
 ## Other
-### !ugly
-Command description missing.
-
-- Usage: `Template string missing.`
-
-- Example: `Example string missing.`
-
 ### !puppet  (assume-direct-control, puppeteer, amplify)
 Command description missing.
 
@@ -164,6 +158,13 @@ Command description missing.
 
 ### !release  (aa, aaa, aaaa)
 Quick release command
+
+- Usage: `Template string missing.`
+
+- Example: `Example string missing.`
+
+### !ugly
+Command description missing.
 
 - Usage: `Template string missing.`
 
