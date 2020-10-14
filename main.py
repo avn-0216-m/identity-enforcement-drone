@@ -40,9 +40,9 @@ logger.info("-----------------------------------------------")
 
 # Valid attributes for certain commands
 viewable_attributes = ["display_name", "name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "user_id"]
-addable_attributes = ["replacement_lexicon", "allowance_lexicon", "disallowance_lexicon"]
-settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "avatar", "display_name"]
-clearable_attributes = ["description", "avatar", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "display_name"]
+addable_attributes = ["replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "override_lexicon"]
+settable_attributes = ["name", "description", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "avatar", "display_name", "override_lexicon", "override_chance"]
+clearable_attributes = ["description", "avatar", "replacement_lexicon", "allowance_lexicon", "disallowance_lexicon", "display_name", "override_lexicon"]
 newline = "\n"
 
 # Setup the bot

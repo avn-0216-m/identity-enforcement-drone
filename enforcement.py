@@ -138,6 +138,11 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
                 proxy_message_content = proxy_message_content.replace(match, "\_" * len(match), 1)
 
 
+    #Check for override
+    elif identity.override_lexicon is not None and identity.override_chance is not None:
+        if random.randint(0,100) < identity.override_chance:
+            LOGGER.info("Overriding message.")
+            proxy_message_content = random.choice(string_to_lexicon(identity.override_lexicon))
 
     #The message only needs to be proxied if any of the 3 fields have changed via enforcement (message, avatar, or username).
     if (proxy_message_content == message.content) and (proxy_avatar_url == message.author.avatar_url) and (proxy_username == message.author.display_name):
@@ -146,5 +151,7 @@ async def enforce_user(message: discord.Message, enforcement: Enforcement):
     proxy_webhook = await get_webhook(message.channel)
     await message.delete()
     await proxy_webhook.send(proxy_message_content, username=proxy_username, avatar_url = proxy_avatar_url)
+
+    LOGGER.info("Message proxied.")
 
     return True
