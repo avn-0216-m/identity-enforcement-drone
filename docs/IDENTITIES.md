@@ -49,10 +49,10 @@ With just a replacement lexicon, a new message will be built using words and phr
 With just an allowance lexicon, the message will be deleted unless it is an exact match of one of the entires in the allowance lexicon.
 
 ### Replacement, Allowance
-With an allowance lexicon and replacement lexicon present in an identity, the message will still be replaced by the replacement lexicon, but any allowed words and phrases from the original message will be spliced into the replacement message. For example, a puppy identity with "yes miss!" in the allowance lexicon would turn "yes miss! i love being a puppy!!" into "yes miss! woof woof bark snff"
+With an allowance lexicon and replacement lexicon present in an identity, the message will still be replaced by the replacement lexicon, but any allowed words and phrases from the original message will be spliced into the replacement message. For example, a puppy identity with `"yes miss!"` in the allowance lexicon would turn `"yes miss! i love being a puppy!!"` into `"yes miss! woof woof bark snff"`
 
 ### Disallowance
-With just a disallowance lexicon, any disallowed words or phrases will be replaced with underscores. For example, "think" would become "\_\_\_\_\_". The number of characters is preserved when disallowing words.
+With just a disallowance lexicon, any disallowed words or phrases will be replaced with underscores. For example, `"think"` would become `"_____"`. The number of characters is preserved when disallowing words.
 
 ### Disallowance, Replacement
 With a disallowance lexicon and a replacement lexicon, disallowed words will be replaced with words from the replacement lexicon until roughly equivalent length.
