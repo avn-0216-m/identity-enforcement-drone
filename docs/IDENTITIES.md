@@ -18,9 +18,10 @@ Similar to name, this field is purely informational.
 This is the display name users enforced with your identity will have. If a user has the `display_name` of `Good toy`, then all the messages sent by them will appear to be sent by `Good toy`.
 
 ## Avatar (avatar)
-If this attribute is set to a valid URL, it will replace the user's current avatar when enforcing an identity.  
+If this attribute is set to a valid URL, it will replace the user's current avatar when enforcing an identity.
 
 ## Replacement Lexicon (replacement_lexicon)
+This lexicon makes up the words that a user's message is replaced with. For example, a replacement lexicon with "beep" and "boop" in it would replace a user message with a random pattern of "beep" and "boop" until it is roughly the same length as the original message.
 
 ## Allowance Lexicon (allowance_lexicon)
 
@@ -31,3 +32,26 @@ If this attribute is set to a valid URL, it will replace the user's current avat
 ## Override Lexicon (override_lexicon)
 
 ## Override Chance (override_chance)
+
+## How the Lexicons Interact
+
+### Replacement
+With just a replacement lexicon, a new message will be built using words and phrases from the replacement lexicon until it is roughly the same length as the original message.
+
+### Allowance
+With just an allowance lexicon, the message will be deleted unless it is an exact match of one of the entires in the allowance lexicon.
+
+### Replacement, Allowance
+With an allowance lexicon and replacement lexicon present in an identity, the message will still be replaced by the replacement lexicon, but any allowed words and phrases from the original message will be spliced into the replacement message. For example, a puppy identity with "yes miss!" in the allowance lexicon would turn "yes miss! i love being a puppy!!" into "yes miss! woof woof bark snff"
+
+### Disallowance
+With just a disallowance lexicon, any disallowed words or phrases will be replaced with underscores. For example, "think" would become "\_\_\_\_\_". The number of characters is preserved when disallowing words.
+
+### Disallowance, Replacement
+With a disallowance lexicon and a replacement lexicon, disallowed words will be replaced with words from the replacement lexicon until roughly equivalent length.
+
+### Replacement, Allowance, Disallowance
+Uhhhhhh, idk?
+
+### Override
+No matter what combination of lexicons an identity has, there will always be a chance for the override to automatically replace the message provided the chance is greater than 0.
