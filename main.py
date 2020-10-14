@@ -134,10 +134,10 @@ def iterate_commands(commands, top_level):
             logger.info(f"{command.name} has sub commands:")
             if top_level:
                 logger.info(f"Creating new category: {command.name}")
-                docfile.write(f"## {command.name}")
+                docfile.write(f"## {command.section_name}")
                 docfile.write("\n")
                 if command.short_doc is not None:
-                    logger.info(f"Writing description for {command.name} group.")
+                    logger.info(f"Writing description for {command.section_name} group.")
                     docfile.write(command.description)
                     docfile.write("\n")
             write_command(command)
@@ -153,9 +153,9 @@ def iterate_commands(commands, top_level):
 #Commands - Relationships
 @bot.group(
     invoke_without_command = True,
-    name="Relationships",
+    name="rl",
     description="These commands are used to manage your relationships with other users. Dominate, submit, and relinquish ownership using these.", 
-    aliases=["rel", "rl", "relationship"], 
+    aliases=["rel", "relationship", "relationships"], 
     help="List your current relationships with other users on the current guild.",
     brief="!rl",
     usage="!rl",
@@ -352,9 +352,10 @@ async def relinquish(context, target: discord.Member = None):
 #Commands - Identities
 @bot.group(
     invoke_without_command = True,
-    name = "Identities",
+    name = "id",
+    section_name = "Identities",
     description = "These commands are used to manage your identities (create, copy, update, delete) and enforce them.", 
-    aliases = ["id", "ids", "identity"],
+    aliases = ["ids", "identity", "identities"],
     help="Lists all of your currently owned identities with their name and description.",
     brief="!id",
     usage="!id"
@@ -831,9 +832,13 @@ async def on_error(event, *args, **kwargs):
     traceback.print_exc()
     logger.info("!!! --- End exception log. --- !!!")
 
+#Set command section names
+identities.section_name = "Identities"
+relationships.section_name = "Relationships"
+
 
 if(len(sys.argv) > 1 and sys.argv[1] == "docs"):
-    docfile = open("COMMANDS.md", "w+")
+    docfile = open("docs/COMMANDS.md", "w+")
     generate_documentation()
     sys.exit(216)
 
