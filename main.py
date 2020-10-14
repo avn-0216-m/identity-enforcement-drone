@@ -613,7 +613,12 @@ async def clear(context, id_name, attribute):
 
     await context.send(embed=discord.Embed(title=f"{id_name} successfully updated.", description=f"{attribute} cleared."))
 
-@identities.command(aliases = ['assign'])
+@identities.command(
+    aliases = ['assign'],
+    help="Enforce one of your submissives with an identity in your inventory.",
+    brief="!id enforce [@user] [identity name]",
+    usage="!id enforce @maiden Drone"
+)
 async def enforce(context, target: discord.Member, identity_name: str, global_indicator: str = None):
     '''
     Assign an identity to a user.
@@ -662,7 +667,11 @@ async def enforce(context, target: discord.Member, identity_name: str, global_in
             reply.set_thumbnail(url=identity.avatar)
     await context.send(embed = reply)
 
-@identities.command()
+@identities.command(
+    help="List all current enforcements on this server.",
+    brief="!id enforcements",
+    usage="!id enforcements"
+)
 async def enforcements(context):
     reply = discord.Embed(title=f"Enforcements on {context.guild.name}:")
     enforcements = db.get_all_guild_enforcements(context.guild)
@@ -678,7 +687,12 @@ async def enforcements(context):
 
     await context.send(embed=reply)
 
-@identities.group(invoke_without_command = True)
+@identities.group(
+    invoke_without_command = True,
+    help="Duplicate an identity in your inventory under a new name.",
+    brief="!id copy [identity] [new name]",
+    usage="!id copy Drone Beeper"
+)
 async def copy(context, id_name, copy_as):
 
     reply = discord.Embed()
@@ -707,7 +721,12 @@ async def copy(context, id_name, copy_as):
 
     await context.send(embed = reply)
 
-@copy.command(name = "from")
+@copy.command(
+    name = "from",
+    help="Copy an identity from another user's inventory.",
+    brief="!id copy from [@user] [identity] <new name>",
+    usage="!id copy from @maiden Drone"
+)
 async def _from(context, target: discord.Member, id_name, copy_as):
 
     reply = discord.Embed()
@@ -740,14 +759,24 @@ async def _from(context, target: discord.Member, id_name, copy_as):
 
     await context.send(embed = reply)
 
-@bot.command(aliases = ['aa','aaa','aaaa'], name = "release")
+@bot.command(
+    aliases = ['aa','aaa','aaaa'],
+    name = "release",
+    help = "Release yourself (or someone else) quicker than typing out !id release if you're in a bad situation.",
+    brief = "!aaa",
+    usage = "!aaa"
+)
 async def _release(context, target: discord.Member = None):
     '''
     Quick release command
     '''
     await release(context,target)
 
-@identities.command()
+@identities.command(
+    help="Release a user (including yourself) from an identity enforcement.",
+    brief="!id release [@user]",
+    usage="!id release @maiden" 
+)
 async def release(context, target: discord.Member = None):
 
     if target is None:
@@ -769,7 +798,11 @@ async def release(context, target: discord.Member = None):
     await context.send(embed=reply)
 
 #Commands - Other
-@bot.command()
+@bot.command(
+    help="This is a silly joke command that references that bizarre porn ad meme.",
+    brief="!ugly [@user]",
+    usage="!ugly @maiden"
+)
 async def ugly(context, target: discord.Member):
     # WARNING: THIS IS STUPID.
     reply = discord.Embed(title="THIS UGLY SON OF A BITCH >", description="is fucking SUPER HOT GIRLS")
@@ -778,7 +811,12 @@ async def ugly(context, target: discord.Member):
     reply.set_footer(text="How? ...Just Watch The Free Video")
     await context.send(embed=reply)
 
-@bot.command(aliases = ['assume-direct-control', 'puppeteer', "amplify"])
+@bot.command(
+    aliases = ['assume-direct-control', 'puppeteer', "amplify"],
+    help="Send a message using a submissive's display name and avatar. Immitate them. Does not account for currently enforced identities.",
+    brief='!puppet [@user] [message]',
+    usage='!puppet @maiden "Hello world!"'
+)
 async def puppet(context, target: discord.Member, message):
     relationship = db.get_relationship(context.author, target)
     if relationship is None:
