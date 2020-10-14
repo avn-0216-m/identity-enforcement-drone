@@ -2,7 +2,7 @@
 
 Have you ever wished PluralKit was, like, horny? This is the bot for you.
 
-Invite it to your server with [this link](https://discord.com/api/oauth2/authorize?client_id=694984579995533313&permissions=536955904&scope=bot)!
+Invite it to your server with [this link](https://discord.com/api/oauth2/authorize?client_id=694984579995533313&permissions=536995840&scope=bot)!
 
 Join the [Discord server](https://discord.gg/jXwgQAu) if you want to praise me/complain.
 
