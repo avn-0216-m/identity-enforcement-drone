@@ -727,7 +727,10 @@ async def copy(context, id_name, copy_as):
     brief="!id copy from [@user] [identity] <new name>",
     usage="!id copy from @maiden Drone"
 )
-async def _from(context, target: discord.Member, id_name, copy_as):
+async def _from(context, target: discord.Member, id_name, copy_as = None):
+
+    if copy_as == None:
+        copy_as = id_name
 
     reply = discord.Embed()
 
@@ -744,7 +747,7 @@ async def _from(context, target: discord.Member, id_name, copy_as):
     copied_identity = db.get_user_identity_by_name(context.author, copy_as)
     if copied_identity is not None:
         reply.title = "Could not copy identity."
-        reply.description = f"You already have a(n) {copy_as} identity."
+        reply.description = f"You already have an identity with that name."
         await context.send(embed = reply)
         return
 
