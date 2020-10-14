@@ -541,12 +541,19 @@ async def _set(context, id_name, attribute, *new_values):
         await context.send(embed=discord.Embed(title="No identity by that name found.", description=f"You can list identities you own with '{bot.command_prefix}identities'"))
         return
 
+    #Validate display_name
     if attribute == "display_name" and len(new_values[0]) > 80: 
         reply = discord.Embed(title="Could not update display name.")
         reply.add_field(name="Maximum length:", value="80")
         reply.add_field(name="Your length:", value=len(attribute))
         await context.send(embed=reply)
         return
+    
+    #Validate override_chance
+    if attribute == "override_chance" and int(new_values[0]) > 100:
+        new_values[0] == 100
+    elif attribute == "override_chance" and int(new_values[0]) < 0:
+        new_values[0] == 0
 
     if "lexicon" in attribute:
         update_value = lexicon_to_string(new_values)
