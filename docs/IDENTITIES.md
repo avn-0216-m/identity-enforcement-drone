@@ -24,14 +24,19 @@ If this attribute is set to a valid URL, it will replace the user's current avat
 This lexicon makes up the words that a user's message is replaced with. For example, a replacement lexicon with "beep" and "boop" in it would replace a user message with a random pattern of "beep" and "boop" until it is roughly the same length as the original message.
 
 ## Allowance Lexicon (allowance_lexicon)
+An allowance lexicon lists which words a user enforced with a given identity is allowed to say. If used without other lexicons, a user must send an exact entry from the lexicon otherwise their message will be automatically deleted.
 
 ## Strict (strict)
+This toggleable value determines whether or not users enforced with an identity that has an allowance lexicon can build sentences out of an available pool of words, rather than having to match an exact sentence.
 
 ## Disallowance Lexicon (disallowance_lexicon)
+This lexicon defines words users are not allowed to say when enforced with an identity. Forbidden words will be replaced with underscores unless a replacement_lexicon is present.
 
 ## Override Lexicon (override_lexicon)
+The override lexicon will occasionally, depending on the override chance, replace a users entire message with an entry from the override lexicon. If an identity only has an override lexicon present, then the user will be able to speak freely until random chance "overrides" one of their messages.
 
 ## Override Chance (override_chance)
+This value determines how likely it is that a users message will be replaced with an entry from the override lexicon. Valid from 0 to 100. 0 by default.
 
 ## How the Lexicons Interact
 
