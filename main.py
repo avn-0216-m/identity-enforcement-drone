@@ -505,6 +505,7 @@ async def delete(context, id_name, please = None):
 
     if please is None:
         reply = discord.Embed(title="Hold on one second!", description = "Append 'please' to the end of this command to confirm that you understand this will delete your selected identity.")
+        reply.set_footer(text=f"Try: '{context.message.content} please'")
         await context.send(embed = reply)
         return
 

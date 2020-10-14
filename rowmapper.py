@@ -5,7 +5,7 @@ logger = logging.getLogger('Identity Enforcement Drone')
 def map_rows(rows, output_class):
 
     #fetchone() returns a single dictionary, whereas
-    #fetchall() returns a list.
+    #fetchall() returns a list (of dictionaries).
     #We need to account for it here.
 
     if rows is None: return None
