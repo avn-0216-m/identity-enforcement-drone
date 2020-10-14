@@ -35,6 +35,8 @@ This lexicon makes up the words that a user's message is replaced with. For exam
 
 ## How the Lexicons Interact
 
+An identity will behave differently depending on the lexicons present. Here is an overview:
+
 ### Replacement
 With just a replacement lexicon, a new message will be built using words and phrases from the replacement lexicon until it is roughly the same length as the original message.
 
@@ -50,8 +52,11 @@ With just a disallowance lexicon, any disallowed words or phrases will be replac
 ### Disallowance, Replacement
 With a disallowance lexicon and a replacement lexicon, disallowed words will be replaced with words from the replacement lexicon until roughly equivalent length.
 
+### Disallowance, Allowance
+No effect. The identity will default to behaving as if it only has an allowance lexicon.
+
 ### Replacement, Allowance, Disallowance
-Uhhhhhh, idk?
+No effect. The identity will default to behaving as if it only has a disallowance and replacement lexicon.
 
 ### Override
 No matter what combination of lexicons an identity has, there will always be a chance for the override to automatically replace the message provided the chance is greater than 0.
