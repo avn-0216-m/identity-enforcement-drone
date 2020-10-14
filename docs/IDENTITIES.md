@@ -1,5 +1,9 @@
 # Identities
 
+![](identities.png)
+
+(That's puppyspeak for "This is me with an identity").
+
 Identities are created by users and enforced by the bot. For details on how to create an identity, check [the commands list](./COMMANDS.md).
 
 Identities have many fields which are used for informational and enforcement purposes, which will be explained now:
